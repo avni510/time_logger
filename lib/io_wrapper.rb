@@ -1,5 +1,5 @@
 module TimeLogger
-  class UIWrapper
+  class IOWrapper
 
     def get_action
       gets.chomp
