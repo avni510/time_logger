@@ -18,11 +18,23 @@ module TimeLogger
     end
 
     def log_time
-      @console_ui.date_log_time_message
+      date_logged = @console_ui.date_log_time_message
+      hours_logged = @console_ui.hours_log_time_message
+      timecode_options_hash = generate_timecode_hash
+      timecode_logged = @console_ui.timecode_log_time_message(timecode_options_hash)
+      @save_data.add_logged_time(date_logged, hours_logged, timecode_logged) 
     end
 
     private
     
+    def generate_timecode_hash
+      { 
+        "1": "Billable", 
+        "2": "Non-Billabe",
+        "3": "PTO"
+      }
+    end
+
     def generate_menu_hash
       { 
         "1": "1. Do you want to log your time?", 
