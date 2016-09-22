@@ -7,8 +7,9 @@ module TimeLogger
     before(:each) do 
       @mock_save_data = double
       @mock_console_ui = double
+      @validation = Validation.new
       allow(@mock_save_data).to receive(:add_username).with("avnik")
-      @employee = Employee.new("avnik", @mock_save_data, @mock_console_ui)
+      @employee = Employee.new("avnik", @mock_save_data, @mock_console_ui, @validation)
     end
 
     it "creates a new Employee" do
@@ -33,40 +34,82 @@ module TimeLogger
     end
 
     describe ".log_time" do
-     it "allows the user to enter the date of when they want to log time for" do
+      before(:each) do
+        allow(@mock_console_ui).to receive(:date_log_time_message).and_return("09-12-2016")
+        allow(@mock_console_ui).to receive(:hours_log_time_message).and_return("7")
+        allow(@mock_console_ui).to receive(:timecode_log_time_message).and_return("1")
 
-      expect(@mock_console_ui).to receive(:date_log_time_message)
-      expect(@mock_console_ui).to receive(:hours_log_time_message)
+        allow(@mock_save_data).to receive(:add_logged_time)
+      end
 
-      timecode_hash = 
-      { 
-        "1": "Billable", 
-        "2": "Non-Billabe",
-        "3": "PTO"
-      }
+      context "all fields entered are valid" do
+        it "allows the user to enter the date, hours worked, and timecode" do
 
-      expect(@mock_console_ui).to receive(:timecode_log_time_message).with(timecode_hash)
+        expect(@mock_console_ui).to receive(:date_log_time_message).and_return("09-15-2016")
+        expect(@mock_console_ui).to receive(:hours_log_time_message).and_return("8")
 
-      expect(@mock_save_data).to receive(:add_logged_time)
+        timecode_hash = 
+        { 
+          "1": "Billable", 
+          "2": "Non-Billabe",
+          "3": "PTO"
+        }
 
-      @employee.log_time 
+        expect(@mock_console_ui).to receive(:timecode_log_time_message).with(timecode_hash)
+
+        expect(@mock_save_data).to receive(:add_logged_time)
+
+        @employee.log_time 
+        end
+      end
+
+     context "the date entered is invalid" do
+       it "prompts the user to enter a valid date" do
+         expect(@mock_console_ui).to receive(:date_log_time_message).and_return("06-31-2016")
+
+         expect(@mock_console_ui).to receive(:valid_date_message)
+         expect(@mock_console_ui).to receive(:get_user_input).and_return("06-30-2016")
+
+         @employee.log_time
+       end
+     end
+
+     context "the date entered is in the future" do
+       it "prompts the user to enter a previous date" do
+         expect(@mock_console_ui).to receive(:date_log_time_message).and_return("11-20-2016")
+
+         expect(@mock_console_ui).to receive(:future_date_valid_message)
+         expect(@mock_console_ui).to receive(:get_user_input).and_return("06-30-2016")
+
+         @employee.log_time
+       end
+     end
+
+     context "more than 24 hours were logged for a specific date" do
+       it "prompts the user to enter a valid number of hours" do
+
+        expect(@mock_console_ui).to receive(:hours_log_time_message).and_return("30")
+
+        expect(@mock_console_ui).to receive(:valid_hours_message)
+
+        expect(@mock_console_ui).to receive(:get_user_input).and_return("3")
+
+        @employee.log_time
+       end
+     end
+
+     context "an invalid timecode is entered" do
+       it "prompts the user to enter a menu option" do
+
+        expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("4")
+
+        expect(@mock_console_ui).to receive(:valid_menu_option_message)
+
+        expect(@mock_console_ui).to receive(:get_user_input).and_return("3")
+
+        @employee.log_time
+       end
      end
    end
-
-#    it "allows the user to enter how many hours worked" do
-#      expect(@mock_console_ui).to receive(:hours_log_time_message)
-#      @employee.log_time
-#    end
-#
-#    it "allows the user to enter the type of work" do
-#    end
-#
-#
-#    it "doesn't allow the user to select a date in the future" do
-#    end
-#
-#    it "doesn't allow the user to enter more than 24 hours" do
-#    end
-
   end
 end

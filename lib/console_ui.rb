@@ -17,12 +17,24 @@ module TimeLogger
       @io_wrapper.puts_string("")
     end
 
+    def valid_hours_message
+      @io_wrapper.puts_string("Please enter a valid number of hours")
+    end
+
     def valid_username_message
       @io_wrapper.puts_string("Please enter a valid username")
     end
 
     def valid_menu_option_message
       @io_wrapper.puts_string("Please enter a valid menu option")
+    end
+    
+    def valid_date_message
+      @io_wrapper.puts_string("Please enter a valid date")
+    end
+
+    def future_date_valid_message
+      @io_wrapper.puts_string("Please enter a date in the past")
     end
 
     def menu_selection_message

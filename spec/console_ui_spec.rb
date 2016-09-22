@@ -26,6 +26,15 @@ module TimeLogger
       end
     end
 
+    describe ".valid_hours_message" do
+      context "more than 24 hours are entered in" do
+        it "displays a message to the user to enter a valid input" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid number of hours")
+          console_ui.valid_hours_message
+        end
+      end
+    end
+
     describe ".valid_username_message" do
       context "an invalid username is entered" do
         it "asks the user to enter a valid username" do
@@ -40,6 +49,24 @@ module TimeLogger
         it "asks the user to enter a valid menu option" do
           expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid menu option")
           console_ui.valid_menu_option_message
+        end
+      end
+    end
+
+    describe ".valid_date_message" do
+      context "the user doesn't enter a date in the proper format" do
+        it "displays a message to enter a valid date" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid date")
+          console_ui.valid_date_message
+        end
+      end
+    end
+
+    describe ".future_date_valid_message"do
+      context "the user enters a date in the correct format and the date is in the future" do
+        it "displays a message to enter a previous date" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a date in the past")
+          console_ui.future_date_valid_message
         end
       end
     end
