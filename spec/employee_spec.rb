@@ -8,12 +8,14 @@ module TimeLogger
       @mock_save_data = double
       @mock_console_ui = double
       @validation = Validation.new
-      allow(@mock_save_data).to receive(:add_username).with("avnik")
       @employee = Employee.new("avnik", @mock_save_data, @mock_console_ui, @validation)
     end
 
-    it "creates a new Employee" do
-      expect(@employee.username).to eq("avnik")
+    describe ".create" do
+      it "creates a new Employee" do
+        expect(@mock_save_data).to receive(:add_username).with("avnik")
+        @employee.create("avnik")
+      end
     end
 
     describe ".menu_messages" do

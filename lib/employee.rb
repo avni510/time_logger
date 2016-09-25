@@ -8,7 +8,10 @@ module TimeLogger
       @save_data = save_data
       @console_ui = console_ui
       @validation = validation
-      save_data.add_username(@username)
+    end
+
+    def create(username)
+      @save_data.add_username(username)
     end
 
     def menu_messages
