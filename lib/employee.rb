@@ -1,4 +1,3 @@
-require 'pry'
 module TimeLogger
 
   class Employee
@@ -22,7 +21,8 @@ module TimeLogger
     def log_time
       date_logged = log_date 
       hours_logged = log_hours_worked
-      timecode_logged = log_timecode
+      timecode_logged= log_timecode
+      #add ability to select client 
       @save_data.add_logged_time(@username, date_logged, hours_logged, timecode_logged) 
     end
 
@@ -41,8 +41,10 @@ module TimeLogger
 
     def log_timecode
       timecode_options_hash = generate_timecode_hash
-      timecode_entered = @console_ui.timecode_log_time_message(timecode_options_hash)
-      valid_timecode_loop(timecode_options_hash, timecode_entered)
+      timecode_num_entered = @console_ui.timecode_log_time_message(timecode_options_hash)
+      timecode_num_entered = valid_timecode_loop(timecode_options_hash, timecode_num_entered)
+      timecode_type = timecode_options_hash[timecode_num_entered.to_sym]
+      timecode_type = timecode_type[3..-1]
     end
 
     def valid_date_loop(date_entered)
@@ -79,9 +81,9 @@ module TimeLogger
 
     def generate_timecode_hash
       { 
-        "1": "Billable", 
-        "2": "Non-Billabe",
-        "3": "PTO"
+        "1": "1. Billable", 
+        "2": "2. Non-Billable",
+        "3": "3. PTO"
       }
     end
 

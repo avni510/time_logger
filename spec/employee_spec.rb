@@ -37,7 +37,7 @@ module TimeLogger
       before(:each) do
         allow(@mock_console_ui).to receive(:date_log_time_message).and_return("09-12-2016")
         allow(@mock_console_ui).to receive(:hours_log_time_message).and_return("7")
-        allow(@mock_console_ui).to receive(:timecode_log_time_message).and_return("1")
+        allow(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
         allow(@mock_save_data).to receive(:add_logged_time)
       end
@@ -50,9 +50,9 @@ module TimeLogger
 
         timecode_hash = 
         { 
-          "1": "Billable", 
-          "2": "Non-Billabe",
-          "3": "PTO"
+          "1": "1. Billable", 
+          "2": "2. Non-Billable",
+          "3": "3. PTO"
         }
 
         expect(@mock_console_ui).to receive(:timecode_log_time_message).with(timecode_hash)
@@ -109,6 +109,19 @@ module TimeLogger
 
         @employee.log_time
        end
+     end
+
+     it "passes in the correct data to be saved" do
+
+      expect(@mock_console_ui).to receive(:date_log_time_message).and_return("04-15-2016")
+
+      expect(@mock_console_ui).to receive(:hours_log_time_message).and_return("8")
+
+      expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
+
+      expect(@mock_save_data).to receive(:add_logged_time).with("avnik", "04-15-2016", "8", "Non-Billable")
+
+      @employee.log_time
      end
    end
   end

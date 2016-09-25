@@ -42,7 +42,7 @@ module TimeLogger
 
         save_data.add_username("avnik")
 
-        save_data.add_log_time("avnik", "09-19-2016", "6", "Billable")
+        save_data.add_log_time("avnik", "09-19-2016", "6", "Billable", "Google")
 
         data = file_wrapper.read_data(output_file)
         
@@ -55,7 +55,8 @@ module TimeLogger
                 {
                   "date": "09-19-2016",
                   "hours_worked": "6", 
-                  "timecode": "Billable"
+                  "timecode": "Billable",
+                  "client": "Google"
                 } ]
             } ]
         )

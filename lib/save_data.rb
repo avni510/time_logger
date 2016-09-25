@@ -14,12 +14,12 @@ module TimeLogger
     end
 
 
-    def add_log_time(username, date, hours_worked, timecode)
+    def add_log_time(username, date, hours_worked, timecode, client=nil)
       data_hash = @file_wrapper.read_data(@output_file)
 
       workers_array = data_hash["workers"]
       worker_hash = generate_worker_hash(workers_array, username)
-      log_time_hash = generate_log_time_hash(date, hours_worked, timecode)
+      log_time_hash = generate_log_time_hash(date, hours_worked, timecode, client)
 
       worker_hash["log_time"] << log_time_hash
 
@@ -28,11 +28,12 @@ module TimeLogger
 
     private
 
-    def generate_log_time_hash(date, hours_worked, timecode)
+    def generate_log_time_hash(date, hours_worked, timecode, client)
       {
         "date": date,
         "hours_worked": hours_worked,
-        "timecode": timecode
+        "timecode": timecode,
+        "client": client
       }
     end
 

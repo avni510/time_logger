@@ -124,5 +124,77 @@ module TimeLogger
         console_ui.timecode_log_time_message(timecode_hash)
       end
     end
+
+    describe ".format_employee_self_report" do
+      it "given a hash of log times it returns a report for the employee" do
+        log_times_sorted = [
+          {
+            "date": "09-02-2016",
+            "hours_worked": "7", 
+            "timecode": "Billable",
+            "client": "Microsoft"
+          },
+          {
+            "date": "09-04-2016",
+            "hours_worked": "5", 
+            "timecode": "Billable",
+            "client": "Microsoft"
+          },
+          {
+            "date": "09-06-2016",
+            "hours_worked": "6", 
+            "timecode": "Non-Billable",
+            "client": nil
+          },
+          {
+            "date": "09-07-2016",
+            "hours_worked": "10", 
+            "timecode": "Billable",
+            "client": "Google"
+          },
+          {
+            "date": "09-08-2016",
+            "hours_worked": "5", 
+            "timecode": "PTO",
+            "client": nil
+          }
+        ]
+
+        log_times_sorted = JSON.parse(JSON.generate(log_times_sorted))
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("This is a report for the current month")
+
+        expect(console_ui).to receive(:puts_space).exactly(3).times
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Date" + "            "  + "Hours Worked" +            "            " + "Timecode" + "            " + "Client")
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-02-2016" + "            "  + "7" + "            " + "Billable" + "            " + "Microsoft")
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-04-2016" + "            "  + "5" + "            " + "Billable" + "            " + "Microsoft")
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-06-2016" + "            "  + "6" + "            " + "Non-Billable")
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-07-2016" + "            "  + "10" + "            " + "Billable" + "            " + "Google")
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-08-2016" + "            "  + "5" + "            " + "PTO")
+
+
+        total_hours_worked_per_client = { "Google": "10", "Microsoft": "12" }
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Total hours worked for Google" + " : " + "10") 
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Total hours worked for Microsoft" + " : " + "12") 
+
+        total_hours_worked_per_timecode = { "Billable": "22", "Non-Billable": "6", "PTO": "5" }
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Total Billable hours worked" + " : " + "22") 
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Total Non-Billable hours worked" + " : " + "6") 
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Total PTO hours worked" + " : " + "5") 
+
+        console_ui.format_employee_self_report(log_times_sorted, total_hours_worked_per_client, total_hours_worked_per_timecode)
+      end
+    end
   end
 end

@@ -68,5 +68,42 @@ module TimeLogger
       display_menu_options(timecode_hash)
       get_user_input
     end
+
+    def format_employee_self_report(log_times_sorted, client_hash, timecode_hash)
+      @io_wrapper.puts_string("This is a report for the current month")
+
+      puts_space
+
+      @io_wrapper.puts_string("Date" + "            "  + "Hours Worked" + "            " + "Timecode" + "            " + "Client")
+      log_times_sorted.each do |log_time_hash|
+
+        items_to_print = log_time_hash["date"] + "            " + log_time_hash["hours_worked"] + "            " + log_time_hash["timecode"] 
+        if log_time_hash["client"]
+          items_to_print = items_to_print + "            " + log_time_hash["client"]
+        end
+
+        @io_wrapper.puts_string(items_to_print)
+      end
+
+      puts_space
+
+      format_client_hours_worked(client_hash)
+
+      puts_space
+
+      format_timecode_hours_worked(timecode_hash)
+    end
+
+    def format_client_hours_worked(clients_hash)
+      clients_hash.each do |client, hours_worked|
+          @io_wrapper.puts_string("Total hours worked for #{client}" + " : " + "#{hours_worked}")
+      end
+    end
+
+    def format_timecode_hours_worked(timecode_hash)
+      timecode_hash.each do |timecode, hours_worked|
+          @io_wrapper.puts_string("Total #{timecode} hours worked" + " : " + "#{hours_worked}")
+      end
+    end
   end
 end

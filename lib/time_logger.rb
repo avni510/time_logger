@@ -5,7 +5,9 @@ require_relative "employee"
 require_relative "save_data"
 require "date"
 require_relative "validation"
-require "log_time"
+require_relative "log_time"
+require_relative "report"
+require_relative "retrieve_data"
 
 module TimeLogger
 end
