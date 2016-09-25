@@ -6,7 +6,7 @@ module TimeLogger
       @console_ui = console_ui
     end
 
-    def self_summary(username)
+    def execute(username)
       log_times_array = @retrieve_data.user_log_times(username)
       sorted_log_times = log_times_array.sort_by{ |log_time| log_time["date"] }
       clients_hours_hash = total_hours_per_client(sorted_log_times)

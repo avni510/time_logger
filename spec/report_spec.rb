@@ -94,7 +94,7 @@ module TimeLogger
 
           expect(mock_console_ui).to receive(:format_employee_self_report).with(log_times_sorted, clients_hash, timecode_hash)
 
-          report.self_summary("kothari1")
+          report.execute("kothari1")
         end
       end
     end

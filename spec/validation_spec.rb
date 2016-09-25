@@ -96,5 +96,27 @@ module TimeLogger
         end
       end
     end
+
+    describe ".menu_option_valid?" do
+      it "returns true if the user input is a key in the hash and false otherwise" do
+        menu_hash = 
+            { 
+              "1": "1. Do you want to log your time?", 
+              "2": "2. Do you want to run a report on yourself?",
+              "3": "3. Quit the program"
+            }
+        [
+          ["4", false],
+          ["3", true],
+          ["u", false],
+          [",", false]
+        ].each do |user_input, bool|
+
+          result = validation.menu_option_valid?(menu_hash, user_input)
+
+          expect(result).to eq(bool)
+        end
+      end
+    end
   end
 end

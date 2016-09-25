@@ -26,6 +26,10 @@ module TimeLogger
       return false if hours_worked !~ /^\d{0,2}$/
       hours_worked.to_i <= HOURS_IN_A_DAY 
     end
+
+    def menu_option_valid?(menu_hash, user_input)
+      menu_hash.has_key?(user_input.to_sym)
+    end
   end
 end
 
