@@ -9,6 +9,7 @@ require_relative "log_time"
 require_relative "report"
 require_relative "retrieve_data"
 require_relative "menu_selection"
+require_relative "console_runner"
 
 module TimeLogger
 end
