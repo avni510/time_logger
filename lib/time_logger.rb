@@ -10,6 +10,10 @@ require_relative "report"
 require_relative "retrieve_data"
 require_relative "menu_selection"
 require_relative "console_runner"
+require_relative "repository"
+require_relative "log_time_repo"
+require_relative "employee_repo"
+require_relative "log_time_entry"
 
 module TimeLogger
 end
