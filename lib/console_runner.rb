@@ -8,6 +8,7 @@ module TimeLogger
       @file_name = file_name
     end
 
+
     def run
       @console_ui.username_display_message
       username = @console_ui.get_user_input

@@ -16,7 +16,7 @@ module TimeLogger
         allow(@mock_console_ui).to receive(:hours_log_time_message).and_return("7")
         allow(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
-        allow(@mock_save_data).to receive(:add_logged_time)
+        allow(@mock_save_data).to receive(:add_log_time)
       end
 
       context "all fields entered are valid" do
@@ -34,7 +34,7 @@ module TimeLogger
 
         expect(@mock_console_ui).to receive(:timecode_log_time_message).with(timecode_hash)
 
-        expect(@mock_save_data).to receive(:add_logged_time)
+        expect(@mock_save_data).to receive(:add_log_time)
 
         @log_time.execute(@username)
         end
@@ -96,7 +96,7 @@ module TimeLogger
 
         expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
-        expect(@mock_save_data).to receive(:add_logged_time).with("avnik", "04-15-2016", "8", "Non-Billable")
+        expect(@mock_save_data).to receive(:add_log_time).with("avnik", "04-15-2016", "8", "Non-Billable")
 
         @log_time.execute(@username)
       end

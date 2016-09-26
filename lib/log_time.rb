@@ -11,7 +11,7 @@ module TimeLogger
       hours_logged = log_hours_worked
       timecode_logged= log_timecode
       #add ability to select client 
-      @save_data.add_logged_time(username, date_logged, hours_logged, timecode_logged) 
+      @save_data.add_log_time(username, date_logged, hours_logged, timecode_logged) 
     end
 
     private
