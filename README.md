@@ -24,7 +24,7 @@ $ bundle install
 
 Run application
 ```
-$ 
+$ ./bin/execute_time_logger.rb
 ```
 Usage
 -----
