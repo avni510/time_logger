@@ -5,9 +5,10 @@ module TimeLogger
   describe Repository do
   
     before(:each) do
+      mock_save_json_data = double
       repositories_hash = {
-        "log_time": LogTimeRepo.new,
-        "employee": EmployeeRepo.new
+        "log_time": LogTimeRepo.new(mock_save_json_data),
+        "employee": EmployeeRepo.new(mock_save_json_data)
       }
 
       @repository = Repository.new(repositories_hash)

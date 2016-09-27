@@ -6,7 +6,7 @@ module TimeLogger
     end
 
     def for(type)
-      @repositories[type]
+      @repositories[type.to_sym]
     end
   end
 end

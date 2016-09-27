@@ -75,11 +75,11 @@ module TimeLogger
       puts_space
 
       @io_wrapper.puts_string("Date" + "            "  + "Hours Worked" + "            " + "Timecode" + "            " + "Client")
-      log_times_sorted.each do |log_time_hash|
+      log_times_sorted.each do |log_time|
 
-        items_to_print = log_time_hash["date"] + "            " + log_time_hash["hours_worked"] + "            " + log_time_hash["timecode"] 
-        if log_time_hash["client"]
-          items_to_print = items_to_print + "            " + log_time_hash["client"]
+        items_to_print = log_time[0] + "            " + log_time[1] + "            " + log_time[2] 
+        if log_time[3]
+          items_to_print = items_to_print + "            " + log_time[3]
         end
 
         @io_wrapper.puts_string(items_to_print)

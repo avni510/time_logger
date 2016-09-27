@@ -1,4 +1,3 @@
-require 'pry'
 module TimeLogger
   require "spec_helper"
 
@@ -16,33 +15,138 @@ module TimeLogger
       file_wrapper.write_data(output_file, @original_data_hash)
     end
 
-    describe ".add_username" do
-      it "adds the username to the JSON file" do
-      read_original_file_data
-        
-      save_json_data.add_username("avnik")
+    describe ".employees" do
+      context "no users are in the JSON file" do
+        it "adds all the employees to a JSON file" do
+          read_original_file_data
 
-      data = file_wrapper.read_data(output_file)
+          employee_entry_1 = Employee.new(1, "gharrison", false)
+          employee_entry_2 = Employee.new(2, "jlennon", false)
 
-      expect(data).to include_json(
-        "workers": [ 
-          {
-            id: 1,
-            username: "avnik", 
-            admin: false, 
-            log_time: []
-          } ]
-      )
+          employees = [ employee_entry_1, employee_entry_2 ]
 
-      rewrite_original_file_data
+          save_json_data.employees(employees)
+
+          data = file_wrapper.read_data(output_file)
+          
+          expect(data).to include_json(
+            "workers": 
+            [ 
+              {
+                id: 1,
+                username: "gharrison", 
+                admin: false, 
+                log_time: []
+              },
+              {
+                id: 2,
+                username: "jlennon", 
+                admin: false, 
+                log_time: []
+              } 
+            ]
+          )
+
+
+          rewrite_original_file_data
+        end
+      end
+
+      context "users exist in the JSON" do
+        it "adds all the employees to a JSON file" do
+          read_original_file_data
+          
+          data_hash = 
+
+            {
+            "workers": [{
+              "id": 1,
+              "username": "rstarr",
+              "admin": false,
+              "log_time": [
+                {
+                  "id": 1,
+                  "date": "09-07-2016",
+                  "hours_worked": "8",
+                  "timecode": "Non-Billable",
+                  "client": nil
+                }, {
+                  "id": 2,
+                  "date": "09-08-2016",
+                  "hours_worked": "8",
+                  "timecode": "PTO",
+                  "client": nil
+                }]
+            }],
+            "clients": []
+          }
+
+          file_wrapper.write_data(output_file, data_hash)
+
+          employee_entry_1 = Employee.new(1, "rstarr", false)
+          employee_entry_2 = Employee.new(2, "gharrison", false)
+          employee_entry_3 = Employee.new(3, "jlennon", false)
+
+          employees = [ employee_entry_1, employee_entry_2, employee_entry_3 ]
+
+          save_json_data.employees(employees)
+
+          data = file_wrapper.read_data(output_file)
+          
+          expect(data).to include_json(
+            "workers": 
+            [ 
+              {
+                id: 1,
+                username: "rstarr",
+                admin: false,
+                log_time: [
+                  {
+                    id: 1,
+                    date: "09-07-2016",
+                    hours_worked: "8",
+                    timecode: "Non-Billable",
+                    client: nil
+                  }, 
+                  {
+                    id: 2,
+                    date: "09-08-2016",
+                    hours_worked: "8",
+                    timecode: "PTO",
+                    client: nil
+                  }]
+              },
+              {
+                id: 2,
+                username: "gharrison", 
+                admin: false, 
+                log_time: []
+              },
+              {
+                id: 3,
+                username: "jlennon", 
+                admin: false, 
+                log_time: []
+              } 
+            ]
+          )
+
+
+          rewrite_original_file_data
+        end
       end
     end
 
+
     describe ".log_time" do
-      it "adds the date to the JSON file" do
+      it "adds all entries of log time to the JSON file" do
         read_original_file_data
 
-        save_json_data.add_username("avnik")
+        
+        employee_entry_1 = Employee.new(1, "rstarr", false)
+        employees = [ employee_entry_1 ]
+
+        save_json_data.employees(employees)
 
         log_time_entry_1 = LogTimeEntry.new(1, 1, "09-07-2016", "8", "Non-Billable", nil)
         log_time_entry_2 = LogTimeEntry.new(2, 1, "09-08-2016", "8", "PTO", nil)
@@ -58,7 +162,7 @@ module TimeLogger
           [ 
             {
               id: 1,
-              username: "avnik", 
+              username: "rstarr", 
               admin: false, 
               log_time: 
                 [ 
@@ -87,13 +191,15 @@ module TimeLogger
         it "adds the newly entered log time into the JSON" do
           read_original_file_data
 
-  #        save_json_data.add_username("avnik")
+          employee_entry_1 = Employee.new(1, "rstarr", false)
+          employees = [ employee_entry_1 ]
+
           data_hash = 
 
             {
             "workers": [{
               "id": 1,
-              "username": "avnik",
+              "username": "rstarr",
               "admin": false,
               "log_time": [
                 {
@@ -130,7 +236,7 @@ module TimeLogger
             [ 
               {
                 id: 1,
-                username: "avnik", 
+                username: "rstarr", 
                 admin: false, 
                 log_time: 
                   [ 

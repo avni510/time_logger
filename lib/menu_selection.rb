@@ -37,15 +37,14 @@ module TimeLogger
         log_time.execute(1, @repository)
       elsif user_input == @menu_hash.key("2. Do you want to run a report on yourself?")
         report = instaniate_report
-        report.execute(@username)
+        report.execute(1, @repository)
       elsif user_input == @menu_hash.key("3. Quit the program")
 #        Kernel.exit
       end
     end
 
     def instaniate_report
-      retrieve_data = RetrieveData.new(FileWrapper.new, @file_name)
-      Report.new(retrieve_data, @console_ui)
+      Report.new(@console_ui)
     end
 
     def instaniate_log_time

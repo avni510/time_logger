@@ -1,15 +1,15 @@
 module TimeLogger
 
   class Employee
+    attr_reader :id
     attr_reader :username
+    attr_reader :admin
     
-    def initialize(username, save_data)
+    def initialize(id, username, admin=false)
+      @id = id
       @username = username
-      @save_data = save_data
+      @admin = admin
     end
 
-    def create(username)
-      @save_data.add_username(username)
-    end
   end
 end

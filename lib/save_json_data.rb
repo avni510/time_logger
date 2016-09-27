@@ -6,10 +6,30 @@ module TimeLogger
       @output_file = output_file
     end
 
-    def add_username(username)
+    def employees(employees)
       data_hash = @file_wrapper.read_data(@output_file)
-      username_hash = generate_username_hash(username)
-      data_hash["workers"] << username_hash
+
+      workers_array = data_hash["workers"]
+
+      if workers_array.empty?
+        last_employee_entered = 0
+      else
+        last_employee_entered = workers_array[-1]["id"]
+      end
+
+      new_employees = []
+
+      employees.each do |employee|
+        if employee.id > last_employee_entered
+          new_employees << employee
+        end
+      end
+
+      new_employees.each do |employee|
+        employee_hash = generate_employee_hash(employee.id, employee.username, employee.admin)
+        workers_array << employee_hash
+      end
+
       @file_wrapper.write_data(@output_file, data_hash)
     end
 
@@ -43,21 +63,13 @@ module TimeLogger
       }
     end
 
-    def generate_username_hash(username)
+    def generate_employee_hash(id, username, admin)
       { 
-        "id": 1, 
+        "id": id, 
         "username": username, 
-        "admin": false, 
+        "admin": admin, 
         "log_time": []
       }
-    end
-
-    def generate_worker_hash(workers_array, username)
-      workers_array.each do |worker|
-        if worker["username"] == username
-          return worker
-        end
-      end
     end
   end
 end
