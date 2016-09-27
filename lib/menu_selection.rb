@@ -1,11 +1,12 @@
 module TimeLogger
   class MenuSelection
 
-    def initialize(username, file_name, console_ui, validation)
+    def initialize(username, file_name, console_ui, validation, repository)
       @username = username
       @file_name = file_name
       @console_ui = console_ui
       @validation = validation
+      @repository = repository
     end
 
     def menu_messages
@@ -33,7 +34,7 @@ module TimeLogger
       user_input = user_input.to_sym
       if user_input == @menu_hash.key("1. Do you want to log your time?")
         log_time = instaniate_log_time
-        log_time.execute(@username)
+        log_time.execute(1, @repository)
       elsif user_input == @menu_hash.key("2. Do you want to run a report on yourself?")
         report = instaniate_report
         report.execute(@username)
@@ -48,9 +49,9 @@ module TimeLogger
     end
 
     def instaniate_log_time
-      save_data = SaveData.new(FileWrapper.new, @file_name)
+      save_data = SaveJsonData.new(FileWrapper.new, @file_name)
       validation = Validation.new
-      LogTime.new(save_data, @console_ui, validation)
+      LogTime.new(@console_ui, validation)
     end
 
     def generate_menu_hash

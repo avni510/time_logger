@@ -11,7 +11,7 @@ module TimeLogger
 
     describe ".create" do
       context "the user has entered their log time" do
-        it "adds the user's log time to entries" do
+        it "creates an instance of the object LogTimeEntry and saves that to entries" do
           employee_id = 1
           date = "09-07-2016"
           hours_worked = "8"
@@ -21,10 +21,7 @@ module TimeLogger
 
           log_time_repo.create(employee_id, date, hours_worked, timecode)
 
-          entries = [ [1, 1, "09-07-2016", "8", "Non-Billable", nil] ]
-
-
-          expect(log_time_repo.entries).to eq(entries)
+          expect(log_time_repo.entries[0]).to be_a_kind_of(LogTimeEntry)
         end
       end
 
@@ -46,13 +43,9 @@ module TimeLogger
 
           log_time_repo.create(employee_id, date, hours_worked, timecode)
 
-          entries = 
-            [ 
-              [1, 1, "09-07-2016", "8", "Non-Billable", nil], 
-              [2, 1, "09-08-2016", "8", "PTO", nil] 
-            ]
-
-          expect(log_time_repo.entries).to eq(entries)
+          log_time_repo.entries.each do |entry|
+            expect(entry).to be_a_kind_of(LogTimeEntry)
+          end
         end
       end
     end
@@ -86,13 +79,14 @@ module TimeLogger
 
         result = log_time_repo.find_by_employee_id(1)
 
-        employee_1_log_times = 
-          [ 
-            [1, 1, "09-07-2016", "8", "Non-Billable", nil], 
-            [2, 1, "09-08-2016", "8", "PTO", nil] 
-          ]
+        count = 0
 
-        expect(result).to eq(employee_1_log_times)
+        result.each do |entry|
+          count += 1
+          expect(entry).to be_a_kind_of(LogTimeEntry)
+        end
+
+        expect(count).to eq(2)
       end
     end
 

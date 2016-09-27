@@ -3,10 +3,11 @@ module TimeLogger
 
   describe MenuSelection do
     let(:mock_console_ui) { double }
+    let(:repository) { double }
     let(:username) { "kothari1" } 
     let(:file_name) {"/Users/avnikothari/Desktop/8thlight/time_logger/time_logger_data.json"}
     let(:validation) { Validation.new }
-    let(:menu_selection) { MenuSelection.new(username, file_name, mock_console_ui, validation) }
+    let(:menu_selection) { MenuSelection.new(username, file_name, mock_console_ui, validation, repository) }
 
     before(:each) do
       allow(mock_console_ui).to receive(:menu_selection_message)

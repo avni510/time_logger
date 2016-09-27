@@ -3,20 +3,25 @@ module TimeLogger
 
   describe LogTime do
     before(:each) do
-      @mock_save_data = double
+      @repositories_hash = 
+        {  
+          "log_time": double,
+        } 
+      @repository = Repository.new(@repositories_hash)
       @mock_console_ui = double
       @validation = Validation.new
-      @log_time = LogTime.new(@mock_save_data, @mock_console_ui, @validation)
-      @username = "avnik"
+      @log_time = LogTime.new(@mock_console_ui, @validation)
+      @employee_id = 1
     end
 
-    describe ".log_time" do
+    describe ".execute" do
       before(:each) do
         allow(@mock_console_ui).to receive(:date_log_time_message).and_return("09-12-2016")
         allow(@mock_console_ui).to receive(:hours_log_time_message).and_return("7")
         allow(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
-
-        allow(@mock_save_data).to receive(:add_log_time)
+        mock_log_time_repo = @repositories_hash[:log_time]
+        allow(mock_log_time_repo).to receive(:create)
+        allow(mock_log_time_repo).to receive(:save)
       end
 
       context "all fields entered are valid" do
@@ -26,17 +31,15 @@ module TimeLogger
         expect(@mock_console_ui).to receive(:hours_log_time_message).and_return("8")
 
         timecode_hash = 
-        { 
-          "1": "1. Billable", 
-          "2": "2. Non-Billable",
-          "3": "3. PTO"
-        }
+          { 
+            "1": "1. Billable", 
+            "2": "2. Non-Billable",
+            "3": "3. PTO"
+          }
 
         expect(@mock_console_ui).to receive(:timecode_log_time_message).with(timecode_hash)
 
-        expect(@mock_save_data).to receive(:add_log_time)
-
-        @log_time.execute(@username)
+        @log_time.execute(@employee_id, @repository)
         end
       end
 
@@ -45,9 +48,10 @@ module TimeLogger
           expect(@mock_console_ui).to receive(:date_log_time_message).and_return("06-31-2016")
 
           expect(@mock_console_ui).to receive(:valid_date_message)
+
           expect(@mock_console_ui).to receive(:get_user_input).and_return("06-30-2016")
 
-          @log_time.execute(@username)
+          @log_time.execute(@employee_id, @repository)
         end
       end
 
@@ -56,9 +60,10 @@ module TimeLogger
           expect(@mock_console_ui).to receive(:date_log_time_message).and_return("11-20-2016")
 
           expect(@mock_console_ui).to receive(:future_date_valid_message)
+
           expect(@mock_console_ui).to receive(:get_user_input).and_return("06-30-2016")
 
-          @log_time.execute(@username)
+          @log_time.execute(@employee_id, @repository)
         end
       end
 
@@ -71,7 +76,7 @@ module TimeLogger
 
           expect(@mock_console_ui).to receive(:get_user_input).and_return("3")
 
-          @log_time.execute(@username)
+          @log_time.execute(@employee_id, @repository)
         end
       end
 
@@ -84,7 +89,7 @@ module TimeLogger
 
           expect(@mock_console_ui).to receive(:get_user_input).and_return("3")
 
-          @log_time.execute(@username)
+          @log_time.execute(@employee_id, @repository)
         end
       end
 
@@ -96,9 +101,13 @@ module TimeLogger
 
         expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
-        expect(@mock_save_data).to receive(:add_log_time).with("avnik", "04-15-2016", "8", "Non-Billable")
+        mock_log_time_repo = @repositories_hash[:log_time]
 
-        @log_time.execute(@username)
+        expect(mock_log_time_repo).to receive(:create).with(@employee_id, "04-15-2016", "8", "Non-Billable")
+
+        expect(mock_log_time_repo).to receive(:save)
+
+        @log_time.execute(@employee_id, @repository)
       end
     end
   end

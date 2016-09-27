@@ -10,11 +10,11 @@ file_path = "/Users/avnikothari/Desktop/8thlight/time_logger/time_logger_data.js
 
 file_wrapper = TimeLogger::FileWrapper.new
 
-save_data = TimeLogger::SaveData.new(file_wrapper, file_path)
+save_data = TimeLogger::SaveJsonData.new(file_wrapper, file_path)
 
 validation = TimeLogger::Validation.new
 
-console_runner = TimeLogger::ConsoleRunner.new(console_ui, save_data, validation, file_path)
+console_runner = TimeLogger::ConsoleRunner.new(console_ui, save_data, validation, file_path, file_wrapper)
 
 console_runner.run
 

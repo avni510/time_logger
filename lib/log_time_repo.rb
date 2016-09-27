@@ -12,24 +12,24 @@ module TimeLogger
       if @entries.empty?
         log_entry_id = 1
       else
-        log_entry_id = @entries[-1][0] + 1
+        log_entry_id = @entries.count + 1
       end
-      
-      log_entry = [ log_entry_id, employee_id, date, hours_worked, timecode, client ]
 
-      @entries << log_entry
+      log_time_entry = LogTimeEntry.new(log_entry_id, employee_id, date, hours_worked, timecode, client)
+
+      @entries << log_time_entry
     end
 
     def find_by_employee_id(employee_id)
-      total_entries_per_employee = []
+      total_entries_for_employee = []
 
       @entries.each do |entry|
-        if entry[1] == employee_id
-          total_entries_per_employee << entry
+        if entry.employee_id == employee_id
+          total_entries_for_employee << entry
         end
       end
 
-      total_entries_per_employee
+      total_entries_for_employee
     end
 
     def save

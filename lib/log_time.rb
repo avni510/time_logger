@@ -1,17 +1,18 @@
 module TimeLogger
   class LogTime
-    def initialize(save_data, console_ui, validation)
-      @save_data = save_data
+    def initialize(console_ui, validation)
       @console_ui = console_ui
       @validation = validation
     end
 
-    def execute(username)
+    def execute(employee_id, repository)
       date_logged = log_date 
       hours_logged = log_hours_worked
-      timecode_logged= log_timecode
+      timecode_logged = log_timecode
       #add ability to select client 
-      @save_data.add_log_time(username, date_logged, hours_logged, timecode_logged) 
+      log_time_repo = repository.for(:log_time)
+      log_time_repo.create(employee_id, date_logged, hours_logged, timecode_logged)
+      log_time_repo.save
     end
 
     private
