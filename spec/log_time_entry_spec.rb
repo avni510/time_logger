@@ -4,18 +4,20 @@ module TimeLogger
   describe LogTimeEntry do
 
     before(:each) do
-      entry_id  = 1
-      employee_id = 1
-      date = "09-08-2016"
-      hours = "8"
-      timecode = "Non-Billable"
-      client = nil
+      params = {
+        "id": 1, 
+        "employee_id": 1,
+        "date": "09-08-2016",
+        "hours_worked": "8",
+        "timecode": "Non-Billable",
+        "client": nil
+      }
 
-      @log_time_entry = LogTimeEntry.new(entry_id, employee_id, date, hours, timecode, client)
+      @log_time_entry = LogTimeEntry.new(params)
     end
 
     it "has an id related to each entry of logging time" do
-      expect(@log_time_entry.entry_id).to eq(1)
+      expect(@log_time_entry.id).to eq(1)
     end
 
     it "has an employee id related to each entry of logging time" do

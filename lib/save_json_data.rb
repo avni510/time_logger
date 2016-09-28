@@ -38,7 +38,7 @@ module TimeLogger
         worker["log_time"] = []
         entries.each do |entry|
           if worker["id"] == entry.employee_id
-            log_time_hash = generate_log_time_hash(entry.entry_id, entry.date, entry.hours_worked, entry.timecode, entry.client)
+            log_time_hash = generate_log_time_hash(entry.id, entry.date, entry.hours_worked, entry.timecode, entry.client)
             worker["log_time"] << log_time_hash
           end
         end

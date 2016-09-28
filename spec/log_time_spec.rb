@@ -96,10 +96,31 @@ module TimeLogger
 
           allow(@mock_console_ui).to receive(:hours_log_time_message).and_return("5", "7")
 
+          params_entry_1 = 
+            { 
+              "id": 1, 
+              "employee_id": 1, 
+              "date": "06-30-2016", 
+              "hours_worked": "10", 
+              "timecode": "PTO", 
+              "client": nil 
+            }
+
+          params_entry_2 = 
+            { 
+              "id": 2, 
+              "employee_id": 1, 
+              "date": "06-30-2016", 
+              "hours_worked": "12", 
+              "timecode": "PTO", 
+              "client": nil 
+            }
+
           expect(@mock_log_time_repo).to receive(:find_log_times_by).and_return(
+
             [ 
-              LogTimeEntry.new( 1, 1, "06-30-2016", "10", "PTO", nil), 
-              LogTimeEntry.new( 1, 1, "06-30-2016", "12", "PTO", nil)
+              LogTimeEntry.new(params_entry_1), 
+              LogTimeEntry.new(params_entry_2)
             ], [])
 
           expect(@mock_console_ui).to receive(:valid_hours_message)

@@ -23,7 +23,7 @@ module TimeLogger
     private
     
     def valid_menu_selection(user_input)
-      until @validation.menu_option_valid?(@menu_hash, user_input)
+      until @validation.menu_selection_valid?(@menu_hash, user_input)
         @console_ui.valid_menu_option_message
         user_input = @console_ui.get_user_input
       end

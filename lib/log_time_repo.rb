@@ -15,7 +15,16 @@ module TimeLogger
         log_entry_id = @entries.count + 1
       end
 
-      log_time_entry = LogTimeEntry.new(log_entry_id, employee_id, date, hours_worked, timecode, client)
+      params = {
+        "id": log_entry_id, 
+        "employee_id": employee_id, 
+        "date": date, 
+        "hours_worked": hours_worked, 
+        "timecode": timecode, 
+        "client": client
+      }
+
+      log_time_entry = LogTimeEntry.new(params)
 
       @entries << log_time_entry
     end

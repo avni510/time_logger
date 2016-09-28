@@ -8,7 +8,7 @@ module TimeLogger
     def execute(employee_id, repository)
       
       log_time_repo = repository.for(:log_time)
-      unsorted_log_times = log_time_repo.find_by_employee_id(employee_id)
+      unsorted_log_times = log_time_repo.find_log_times_by(employee_id)
 
       sorted_log_times_objects = unsorted_log_times.sort_by{ |log_time_entry| log_time_entry.date }
 

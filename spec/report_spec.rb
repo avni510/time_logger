@@ -45,9 +45,9 @@ module TimeLogger
 
         it "returns a report of sorted log times, total client hours, and total timecode" do
 
-          unsorted_log_times = @log_time_repo.find_by_employee_id(@employee_1.id)
+          unsorted_log_times = @log_time_repo.find_log_times_by(@employee_1.id)
 
-          expect(@mock_log_time_repo).to receive(:find_by_employee_id).with(@employee_1.id).and_return(unsorted_log_times)
+          expect(@mock_log_time_repo).to receive(:find_log_times_by).with(@employee_1.id).and_return(unsorted_log_times)
 
 
           sorted_log_times = unsorted_log_times.sort_by{ |log_time_entry| log_time_entry.date }

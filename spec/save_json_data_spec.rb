@@ -148,8 +148,27 @@ module TimeLogger
 
         save_json_data.employees(employees)
 
-        log_time_entry_1 = LogTimeEntry.new(1, 1, "09-07-2016", "8", "Non-Billable", nil)
-        log_time_entry_2 = LogTimeEntry.new(2, 1, "09-08-2016", "8", "PTO", nil)
+        params_entry_1 = 
+          { 
+            "id": 1, 
+            "employee_id": 1, 
+            "date": "09-07-2016", 
+            "hours_worked": "8", 
+            "timecode": "Non-Billable", 
+            "client": nil 
+          }
+        params_entry_2 = 
+          { 
+            "id": 2, 
+            "employee_id": 1, 
+            "date": "09-08-2016", 
+            "hours_worked": "8", 
+            "timecode": "PTO", 
+            "client": nil 
+          }
+
+        log_time_entry_1 = LogTimeEntry.new(params_entry_1)
+        log_time_entry_2 = LogTimeEntry.new(params_entry_2)
 
         entries = [ log_time_entry_1, log_time_entry_2 ]
 
@@ -221,10 +240,39 @@ module TimeLogger
 
           file_wrapper.write_data(output_file, data_hash)
 
-          log_time_entry_1 = LogTimeEntry.new(1, 1, "09-07-2016", "8", "Non-Billable", nil)
-          log_time_entry_2 = LogTimeEntry.new(2, 1, "09-08-2016", "8", "PTO", nil)
+          params_entry_1 = 
+            { 
+              "id": 1, 
+              "employee_id": 1, 
+              "date": "09-07-2016", 
+              "hours_worked": "8", 
+              "timecode": "Non-Billable", 
+              "client": nil 
+            }
+          params_entry_2 = 
+            { 
+              "id": 2, 
+              "employee_id": 1, 
+              "date": "09-08-2016", 
+              "hours_worked": "8", 
+              "timecode": "PTO", 
+              "client": nil 
+            }
 
-          log_time_entry_3 = LogTimeEntry.new(3, 1, "09-05-2016", "8", "Non-Billable", nil)
+          params_entry_3 = 
+            { 
+              "id": 3, 
+              "employee_id": 1, 
+              "date": "09-05-2016", 
+              "hours_worked": "8", 
+              "timecode": "Non-Billable", 
+              "client": nil 
+            }
+
+          log_time_entry_1 = LogTimeEntry.new(params_entry_1)
+          log_time_entry_2 = LogTimeEntry.new(params_entry_2)
+          log_time_entry_3 = LogTimeEntry.new(params_entry_3)
+
           entries = [ log_time_entry_1, log_time_entry_2, log_time_entry_3 ]
 
           save_json_data.log_time(entries)
