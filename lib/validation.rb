@@ -26,10 +26,12 @@ module TimeLogger
       not user_input !~ /^\d*$/
     end
 
-    def hours_worked_per_day_valid?(previous_hours_array, hours)
-      previous_hours_array = previous_hours_array.map(&:to_i)
-      total_hours_entered = previous_hours_array.reduce(0, :+)
-      total_hours_entered + hours.to_i > HOURS_IN_A_DAY ? false : true
+    def hours_worked_per_day_valid?(previous_entries_array, hours_entered)
+      total_hours_logged = previous_entries_array.reduce(0) { 
+        |sum, entry| sum + entry.hours_worked.to_i 
+      }
+
+      total_hours_logged + hours_entered.to_i > HOURS_IN_A_DAY ? false : true
     end
   end
 end

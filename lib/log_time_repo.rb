@@ -20,7 +20,33 @@ module TimeLogger
       @entries << log_time_entry
     end
 
-    def find_by_employee_id(employee_id)
+    def find_log_times_by(employee_id, date=nil)
+      if date == nil
+        find_entries_for_employee_by(employee_id)
+      else
+        find_entries_for_date_by(employee_id, date)
+      end
+    end
+
+    def save
+      @save_json_data.log_time(@entries)
+    end
+
+    private 
+
+    def find_entries_for_date_by(employee_id, date)
+      entries_for_employee_for_date = []
+
+      @entries.each do |entry|
+        if entry.employee_id == employee_id && entry.date == date
+          entries_for_employee_for_date << entry
+        end
+      end
+
+      entries_for_employee_for_date 
+    end
+
+    def find_entries_for_employee_by(employee_id)
       total_entries_for_employee = []
 
       @entries.each do |entry|
@@ -30,10 +56,6 @@ module TimeLogger
       end
 
       total_entries_for_employee
-    end
-
-    def save
-      @save_json_data.log_time(@entries)
     end
   end
 end

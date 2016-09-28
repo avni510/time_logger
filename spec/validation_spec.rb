@@ -97,14 +97,13 @@ module TimeLogger
       context "the user enters a digit" do
         it "returns true if total hours worked in a day is less than hours in a day and false otherwise" do
           [
-            [ ["4", "20"], "2", false ],
-            [ ["8", "8"], "4", true ], 
-            [ ["7", "2", "10", "5"], "1", false],
-            [ [], "8", true]
-          ].each do |hours_saved, hours_entered, bool|
+            [ [LogTimeEntry.new( 1, 1, "09-08-2016", "10", "PTO", nil)], "2", true ],
+            [ [LogTimeEntry.new( 1, 1, "09-08-2016", "10", "PTO", nil), 
+               LogTimeEntry.new( 1, 1, "09-08-2016", "12", "PTO", nil)], "10", false]
+          ].each do |log_time_entry, hours_entered, bool|
 
             result = validation.hours_worked_per_day_valid?(
-                hours_saved,
+                log_time_entry,
                 hours_entered
               )
 

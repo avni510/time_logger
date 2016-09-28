@@ -50,8 +50,8 @@ module TimeLogger
       end
     end
 
-    describe ".find_by_employee_id" do
-      it "retrieves all the entries for a given employee" do
+    describe ".find_log_times_by" do
+      it "retrieves all the log times for a given employee" do
 
         employee_id = 1
         date = "09-07-2016"
@@ -77,16 +77,62 @@ module TimeLogger
 
         log_time_repo.create(employee_id, date, hours_worked, timecode)
 
-        result = log_time_repo.find_by_employee_id(1)
+        result_array = log_time_repo.find_log_times_by(1)
 
-        count = 0
-
-        result.each do |entry|
-          count += 1
-          expect(entry).to be_a_kind_of(LogTimeEntry)
+        result_array.each do |result|
+          expect(result.employee_id).to eq(1)
         end
+      end
 
-        expect(count).to eq(2)
+      context "an employee has logged times for the date entered" do
+        it "retrieves the hours worked for a given employee and given date" do
+          employee_id = 1
+          date = "09-07-2016"
+          hours_worked = "8"
+          timecode = "Non-Billable"
+          client = nil
+
+          log_time_repo.create(employee_id, date, hours_worked, timecode)
+
+          employee_id = 1
+          date = "09-07-2016"
+          hours_worked = "8"
+          timecode = "Non-Billable"
+          client = nil
+
+          log_time_repo.create(employee_id, date, hours_worked, timecode)
+
+          employee_id = 1
+          date = "09-07-2016"
+          hours_worked = "7"
+          timecode = "Non-Billable"
+          client = nil
+
+          log_time_repo.create(employee_id, date, hours_worked, timecode)
+
+          employee_id = 1
+          date = "09-08-2016"
+          hours_worked = "7"
+          timecode = "Non-Billable"
+          client = nil
+
+          log_time_repo.create(employee_id, date, hours_worked, timecode)
+
+          result_array = log_time_repo.find_log_times_by(1, "09-07-2016")
+
+          result_array.each do |result|
+            expect(result.date).to eq("09-07-2016")
+          end
+        end
+      end
+
+      context "the employee has no logged times for the date entered" do
+        it "retrieves the hours worked for a given employee and given date" do
+
+          result_array = log_time_repo.find_log_times_by(1, "09-07-2016")
+
+          expect(result_array).to eq([])
+        end
       end
     end
 

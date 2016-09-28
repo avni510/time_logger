@@ -18,7 +18,7 @@ module TimeLogger
     end
 
     def valid_hours_message
-      @io_wrapper.puts_string("Please enter a valid number of hours")
+      @io_wrapper.puts_string("You have exceeded 24 hours for this day.")
     end
 
     def valid_username_message
@@ -35,6 +35,10 @@ module TimeLogger
 
     def future_date_valid_message
       @io_wrapper.puts_string("Please enter a date in the past")
+    end
+
+    def enter_digit_message
+      @io_wrapper.puts_string("Please enter a number")
     end
 
     def menu_selection_message
@@ -92,6 +96,7 @@ module TimeLogger
       puts_space
 
       format_timecode_hours_worked(timecode_hash)
+      puts_space
     end
 
     def format_client_hours_worked(clients_hash)

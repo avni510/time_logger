@@ -12,7 +12,13 @@ module TimeLogger
       data_hash = file_wrapper.read_data(output_file_name)
       original_data_hash = JSON.parse(JSON.generate(data_hash))
 
-      username_hash = { "username": "avni" }
+      username_hash = { 
+        "id": 1, 
+        "username": "rstarr", 
+        "admin": false,
+        "log_times": [] 
+      }
+
       data_hash["workers"] << username_hash
 
       file_wrapper.write_data(output_file_name, data_hash)
@@ -20,14 +26,16 @@ module TimeLogger
       data = file_wrapper.read_data(output_file_name)
 
       expect(data).to include_json(
-        "workers": [ {username: "avni"} ]
+        "workers": [ 
+          {
+            id: 1,
+            username: "rstarr",
+            admin: false,
+            log_times: []
+          } ]
       )
 
       file_wrapper.write_data(output_file_name, original_data_hash)
-
-
-
-
     end
   end
 end

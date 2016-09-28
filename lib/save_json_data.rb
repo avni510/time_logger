@@ -11,11 +11,7 @@ module TimeLogger
 
       workers_array = data_hash["workers"]
 
-      if workers_array.empty?
-        last_employee_entered = 0
-      else
-        last_employee_entered = workers_array[-1]["id"]
-      end
+      last_employee_entered = workers_array.count
 
       new_employees = []
 
@@ -52,6 +48,7 @@ module TimeLogger
     end
 
     private
+
 
     def generate_log_time_hash(id, date, hours_worked, timecode, client)
       {
