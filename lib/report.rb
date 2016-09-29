@@ -6,15 +6,31 @@ module TimeLogger
     end
 
     def execute(employee_id, repository)
-      
+
+      unsorted_log_time_objects = retrieve_log_times(employee_id, repository)
+
+      @sorted_log_time_objects = sort_log_times(unsorted_log_time_objects)
+
+      sorted_log_times_array = convert_objects_to_strings
+      clients_hours_hash = total_hours_per_client
+      timecode_hours_hash = total_hours_per_timecode
+
+      @console_ui.format_employee_self_report(sorted_log_times_array, clients_hours_hash, timecode_hours_hash)
+    end
+    
+    private 
+
+    def retrieve_log_times(employee_id, repository)
       log_time_repo = repository.for(:log_time)
-      unsorted_log_times = log_time_repo.find_log_times_by(employee_id)
+      log_time_repo.find_log_times_by(employee_id)
+    end
 
-      sorted_log_times_objects = unsorted_log_times.sort_by{ |log_time_entry| log_time_entry.date }
+    def sort_log_times(unsorted_log_time_objects)
+      unsorted_log_time_objects.sort_by{ |log_time_entry| log_time_entry.date }
+    end
 
-      sorted_log_times_array = []
-
-      sorted_log_times_objects.each do |log_time_entry|
+    def convert_objects_to_strings
+      @sorted_log_time_objects.map do |log_time_entry|
         log_time_entry_array = 
           [
             log_time_entry.date,
@@ -22,19 +38,15 @@ module TimeLogger
             log_time_entry.timecode,
             log_time_entry.client
           ]
-        sorted_log_times_array << log_time_entry_array
       end
-      
-      clients_hours_hash = total_hours_per_client(sorted_log_times_objects)
-      timecode_hours_hash = total_hours_per_timecode(sorted_log_times_objects)
-      @console_ui.format_employee_self_report(sorted_log_times_array, clients_hours_hash, timecode_hours_hash)
-
     end
 
-    def total_hours_per_client(log_time_objects)
+    def total_hours_per_client
       clients_hash = {}
 
-      log_time_objects.each do |log_time|
+#      log_entries = @sorted_log_time_objects.reject{ |log_time| log_time.client.nil? }
+
+      @sorted_log_time_objects.each do |log_time|
         client = log_time.client
         if client 
           if clients_hash.include?(client)
@@ -49,10 +61,10 @@ module TimeLogger
       clients_hash
     end
 
-    def total_hours_per_timecode(log_time_objects)
+    def total_hours_per_timecode
       timecode_hours_hash = {}
 
-      log_time_objects.each do |log_time|
+      @sorted_log_time_objects.each do |log_time|
         timecode = log_time.timecode
         if timecode_hours_hash.include?(timecode)
           hours_per_timecode = timecode_hours_hash[timecode].to_i + log_time.hours_worked.to_i

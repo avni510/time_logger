@@ -8,21 +8,14 @@ module TimeLogger
     end
 
     def create(username, admin=false)
-      if @employees.empty?
-        employee_id = 1
-      else
-        employee_id = @employees.count += 1
-      end
-
+      employee_id = @employees.count
       employee = Employee.new(employee_id, username, admin)
       @employees << employee
     end
 
     def find_by(username)
       @employees.each do |employee|
-        if employee.username == username
-          return employee
-        end
+        return employee if employee.username == username
       end
     end
 

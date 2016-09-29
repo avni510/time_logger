@@ -9,11 +9,7 @@ module TimeLogger
 
 
     def create(employee_id, date, hours_worked, timecode, client=nil)
-      if @entries.empty?
-        log_entry_id = 1
-      else
-        log_entry_id = @entries.count + 1
-      end
+      log_entry_id = @entries.count
 
       params = {
         "id": log_entry_id, 
