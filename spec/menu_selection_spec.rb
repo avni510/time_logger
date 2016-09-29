@@ -4,18 +4,16 @@ module TimeLogger
   describe MenuSelection do
     let(:mock_console_ui) { double }
     let(:repository) { double }
-    let(:username) { "kothari1" } 
-    let(:file_name) {"/Users/avnikothari/Desktop/8thlight/time_logger/time_logger_data.json"}
-    let(:validation) { Validation.new }
-    let(:menu_selection) { MenuSelection.new(username, file_name, mock_console_ui, validation, repository) }
+    let(:menu_selection) { MenuSelection.new(@employee, mock_console_ui, repository) }
 
     before(:each) do
-      allow(mock_console_ui).to receive(:menu_selection_message)
+      @employee = Employee.new(1, "rstarr", false)
 
+      allow(mock_console_ui).to receive(:menu_selection_message)
       allow(mock_console_ui).to receive(:display_menu_options)
     end
 
-    describe ".menu_messages" do
+    describe ".run" do
       it "displays the beginning messages after an employee logins"do
         expect(mock_console_ui).to receive(:menu_selection_message)
         menu_options_hash = 
@@ -28,7 +26,7 @@ module TimeLogger
         expect(mock_console_ui).to receive(:display_menu_options).with(menu_options_hash)
         expect(mock_console_ui).to receive(:get_user_input).and_return("3")
 
-        menu_selection.menu_messages
+        menu_selection.run
       end
 
       context "the option to log time is selected" do
@@ -37,7 +35,7 @@ module TimeLogger
 
           allow_any_instance_of(LogTime).to receive(:execute)
 
-          menu_selection.menu_messages
+          menu_selection.run
         end
       end
 
@@ -47,19 +45,9 @@ module TimeLogger
 
           allow_any_instance_of(Report).to receive(:execute)
 
-          menu_selection.menu_messages
+          menu_selection.run
         end
       end
-
-#      context "the option to quit the program is selected" do
-#        it "quits the program" do
-#          expect(mock_console_ui).to receive(:get_user_input).and_return("3")
-#          
-#          allow_any_instance_of(Kernel).to receive(:exit)
-#
-#          menu_selection.menu_messages
-#        end
-#      end
 
       context "the user has already selected either log time or run a report" do
         it "displays the menu again" do
@@ -71,21 +59,18 @@ module TimeLogger
 
           allow_any_instance_of(LogTime).to receive(:execute)
 
-#          allow_any_instance_of(Kernel).to receive(:exit)
-
-          menu_selection.menu_messages
+          menu_selection.run
         end
       end
 
       context "the user enters an invalid menu option" do
-
         it "prompts the user to enter a valid menu option" do
           expect(mock_console_ui).to receive(:display_menu_options)
 
           expect(mock_console_ui).to receive(:get_user_input).and_return("!", "3")
           expect(mock_console_ui).to receive(:valid_menu_option_message)
 
-          menu_selection.menu_messages
+          menu_selection.run
         end
       end
     end

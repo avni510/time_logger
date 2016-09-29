@@ -1,13 +1,12 @@
 module TimeLogger
   class SaveJsonData
 
-    def initialize(file_wrapper, output_file)
+    def initialize(file_wrapper)
       @file_wrapper = file_wrapper
-      @output_file = output_file
     end
 
     def employees(employees)
-      data_hash = @file_wrapper.read_data(@output_file)
+      data_hash = @file_wrapper.read_data
 
       workers_array = data_hash["workers"]
 
@@ -26,12 +25,12 @@ module TimeLogger
         workers_array << employee_hash
       end
 
-      @file_wrapper.write_data(@output_file, data_hash)
+      @file_wrapper.write_data(data_hash)
     end
 
 
     def log_time(entries)
-      data_hash = @file_wrapper.read_data(@output_file)
+      data_hash = @file_wrapper.read_data
 
       workers_array = data_hash["workers"]
       workers_array.each do |worker|
@@ -44,7 +43,7 @@ module TimeLogger
         end
       end
 
-      @file_wrapper.write_data(@output_file, data_hash)
+      @file_wrapper.write_data(data_hash)
     end
 
     private

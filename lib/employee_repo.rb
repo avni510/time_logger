@@ -17,6 +17,7 @@ module TimeLogger
       @employees.each do |employee|
         return employee if employee.username == username
       end
+      nil
     end
 
     def save

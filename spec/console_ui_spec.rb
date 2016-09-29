@@ -26,6 +26,15 @@ module TimeLogger
       end
     end
 
+    describe ".username_does_not_exist_message" do
+      context "the username entered does not exist in the data" do
+        it "displays the a message that it does not exist" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("This username does not exist")
+          console_ui.username_does_not_exist_message
+        end
+      end
+    end
+
     describe ".valid_hours_message" do
       context "more than 24 hours are entered in" do
         it "displays a message to the user to enter a valid input" do

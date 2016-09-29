@@ -9,6 +9,10 @@ module TimeLogger
       @io_wrapper.puts_string("Please enter your username")
     end
 
+    def username_does_not_exist_message
+      @io_wrapper.puts_string("This username does not exist")
+    end
+
     def get_user_input
       @io_wrapper.get_action
     end

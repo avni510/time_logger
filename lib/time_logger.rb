@@ -14,6 +14,8 @@ require_relative "repository"
 require_relative "log_time_repo"
 require_relative "employee_repo"
 require_relative "log_time_entry"
+require_relative "load_data_to_repos"
+require_relative "worker_setup"
 
 module TimeLogger
 end

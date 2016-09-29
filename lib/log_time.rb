@@ -6,16 +6,22 @@ module TimeLogger
     end
 
     def execute(employee_id, repository)
+      @repository = repository
+
       log_date 
       log_hours_worked(employee_id, repository)
       log_timecode
+      
       #add ability to select client 
-      log_time_repo = repository.for(:log_time)
       log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered)
       log_time_repo.save
     end
 
     private
+
+    def log_time_repo
+      log_time_repo = @repository.for(:log_time)
+    end
 
     def log_date
       @date_entered = @console_ui.date_log_time_message
@@ -63,7 +69,7 @@ module TimeLogger
 
     def exceeds_hours_in_a_day(employee_id, repository)
       log_time_repo = repository.for(:log_time)
-      log_time_entries = log_time_repo.find_log_times_by(employee_id, @date_entered)
+      log_time_entries = log_time_repo.find_by(employee_id, @date_entered)
       unless @validation.hours_worked_per_day_valid?(log_time_entries, @hours_entered)
         @console_ui.valid_hours_message
         execute(employee_id, repository)

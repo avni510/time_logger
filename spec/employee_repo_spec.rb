@@ -26,12 +26,24 @@ module TimeLogger
     end
 
     describe ".find_by" do
-      it "returns an employee object for a given username" do
-        employee_repo.create(@username, @admin)
+      context "the username exists in memory" do
+        it "returns an employee object for a given username" do
+          employee_repo.create(@username, @admin)
 
-        result = employee_repo.find_by(@username)
-        
-        expect(result.username).to eq("jlennon")
+          result = employee_repo.find_by(@username)
+          
+          expect(result.username).to eq("jlennon")
+        end
+      end
+
+      context "the username does not exist in memory" do
+        it "returns nil" do
+          employee_repo.create(@username, @admin)
+
+          result = employee_repo.find_by("rstarr")
+
+          expect(result).to eq(nil)
+        end
       end
     end
 

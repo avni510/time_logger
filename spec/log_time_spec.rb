@@ -24,7 +24,7 @@ module TimeLogger
 
         allow(@mock_console_ui).to receive(:hours_log_time_message).and_return("8")
 
-        allow(@mock_log_time_repo).to receive(:find_log_times_by).and_return([])
+        allow(@mock_log_time_repo).to receive(:find_by).and_return([])
 
         allow(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
@@ -116,7 +116,7 @@ module TimeLogger
               "client": nil 
             }
 
-          expect(@mock_log_time_repo).to receive(:find_log_times_by).and_return(
+          expect(@mock_log_time_repo).to receive(:find_by).and_return(
 
             [ 
               LogTimeEntry.new(params_entry_1), 
@@ -147,7 +147,7 @@ module TimeLogger
 
         allow(@mock_console_ui).to receive(:hours_log_time_message).and_return("8")
 
-        allow(@mock_log_time_repo).to receive(:find_log_times_by).with(@employee_id, "04-15-2016").and_return([])
+        allow(@mock_log_time_repo).to receive(:find_by).with(@employee_id, "04-15-2016").and_return([])
 
         expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 

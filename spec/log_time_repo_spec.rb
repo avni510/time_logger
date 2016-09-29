@@ -50,7 +50,7 @@ module TimeLogger
       end
     end
 
-    describe ".find_log_times_by" do
+    describe ".find_by" do
       it "retrieves all the log times for a given employee" do
 
         employee_id = 1
@@ -77,7 +77,7 @@ module TimeLogger
 
         log_time_repo.create(employee_id, date, hours_worked, timecode)
 
-        result_array = log_time_repo.find_log_times_by(1)
+        result_array = log_time_repo.find_by(1)
 
         result_array.each do |result|
           expect(result.employee_id).to eq(1)
@@ -118,7 +118,7 @@ module TimeLogger
 
           log_time_repo.create(employee_id, date, hours_worked, timecode)
 
-          result_array = log_time_repo.find_log_times_by(1, "09-07-2016")
+          result_array = log_time_repo.find_by(1, "09-07-2016")
 
           result_array.each do |result|
             expect(result.date).to eq("09-07-2016")
@@ -129,7 +129,7 @@ module TimeLogger
       context "the employee has no logged times for the date entered" do
         it "retrieves the hours worked for a given employee and given date" do
 
-          result_array = log_time_repo.find_log_times_by(1, "09-07-2016")
+          result_array = log_time_repo.find_by(1, "09-07-2016")
 
           expect(result_array).to eq([])
         end

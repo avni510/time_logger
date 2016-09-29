@@ -7,7 +7,9 @@ module TimeLogger
 
     def execute(employee_id, repository)
 
-      unsorted_log_time_objects = retrieve_log_times(employee_id, repository)
+      @repository = repository
+
+      unsorted_log_time_objects = retrieve_log_times(employee_id)
 
       @sorted_log_time_objects = sort_log_times(unsorted_log_time_objects)
 
@@ -20,9 +22,12 @@ module TimeLogger
     
     private 
 
-    def retrieve_log_times(employee_id, repository)
-      log_time_repo = repository.for(:log_time)
-      log_time_repo.find_log_times_by(employee_id)
+    def log_time_repo
+      @repository.for(:log_time)
+    end
+
+    def retrieve_log_times(employee_id) 
+      log_time_repo.find_by(employee_id)
     end
 
     def sort_log_times(unsorted_log_time_objects)

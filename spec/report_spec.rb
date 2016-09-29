@@ -52,7 +52,7 @@ module TimeLogger
           LogTimeEntry.new(params_entry_3),
         ]
 
-      expect(@mock_log_time_repo).to receive(:find_log_times_by).and_return(log_times)
+      expect(@mock_log_time_repo).to receive(:find_by).and_return(log_times)
     end
     
     describe ".execute" do

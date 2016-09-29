@@ -25,7 +25,7 @@ module TimeLogger
       @entries << log_time_entry
     end
 
-    def find_log_times_by(employee_id, date=nil)
+    def find_by(employee_id, date=nil)
       if date == nil
         find_entries_for_employee_by(employee_id)
       else

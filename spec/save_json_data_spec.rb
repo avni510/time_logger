@@ -3,16 +3,16 @@ module TimeLogger
 
   describe SaveJsonData do
     let(:output_file) { "/Users/avnikothari/Desktop/8thlight/time_logger/time_logger_data.json" }
-    let(:file_wrapper) { FileWrapper.new }
-    let(:save_json_data) { SaveJsonData.new(file_wrapper, output_file) }
+    let(:file_wrapper) { FileWrapper.new(output_file) }
+    let(:save_json_data) { SaveJsonData.new(file_wrapper) }
 
     def read_original_file_data
-      data_hash = file_wrapper.read_data(output_file)
+      data_hash = file_wrapper.read_data
       @original_data_hash = JSON.parse(JSON.generate(data_hash))
     end
 
     def rewrite_original_file_data
-      file_wrapper.write_data(output_file, @original_data_hash)
+      file_wrapper.write_data(@original_data_hash)
     end
 
     describe ".employees" do
@@ -27,7 +27,7 @@ module TimeLogger
 
           save_json_data.employees(employees)
 
-          data = file_wrapper.read_data(output_file)
+          data = file_wrapper.read_data
           
           expect(data).to include_json(
             "workers": 
@@ -81,7 +81,7 @@ module TimeLogger
             "clients": []
           }
 
-          file_wrapper.write_data(output_file, data_hash)
+          file_wrapper.write_data(data_hash)
 
           employee_entry_1 = Employee.new(1, "rstarr", false)
           employee_entry_2 = Employee.new(2, "gharrison", false)
@@ -91,7 +91,7 @@ module TimeLogger
 
           save_json_data.employees(employees)
 
-          data = file_wrapper.read_data(output_file)
+          data = file_wrapper.read_data
           
           expect(data).to include_json(
             "workers": 
@@ -174,7 +174,7 @@ module TimeLogger
 
         save_json_data.log_time(entries)
 
-        data = file_wrapper.read_data(output_file)
+        data = file_wrapper.read_data
         
         expect(data).to include_json(
           "workers": 
@@ -238,7 +238,7 @@ module TimeLogger
             "clients": []
           }
 
-          file_wrapper.write_data(output_file, data_hash)
+          file_wrapper.write_data(data_hash)
 
           params_entry_1 = 
             { 
@@ -277,7 +277,7 @@ module TimeLogger
 
           save_json_data.log_time(entries)
 
-          data = file_wrapper.read_data(output_file)
+          data = file_wrapper.read_data
           
           expect(data).to include_json(
             "workers": 
