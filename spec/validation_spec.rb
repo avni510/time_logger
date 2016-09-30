@@ -21,15 +21,10 @@ module TimeLogger
 
       [               
         [timecode_hash, "1", true],
-
         [timecode_hash, "4", false],
-
         [login_menu_hash, "T", false],
-
         [login_menu_hash, "!", false],
-
         [login_menu_hash, "3", true],
-
       ].each do |hash, user_input, bool|
         it "returns true if a valid menu selection is entered otherwise false" do
 
@@ -41,14 +36,14 @@ module TimeLogger
     end
 
     describe ".date_valid?" do
-      it "returns true if the date entered is in the correct format and false otherwise" do
+      it "returns true if the date entered is in the format MM-DD-YYYY or MM-DD-YY and false otherwise" do
         [ 
           ["09-19-2016", true],
           ["000000000", false],
-          ["02-12-2016", true]
+          ["02-12-16", true]
         ].each do |date_entered, bool|
 
-          result = validation.date_valid?(date_entered)
+          result = validation.date_valid_format?(date_entered)
 
           expect(result).to eq(bool)
         end
@@ -61,7 +56,7 @@ module TimeLogger
           ["07-31-2015", true]
         ].each do |date_entered, bool|
 
-          result = validation.date_valid?(date_entered)
+          result = validation.date_valid_format?(date_entered)
 
           expect(result).to eq(bool)
         end
@@ -83,38 +78,57 @@ module TimeLogger
       end
     end
 
-    describe ".hours_worked_valid?" do
-      it "returns true if hours worked entered is less than hours in a day and false otherwise" do
+    describe ".digit_entered?" do
+      it "returns true if an integer is entered and false otherwise" do
         [ 
-          ["35", false],
-          ["3", true],
-          ["22", true]
-        ].each do |hours_worked, bool|
-          result = validation.hours_worked_valid?(hours_worked)
-
+          ["r", false], 
+          ["!", false],
+          ["6", true],
+          ["899999", true],
+          ["helloworld", false]
+        ].each do |user_input, bool|
+          result = validation.digit_entered?(user_input)
           expect(result).to eq(bool)
         end
       end
     end
 
-    describe ".menu_option_valid?" do
-      it "returns true if the user input is a key in the hash and false otherwise" do
-        menu_hash = 
+    describe ".hours_worked_per_day_valid?" do
+      context "the user enters a digit" do
+        it "returns true if total hours worked in a day is less than hours in a day and false otherwise" do
+          params_entry_1 = 
             { 
-              "1": "1. Do you want to log your time?", 
-              "2": "2. Do you want to run a report on yourself?",
-              "3": "3. Quit the program"
+              "id": 1, 
+              "employee_id": 1, 
+              "date": "09-08-2016", 
+              "hours_worked": "10", 
+              "timecode": "PTO", 
+              "client": nil 
             }
-        [
-          ["4", false],
-          ["3", true],
-          ["u", false],
-          [",", false]
-        ].each do |user_input, bool|
+          params_entry_2 = 
+            { 
+              "id": 2, 
+              "employee_id": 1, 
+              "date": "09-08-2016", 
+              "hours_worked": "12", 
+              "timecode": "PTO", 
+              "client": nil 
+            }
 
-          result = validation.menu_option_valid?(menu_hash, user_input)
+          [
+            [ [LogTimeEntry.new(params_entry_1)], "2", true ],
+            [ [LogTimeEntry.new(params_entry_1), 
+               LogTimeEntry.new(params_entry_2)], "10", false],
+               [nil, "10", true]
+          ].each do |log_time_entry, hours_entered, bool|
 
-          expect(result).to eq(bool)
+            result = validation.hours_worked_per_day_valid?(
+                log_time_entry,
+                hours_entered
+              )
+
+            expect(result).to eq(bool)
+          end
         end
       end
     end

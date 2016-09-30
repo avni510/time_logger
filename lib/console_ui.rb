@@ -5,36 +5,50 @@ module TimeLogger
       @io_wrapper = io_wrapper
     end
 
-    def username_display_message
-      @io_wrapper.puts_string("Please enter your username")
-    end
-
-    def get_user_input
-      @io_wrapper.get_action
-    end
-
     def puts_space
       @io_wrapper.puts_string("")
     end
 
+
+    def username_display_message
+      general_message_format("Please enter your username")
+    end
+
+    def username_does_not_exist_message
+      general_message_format("This username does not exist")
+    end
+
+    def get_user_input
+      @io_wrapper.get_action
+      puts_space
+    end
+
+    def no_log_times_message
+      general_message_format("You do not have any log times for this month")
+    end
+
     def valid_hours_message
-      @io_wrapper.puts_string("Please enter a valid number of hours")
+      general_message_format("You have exceeded 24 hours for this day.")
     end
 
     def valid_username_message
-      @io_wrapper.puts_string("Please enter a valid username")
+      general_message_format("Please enter a valid username")
     end
 
     def valid_menu_option_message
-      @io_wrapper.puts_string("Please enter a valid menu option")
+      general_message_format("Please enter a valid menu option")
     end
     
     def valid_date_message
-      @io_wrapper.puts_string("Please enter a valid date")
+      general_message_format("Please enter a valid date")
     end
 
     def future_date_valid_message
-      @io_wrapper.puts_string("Please enter a date in the past")
+      general_message_format("Please enter a date in the past")
+    end
+
+    def enter_digit_message
+      general_message_format("Please enter a number")
     end
 
     def menu_selection_message
@@ -75,11 +89,11 @@ module TimeLogger
       puts_space
 
       @io_wrapper.puts_string("Date" + "            "  + "Hours Worked" + "            " + "Timecode" + "            " + "Client")
-      log_times_sorted.each do |log_time_hash|
+      log_times_sorted.each do |log_time|
 
-        items_to_print = log_time_hash["date"] + "            " + log_time_hash["hours_worked"] + "            " + log_time_hash["timecode"] 
-        if log_time_hash["client"]
-          items_to_print = items_to_print + "            " + log_time_hash["client"]
+        items_to_print = log_time[0] + "            " + log_time[1] + "            " + log_time[2] 
+        if log_time[3]
+          items_to_print = items_to_print + "            " + log_time[3]
         end
 
         @io_wrapper.puts_string(items_to_print)
@@ -92,6 +106,7 @@ module TimeLogger
       puts_space
 
       format_timecode_hours_worked(timecode_hash)
+      puts_space
     end
 
     def format_client_hours_worked(clients_hash)
@@ -104,6 +119,13 @@ module TimeLogger
       timecode_hash.each do |timecode, hours_worked|
           @io_wrapper.puts_string("Total #{timecode} hours worked" + " : " + "#{hours_worked}")
       end
+    end
+
+    private 
+
+    def general_message_format(string)
+      @io_wrapper.puts_string(string)
+      puts_space
     end
   end
 end

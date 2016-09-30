@@ -2,20 +2,27 @@ module TimeLogger
   require "spec_helper"
 
   describe ConsoleRunner do
-
+    let(:mock_file_wrapper) { double }
+    let(:mock_save_json_data) { double }
     let(:mock_console_ui) { double }
-    let(:mock_save_data) { double }
-    let(:validation) { Validation.new }
-    let(:file_name) {"/Users/avnikothari/Desktop/8thlight/time_logger/time_logger_data.json"}
-    let(:console_runner) { ConsoleRunner.new(mock_console_ui, mock_save_data, validation, file_name) }
+    let(:console_runner) { ConsoleRunner.new(mock_file_wrapper, mock_save_json_data, mock_console_ui) }
+
+    def setup_repositories
+      repositories_hash = 
+        {
+          "log_time": double,
+          "employee": double
+        }
+      Repository.new(repositories_hash)
+    end
 
     describe ".run" do
-      it "prompts the user to enter their username" do
-        expect(mock_console_ui).to receive(:username_display_message)
+      it "calls the class that load the repos and calls the class to prompt the user for their username" do
+        repository = setup_repositories
 
-        expect(mock_console_ui).to receive(:get_user_input)
+        expect_any_instance_of(LoadDataToRepos).to receive(:run).and_return(repository)
 
-        allow_any_instance_of(MenuSelection).to receive(:menu_messages)
+        expect_any_instance_of(WorkerSetup).to receive(:run)
 
         console_runner.run
       end

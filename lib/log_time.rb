@@ -1,30 +1,38 @@
 module TimeLogger
   class LogTime
-    def initialize(save_data, console_ui, validation)
-      @save_data = save_data
+    def initialize(console_ui, validation)
       @console_ui = console_ui
       @validation = validation
     end
 
-    def execute(username)
-      date_logged = log_date 
-      hours_logged = log_hours_worked
-      timecode_logged= log_timecode
+    def execute(employee_id, repository)
+      @repository = repository
+
+      log_date 
+      log_hours_worked(employee_id, repository)
+      log_timecode
+      
       #add ability to select client 
-      @save_data.add_log_time(username, date_logged, hours_logged, timecode_logged) 
+      log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered)
+      log_time_repo.save
     end
 
     private
 
-    def log_date
-      date_entered = @console_ui.date_log_time_message
-      date_entered = valid_date_loop(date_entered)
-      date_entered = valid_previous_date(date_entered)
+    def log_time_repo
+      log_time_repo = @repository.for(:log_time)
     end
 
-    def log_hours_worked
-      hours_entered = @console_ui.hours_log_time_message
-      hours_entered = valid_hours_loop(hours_entered)
+    def log_date
+      @date_entered = @console_ui.date_log_time_message
+      @date_entered = valid_date_format_loop
+      future_date_loop
+    end
+
+    def log_hours_worked(employee_id, repository)
+      @hours_entered = @console_ui.hours_log_time_message
+      @hours_entered = digit_loop
+      exceeds_hours_in_a_day(employee_id, repository)
     end
 
     def log_timecode
@@ -32,31 +40,40 @@ module TimeLogger
       timecode_num_entered = @console_ui.timecode_log_time_message(timecode_options_hash)
       timecode_num_entered = valid_timecode_loop(timecode_options_hash, timecode_num_entered)
       timecode_type = timecode_options_hash[timecode_num_entered.to_sym]
-      timecode_type = timecode_type[3..-1]
+      @timecode_entered = timecode_type[3..-1]
     end
 
-    def valid_date_loop(date_entered)
-      until @validation.date_valid?(date_entered)
+    def valid_date_format_loop
+      until @validation.date_valid_format?(@date_entered)
         @console_ui.valid_date_message
-        date_entered = @console_ui.get_user_input
+        @date_entered = @console_ui.get_user_input
       end
-      date_entered
+      @date_entered
     end
     
-    def valid_previous_date(date_entered)
-      until @validation.previous_date?(date_entered)
+    def future_date_loop
+      until @validation.previous_date?(@date_entered)
         @console_ui.future_date_valid_message
-        date_entered = @console_ui.get_user_input
+        @date_entered = @console_ui.get_user_input
       end
-      date_entered
+      @date_entered
     end
 
-    def valid_hours_loop(hours_entered)
-      until @validation.hours_worked_valid?(hours_entered)
-        @console_ui.valid_hours_message
-        hours_entered = @console_ui.get_user_input
+    def digit_loop
+      until @validation.digit_entered?(@hours_entered)
+        @console_ui.enter_digit_message
+        @hours_entered = @console_ui.get_user_input
       end
-      hours_entered
+      @hours_entered
+    end
+
+    def exceeds_hours_in_a_day(employee_id, repository)
+      log_time_entries = log_time_repo.find_by(employee_id, @date_entered)
+      unless @validation.hours_worked_per_day_valid?(log_time_entries, @hours_entered)
+        @console_ui.valid_hours_message
+        execute(employee_id, repository)
+      end
+      @hours_entered
     end
 
     def valid_timecode_loop(timecode_options_hash, timecode_entered)

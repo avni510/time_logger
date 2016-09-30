@@ -1,28 +1,28 @@
 module TimeLogger
   class MenuSelection
 
-    def initialize(username, file_name, console_ui, validation)
-      @username = username
-      @file_name = file_name
+    def initialize(employee_object, console_ui, repository)
+      @employee = employee_object
       @console_ui = console_ui
-      @validation = validation
+      @validation = Validation.new
+      @repository = repository
     end
 
-    def menu_messages
+    def run
       @console_ui.menu_selection_message
       @menu_hash = generate_menu_hash
       begin
         @console_ui.display_menu_options(@menu_hash)
         user_input = @console_ui.get_user_input
-        user_input = valid_menu_selection(user_input)
+        user_input = valid_menu_selection_loop(user_input)
         menu_action(user_input)
       end until user_input.to_sym == @menu_hash.key("3. Quit the program")
     end
 
     private
     
-    def valid_menu_selection(user_input)
-      until @validation.menu_option_valid?(@menu_hash, user_input)
+    def valid_menu_selection_loop(user_input)
+      until @validation.menu_selection_valid?(@menu_hash, user_input)
         @console_ui.valid_menu_option_message
         user_input = @console_ui.get_user_input
       end
@@ -33,24 +33,19 @@ module TimeLogger
       user_input = user_input.to_sym
       if user_input == @menu_hash.key("1. Do you want to log your time?")
         log_time = instaniate_log_time
-        log_time.execute(@username)
+        log_time.execute(@employee.id, @repository)
       elsif user_input == @menu_hash.key("2. Do you want to run a report on yourself?")
         report = instaniate_report
-        report.execute(@username)
-      elsif user_input == @menu_hash.key("3. Quit the program")
-#        Kernel.exit
+        report.execute(@employee.id, @repository)
       end
     end
 
     def instaniate_report
-      retrieve_data = RetrieveData.new(FileWrapper.new, @file_name)
-      Report.new(retrieve_data, @console_ui)
+      Report.new(@console_ui)
     end
 
     def instaniate_log_time
-      save_data = SaveData.new(FileWrapper.new, @file_name)
-      validation = Validation.new
-      LogTime.new(save_data, @console_ui, validation)
+      LogTime.new(@console_ui, @validation)
     end
 
     def generate_menu_hash
