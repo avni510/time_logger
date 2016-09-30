@@ -18,6 +18,7 @@ require_relative "load_data_to_repos"
 require_relative "worker_setup"
 require_relative "employee_creation"
 require_relative "client"
+require_relative "client_repo"
 
 module TimeLogger
 end

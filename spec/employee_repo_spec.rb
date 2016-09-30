@@ -10,7 +10,6 @@ module TimeLogger
     end
 
     before(:each) do
-      @id = 1
       @username = "jlennon"
       @admin = false
     end
