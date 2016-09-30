@@ -23,5 +23,9 @@ module TimeLogger
     def save
       @save_json_data.employees(@employees)
     end
+
+    def all
+      @employees
+    end
   end
 end

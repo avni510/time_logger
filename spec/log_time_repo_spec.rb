@@ -108,5 +108,20 @@ module TimeLogger
         log_time_repo.save
        end
     end
+
+    describe ".all" do
+      it "returns a list of objects of all the log time entries that exist" do
+        create_log_entry(1,"09-04-2016", "8","Non-Billable")
+
+        create_log_entry(1,"09-02-2016", "8","Non-Billable")
+
+        create_log_entry(1,"09-07-2016", "8","Non-Billable")
+
+        result = log_time_repo.all
+
+        expect(result.count).to eq(3)
+        expect(result[-1].date).to eq("09-07-2016")
+      end
+    end
   end
 end

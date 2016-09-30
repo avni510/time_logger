@@ -23,5 +23,9 @@ module TimeLogger
     def save
       @save_json_data.clients(@clients)
     end
+
+    def all
+      @clients
+    end
   end
 end

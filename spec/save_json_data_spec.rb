@@ -1,3 +1,4 @@
+require 'pry'
 module TimeLogger
   require "spec_helper"
 

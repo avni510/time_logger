@@ -30,6 +30,10 @@ module TimeLogger
       @save_json_data.log_time(@entries)
     end
 
+    def all
+      @entries
+    end
+
     private 
 
     def generate_log_entry_hash(log_entry_id, params)

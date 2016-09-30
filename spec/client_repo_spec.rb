@@ -56,5 +56,18 @@ module TimeLogger
         client_repo.save
       end
     end
+
+    describe ".all" do
+      it "returns an array of all log time objects" do
+        client_repo.create(@name)
+        client_repo.create("Microsoft")
+        client_repo.create("Facebook")
+
+        result = client_repo.all
+
+        expect(result.count).to eq(3)
+        expect(result[1].name).to eq("Microsoft")
+      end
+    end
   end
 end

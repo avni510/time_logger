@@ -57,5 +57,18 @@ module TimeLogger
         employee_repo.save
       end
     end
+
+    describe ".all" do
+      it "returns a list of all the employee objects" do
+        employee_repo.create(@username, @admin)
+        employee_repo.create("rstarr", false)
+        employee_repo.create("gharrison", true)
+
+        result = employee_repo.all
+
+        expect(result.count).to eq(3)
+        expect(result[-1].username).to eq("gharrison")
+      end
+    end
   end
 end
