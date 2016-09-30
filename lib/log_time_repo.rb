@@ -8,19 +8,12 @@ module TimeLogger
     end
 
 
-    def create(employee_id, date, hours_worked, timecode, client=nil)
-      log_entry_id = @entries.count
+    def create(params)
+      log_entry_id = @entries.count + 1
 
-      params = {
-        "id": log_entry_id, 
-        "employee_id": employee_id, 
-        "date": date, 
-        "hours_worked": hours_worked, 
-        "timecode": timecode, 
-        "client": client
-      }
+      log_entry_params = generate_log_entry_hash(log_entry_id, params)
 
-      log_time_entry = LogTimeEntry.new(params)
+      log_time_entry = LogTimeEntry.new(log_entry_params)
 
       @entries << log_time_entry
     end
@@ -39,28 +32,35 @@ module TimeLogger
 
     private 
 
+    def generate_log_entry_hash(log_entry_id, params)
+      {
+        "id": log_entry_id,
+        "employee_id": params[:employee_id], 
+        "date": params[:date], 
+        "hours_worked": params[:hours_worked], 
+        "timecode": params[:timecode], 
+        "client": params[:client]
+      }
+    end
+
     def find_entries_for_date_by(employee_id, date)
-      entries_for_employee_for_date = []
+      filtered_entries = @entries.select { |entry| 
+        entry.employee_id == employee_id && entry.date == date 
+      }
 
-      @entries.each do |entry|
-        if entry.employee_id == employee_id && entry.date == date
-          entries_for_employee_for_date << entry
-        end
-      end
-
-      entries_for_employee_for_date 
+      entries_empty?(filtered_entries)
     end
 
     def find_entries_for_employee_by(employee_id)
-      total_entries_for_employee = []
+      filtered_entries = @entries.select { 
+        |entry| entry.employee_id == employee_id 
+      }
+      
+      entries_empty?(filtered_entries)
+    end
 
-      @entries.each do |entry|
-        if entry.employee_id == employee_id
-          total_entries_for_employee << entry
-        end
-      end
-
-      total_entries_for_employee
+    def entries_empty?(entries)
+      entries.empty? ? nil : entries
     end
   end
 end

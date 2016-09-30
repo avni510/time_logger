@@ -27,11 +27,22 @@ module TimeLogger
     end
 
     def hours_worked_per_day_valid?(previous_entries_array, hours_entered)
-      total_hours_logged = previous_entries_array.reduce(0) { 
-        |sum, entry| sum + entry.hours_worked.to_i 
-      }
+      if previous_entries_array
+        total_hours_logged = previous_entries_array.reduce(0) { 
+          |sum, entry| sum + entry.hours_worked.to_i 
+        }
 
-      total_hours_logged + hours_entered.to_i > HOURS_IN_A_DAY ? false : true
+        total_hours = total_hours_logged + hours_entered.to_i 
+        hours_exceed_hours_in_a_day?(total_hours)
+      else
+        hours_exceed_hours_in_a_day?(hours_entered)
+      end
+    end
+
+    private
+
+    def hours_exceed_hours_in_a_day?(hours)
+      hours.to_i > HOURS_IN_A_DAY ? false : true
     end
   end
 end

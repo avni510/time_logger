@@ -5,20 +5,6 @@ module TimeLogger
     let(:mock_io_wrapper) { double }
     let(:console_ui) { ConsoleUI.new(mock_io_wrapper) }
 
-    describe ".username_display_message" do
-      it "asks the user for their username" do
-        expect(mock_io_wrapper).to receive(:puts_string).with("Please enter your username")
-        console_ui.username_display_message
-      end
-    end
-
-    describe ".get_user_input" do 
-      it "prompts the user for input" do
-        expect(mock_io_wrapper).to receive(:get_action).exactly(1).times
-        console_ui.get_user_input
-      end
-    end
-
     describe ".puts_space" do
       it "displays a space" do
         expect(mock_io_wrapper).to receive(:puts_string).with("")
@@ -26,10 +12,37 @@ module TimeLogger
       end
     end
 
+    describe ".username_display_message" do
+      it "asks the user for their username" do
+        expect(mock_io_wrapper).to receive(:puts_string).with("Please enter your username")
+        expect(console_ui).to receive(:puts_space)
+        console_ui.username_display_message
+      end
+    end
+
+    describe ".get_user_input" do 
+      it "prompts the user for input" do
+        expect(mock_io_wrapper).to receive(:get_action).exactly(1).times
+        expect(console_ui).to receive(:puts_space)
+        console_ui.get_user_input
+      end
+    end
+
+    describe ".no_log_times_message" do
+      context "there are no log times for a give user" do
+        it "displays a message to the user that there are no log times" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("You do not have any log times for this month")
+          expect(console_ui).to receive(:puts_space)
+          console_ui.no_log_times_message
+        end
+      end
+    end
+
     describe ".username_does_not_exist_message" do
       context "the username entered does not exist in the data" do
         it "displays the a message that it does not exist" do
           expect(mock_io_wrapper).to receive(:puts_string).with("This username does not exist")
+          expect(console_ui).to receive(:puts_space)
           console_ui.username_does_not_exist_message
         end
       end
@@ -39,6 +52,7 @@ module TimeLogger
       context "more than 24 hours are entered in" do
         it "displays a message to the user to enter a valid input" do
           expect(mock_io_wrapper).to receive(:puts_string).with("You have exceeded 24 hours for this day.")
+          expect(console_ui).to receive(:puts_space)
           console_ui.valid_hours_message
         end
       end
@@ -48,6 +62,7 @@ module TimeLogger
       context "an invalid username is entered" do
         it "asks the user to enter a valid username" do
           expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid username")
+          expect(console_ui).to receive(:puts_space)
           console_ui.valid_username_message
         end
       end
@@ -57,6 +72,7 @@ module TimeLogger
       context "an invalid menu option is selected" do
         it "asks the user to enter a valid menu option" do
           expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid menu option")
+          expect(console_ui).to receive(:puts_space)
           console_ui.valid_menu_option_message
         end
       end
@@ -66,6 +82,7 @@ module TimeLogger
       context "the user doesn't enter a date in the proper format" do
         it "displays a message to enter a valid date" do
           expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid date")
+          expect(console_ui).to receive(:puts_space)
           console_ui.valid_date_message
         end
       end
@@ -75,6 +92,7 @@ module TimeLogger
       context "the user enters a date in the correct format and the date is in the future" do
         it "displays a message to enter a previous date" do
           expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a date in the past")
+          expect(console_ui).to receive(:puts_space)
           console_ui.future_date_valid_message
         end
       end
@@ -84,6 +102,7 @@ module TimeLogger
       context "the user enters a non digit for hours worked" do
         it "displays a message to enter a number" do
           expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a number")
+          expect(console_ui).to receive(:puts_space)
           console_ui.enter_digit_message
         end
       end

@@ -81,6 +81,7 @@ module TimeLogger
             "clients": []
           }
 
+
           file_wrapper.write_data(data_hash)
 
           employee_entry_1 = Employee.new(1, "rstarr", false)

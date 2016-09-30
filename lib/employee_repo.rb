@@ -8,7 +8,7 @@ module TimeLogger
     end
 
     def create(username, admin=false)
-      employee_id = @employees.count
+      employee_id = @employees.count + 1
       employee = Employee.new(employee_id, username, admin)
       @employees << employee
     end

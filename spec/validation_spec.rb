@@ -118,7 +118,8 @@ module TimeLogger
           [
             [ [LogTimeEntry.new(params_entry_1)], "2", true ],
             [ [LogTimeEntry.new(params_entry_1), 
-               LogTimeEntry.new(params_entry_2)], "10", false]
+               LogTimeEntry.new(params_entry_2)], "10", false],
+               [nil, "10", true]
           ].each do |log_time_entry, hours_entered, bool|
 
             result = validation.hours_worked_per_day_valid?(
