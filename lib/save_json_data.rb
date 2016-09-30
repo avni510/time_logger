@@ -46,8 +46,28 @@ module TimeLogger
       @file_wrapper.write_data(data_hash)
     end
 
+    def clients(clients)
+      data_hash = @file_wrapper.read_data
+
+      clients_array = data_hash["clients"]
+
+      clients.each do |client|
+        client_hash = generate_client_hash(client.id, client.name)
+        clients_array << client_hash
+      end
+
+      @file_wrapper.write_data(data_hash)
+    end
+
     private
 
+
+    def generate_client_hash(id, name)
+      {
+        "id": id,
+        "name": name
+      }
+    end
 
     def generate_log_time_hash(id, date, hours_worked, timecode, client)
       {
