@@ -28,6 +28,14 @@ module TimeLogger
       end
     end
 
+    describe ".new_client_name_message" do
+      it "displays a message to enter the name of a client" do
+        expect(mock_io_wrapper).to receive(:puts_string).with("Please enter the new client's name")
+        expect(console_ui).to receive(:puts_space)
+        console_ui.new_client_name_message
+      end
+    end
+
     describe ".enter_new_username_message" do
       context "an admin selects the option to create a new user" do
         it "displays a message to enter the new username" do
@@ -44,6 +52,16 @@ module TimeLogger
           expect(mock_io_wrapper).to receive(:puts_string).with("Would you like the user to be an admin?")
           expect(console_ui).to receive(:puts_space)
           console_ui.create_admin_message
+        end
+      end
+    end
+
+    describe ".client_exists_message" do
+      context "an admin enters a client name that already exists" do
+        it "displays a message to the user to enter a different client name" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("This client already exists, please enter a different one")
+          expect(console_ui).to receive(:puts_space)
+          console_ui.client_exists_message
         end
       end
     end

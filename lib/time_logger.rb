@@ -19,6 +19,7 @@ require_relative "worker_setup"
 require_relative "employee_creation"
 require_relative "client"
 require_relative "client_repo"
+require_relative "client_creation"
 
 module TimeLogger
 end

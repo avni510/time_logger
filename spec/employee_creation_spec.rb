@@ -51,10 +51,7 @@ module TimeLogger
         it "prompts the user to create a different user name" do
           expect(@mock_console_ui).to receive(:get_user_input).and_return("rstarr", "pmccartney", "2")
 
-          expect(@mock_employee_repo).to receive(:find_by).and_return(
-            [
-              Employee.new(1, "rstarr", false)
-            ], nil)
+          expect(@mock_employee_repo).to receive(:find_by).and_return(Employee.new(1, "rstarr", false), nil)
           
           expect(@mock_console_ui).to receive(:username_exists_message).exactly(1).times
 

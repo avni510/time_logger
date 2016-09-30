@@ -26,13 +26,21 @@ module TimeLogger
       general_message_format("Would you like the user to be an admin?")
     end
 
+    def client_exists_message
+      general_item_exists("client")
+    end
+
     def username_exists_message
-      general_message_format("This username already exists, please enter a different one")
+      general_item_exists("username")
     end
 
     def get_user_input
       @io_wrapper.get_action
       puts_space
+    end
+
+    def new_client_name_message
+      general_message_format("Please enter the new client's name")
     end
 
     def no_log_times_message
@@ -138,6 +146,10 @@ module TimeLogger
     def general_message_format(string)
       @io_wrapper.puts_string(string)
       puts_space
+    end
+
+    def general_item_exists(item)
+      general_message_format("This #{item} already exists, please enter a different one")
     end
   end
 end
