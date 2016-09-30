@@ -43,7 +43,7 @@ module TimeLogger
         it "runs the action of displaying a report" do
           expect(mock_console_ui).to receive(:get_user_input).and_return("2", "3")
 
-          allow_any_instance_of(Report).to receive(:execute)
+          allow_any_instance_of(EmployeeReport).to receive(:execute)
 
           menu_selection.run
         end
@@ -55,7 +55,7 @@ module TimeLogger
 
           expect(mock_console_ui).to receive(:get_user_input).and_return("2", "1", "3")
 
-          allow_any_instance_of(Report).to receive(:execute)
+          allow_any_instance_of(EmployeeReport).to receive(:execute)
 
           allow_any_instance_of(LogTime).to receive(:execute)
 

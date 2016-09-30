@@ -1,5 +1,5 @@
 module TimeLogger
-  class Report
+  class EmployeeReport
     
     def initialize(console_ui)
       @console_ui = console_ui
@@ -16,7 +16,7 @@ module TimeLogger
       
       calculate_report_values
 
-      @console_ui.format_employee_self_report(
+      @console_ui.format_employee_report(
         @sorted_log_times_array, 
         @clients_hours_hash, 
         @timecode_hours_hash

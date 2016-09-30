@@ -18,6 +18,18 @@ module TimeLogger
       general_message_format("This username does not exist")
     end
 
+    def enter_new_username_message
+      general_message_format("Please enter the username you would like to create")
+    end
+
+    def create_admin_message
+      general_message_format("Would you like the user to be an admin?")
+    end
+
+    def username_exists_message
+      general_message_format("This username already exists, please enter a different one")
+    end
+
     def get_user_input
       @io_wrapper.get_action
       puts_space
@@ -83,7 +95,7 @@ module TimeLogger
       get_user_input
     end
 
-    def format_employee_self_report(log_times_sorted, client_hash, timecode_hash)
+    def format_employee_report(log_times_sorted, client_hash, timecode_hash)
       @io_wrapper.puts_string("This is a report for the current month")
 
       puts_space

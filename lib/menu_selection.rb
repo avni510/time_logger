@@ -41,7 +41,7 @@ module TimeLogger
     end
 
     def instaniate_report
-      Report.new(@console_ui)
+      EmployeeReport.new(@console_ui)
     end
 
     def instaniate_log_time

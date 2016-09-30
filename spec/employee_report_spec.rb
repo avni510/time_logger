@@ -2,10 +2,10 @@ module TimeLogger
   output_file = "/Users/avnikothari/Desktop/8thlight/time_logger/time_logger_data.json"
   require "spec_helper"
   
-  describe Report do
+  describe EmployeeReport do
     before(:each) do
       @mock_console_ui = double 
-      @report = Report.new(@mock_console_ui) 
+      @employee_report = EmployeeReport.new(@mock_console_ui) 
 
       @repositories_hash = 
         {
@@ -102,10 +102,10 @@ module TimeLogger
             }
           
           timecode_hash = JSON.parse(JSON.generate(timecode_hash))
-          expect(@mock_console_ui).to receive(:format_employee_self_report).with(sorted_log_times_array, clients_hash, timecode_hash)
+          expect(@mock_console_ui).to receive(:format_employee_report).with(sorted_log_times_array, clients_hash, timecode_hash)
 
           employee_id = 1
-          result = @report.execute(employee_id, @repository)
+          result = @employee_report.execute(employee_id, @repository)
         end
       end
 
@@ -116,7 +116,7 @@ module TimeLogger
           expect(@mock_console_ui).to receive(:no_log_times_message)
 
           employee_id = 2
-          result = @report.execute(employee_id, @repository)
+          result = @employee_report.execute(employee_id, @repository)
         end
       end
     end

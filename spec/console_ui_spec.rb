@@ -28,6 +28,36 @@ module TimeLogger
       end
     end
 
+    describe ".enter_new_username_message" do
+      context "an admin selects the option to create a new user" do
+        it "displays a message to enter the new username" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter the username you would like to create")
+          expect(console_ui).to receive(:puts_space)
+          console_ui.enter_new_username_message
+        end
+      end
+    end
+
+    describe ".create_admin_message" do
+      context "an admin creates a new user" do
+        it "displays a message to ask the user if they would like the new user to be an admin or not" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("Would you like the user to be an admin?")
+          expect(console_ui).to receive(:puts_space)
+          console_ui.create_admin_message
+        end
+      end
+    end
+
+    describe ".username_exists_message" do
+      context "an admin enters a username that already exists" do
+        it "displays a message to the user to enter a different user name" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("This username already exists, please enter a different one")
+          expect(console_ui).to receive(:puts_space)
+          console_ui.username_exists_message
+        end
+      end
+    end
+
     describe ".no_log_times_message" do
       context "there are no log times for a give user" do
         it "displays a message to the user that there are no log times" do
@@ -162,7 +192,7 @@ module TimeLogger
       end
     end
 
-    describe ".format_employee_self_report" do
+    describe ".format_employee_report" do
       it "given an array of log times it returns a report for the employee" do
         log_times_sorted = [
           [ "09-02-2016", "7", "Billable", "Microsoft" ],
@@ -203,7 +233,7 @@ module TimeLogger
 
         expect(mock_io_wrapper).to receive(:puts_string).with("Total PTO hours worked" + " : " + "5") 
 
-        console_ui.format_employee_self_report(log_times_sorted, total_hours_worked_per_client, total_hours_worked_per_timecode)
+        console_ui.format_employee_report(log_times_sorted, total_hours_worked_per_client, total_hours_worked_per_timecode)
       end
     end
   end
