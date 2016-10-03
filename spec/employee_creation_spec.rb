@@ -3,12 +3,8 @@ module TimeLogger
 
   describe EmployeeCreation do
     before(:each) do
-      repositories_hash = 
-        {
-          "employee": double
-        }
-      @repository = Repository.new(repositories_hash)
-      @mock_employee_repo = @repository.for(:employee)
+      @mock_employee_repo = double
+      allow(Repository).to receive(:for).and_return(@mock_employee_repo)
 
       @mock_console_ui = double
       validation = Validation.new
@@ -29,7 +25,7 @@ module TimeLogger
           expect(@mock_console_ui).to receive(:enter_new_username_message)
           expect(@mock_console_ui).to receive(:get_user_input).and_return("pmccartney", "1")
           
-          expect(@mock_employee_repo).to receive(:find_by).with("pmccartney").and_return(nil)
+          expect(@mock_employee_repo).to receive(:find_by_username).with("pmccartney").and_return(nil)
 
           expect(@mock_console_ui).to receive(:create_admin_message)
 
@@ -43,7 +39,7 @@ module TimeLogger
 
           expect(@mock_employee_repo).to receive(:save)
 
-          @employee_creation.execute(@repository)
+          @employee_creation.execute
         end
       end
 
@@ -51,12 +47,12 @@ module TimeLogger
         it "prompts the user to create a different user name" do
           expect(@mock_console_ui).to receive(:get_user_input).and_return("rstarr", "pmccartney", "2")
 
-          expect(@mock_employee_repo).to receive(:find_by).and_return(Employee.new(1, "rstarr", false), nil)
+          expect(@mock_employee_repo).to receive(:find_by_username).and_return(Employee.new(1, "rstarr", false), nil)
           
           expect(@mock_console_ui).to receive(:username_exists_message).exactly(1).times
 
 
-          @employee_creation.execute(@repository)
+          @employee_creation.execute
         end
       end
 
@@ -64,11 +60,11 @@ module TimeLogger
         it "prompts the user to enter another admin option" do
           expect(@mock_console_ui).to receive(:get_user_input).and_return("pmccartney", "6", "2")
 
-          expect(@mock_employee_repo).to receive(:find_by).and_return("pmccartney").and_return(nil)
+          expect(@mock_employee_repo).to receive(:find_by_username).and_return("pmccartney").and_return(nil)
           
           expect(@mock_console_ui).to receive(:valid_menu_option_message).exactly(1).times
 
-          @employee_creation.execute(@repository)
+          @employee_creation.execute
         end
       end
     end

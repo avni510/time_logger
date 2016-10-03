@@ -1,11 +1,15 @@
 module TimeLogger
   class Repository
 
-    def initialize(repositories_hash)
-      @repositories = repositories_hash
+    def self.repositories
+      @repositories ||= {}
     end
 
-    def for(type)
+    def self.register(type, repo)
+      @repositories[type.to_sym] = repo
+    end
+
+    def self.for(type)
       @repositories[type.to_sym]
     end
   end

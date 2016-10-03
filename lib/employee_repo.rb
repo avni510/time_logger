@@ -13,7 +13,14 @@ module TimeLogger
       @employees << employee
     end
 
-    def find_by(username)
+    def find_by(id)
+      @employees.each do |employee|
+        return employee if employee.id == id
+      end
+      nil
+    end
+    
+    def find_by_username(username)
       @employees.each do |employee|
         return employee if employee.username == username
       end

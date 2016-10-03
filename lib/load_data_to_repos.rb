@@ -22,21 +22,37 @@ module TimeLogger
 
     def load_repos(data_hash)
       data_hash["workers"].each do |worker|
-        @employee_repo.create(worker["username"], worker["admin"])
+        @employee_repo.create(
+          worker["username"], 
+          worker["admin"]
+        )
         worker["log_time"].each do |log_time_entry|
-          @log_time_repo.create(worker["id"], log_time_entry["date"], log_time_entry["hours_worked"], log_time_entry["timecode"], log_time_entry["client"])
+          params = generate_log_time_hash(
+            worker["id"], 
+            log_time_entry["date"], 
+            log_time_entry["hours_worked"], 
+            log_time_entry["timecode"], 
+            log_time_entry["client"]
+          )
+          @log_time_repo.create(params)
         end
       end
     end
 
-    def setup_main_repository
-      repositories_hash = 
-        { 
-          "log_time": @log_time_repo,
-          "employee": @employee_repo
-        }
+    def generate_log_time_hash(employee_id, date, hours_worked, timecode, client)
+      { 
+        "employee_id": employee_id,
+        "date": date,
+        "hours_worked": hours_worked,
+        "timecode": timecode, 
+        "client": client
+      }
+    end
 
-      Repository.new(repositories_hash)
+    def setup_main_repository
+      Repository.repositories
+      Repository.register("log_time", @log_time_repo)
+      Repository.register("employee", @employee_repo)
     end
   end
 end

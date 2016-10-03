@@ -24,11 +24,28 @@ module TimeLogger
     end
 
     describe ".find_by" do
+      it "takes in a client id and returns an object with the corresponding id" do
+        client_repo.create(@name)
+
+        result = client_repo.find_by(1)
+
+        expect(result.id).to eq(1)
+        expect(result.name).to eq("Google")
+      end
+
+      it "returns nil if the id does not exist in memory" do
+        result = client_repo.find_by(2)
+
+        expect(result).to eq(nil)
+      end
+    end
+
+    describe ".find_by_name" do
       context "the client name exists in memory" do
         it "returns a client object for a given client name" do
           client_repo.create(@name)
 
-          result = client_repo.find_by(@name)
+          result = client_repo.find_by_name(@name)
 
           expect(result.name).to eq("Google")
         end
@@ -38,7 +55,7 @@ module TimeLogger
         it "returns nil" do
           client_repo.create(@name)
 
-          result = client_repo.find_by("Microsoft")
+          result = client_repo.find_by_name("Microsoft")
 
           expect(result).to eq(nil)
         end

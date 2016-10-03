@@ -3,16 +3,11 @@ module TimeLogger
 
   describe WorkerSetup do
     before(:each) do
-      repositories_hash = 
-        { 
-          "log_time": double,
-          "employee": double
-        }
-      @repository = Repository.new(repositories_hash)
-      @mock_employee_repo = @repository.for("employee")
+      @mock_employee_repo = double
+      allow(Repository).to receive(:for).and_return(@mock_employee_repo)
 
       @mock_console_ui = double  
-      @worker_setup = WorkerSetup.new(@mock_console_ui, @repository)
+      @worker_setup = WorkerSetup.new(@mock_console_ui)
     end
     
     def setup_employee
@@ -28,7 +23,7 @@ module TimeLogger
           expect(@mock_console_ui).to receive(:get_user_input).and_return("rstarr")
 
           employee_1 = setup_employee
-          expect(@mock_employee_repo).to receive(:find_by).with("rstarr").and_return(employee_1)
+          expect(@mock_employee_repo).to receive(:find_by_username).with("rstarr").and_return(employee_1)
           
           expect_any_instance_of(MenuSelection).to receive(:run)
 
@@ -43,11 +38,12 @@ module TimeLogger
           expect(@mock_console_ui).to receive(:get_user_input).and_return("jlennon", "rstarr")
 
           employee_1 = setup_employee
-          expect(@mock_employee_repo).to receive(:find_by).with("jlennon").and_return(nil)
+
+          expect(@mock_employee_repo).to receive(:find_by_username).with("jlennon").and_return(nil)
 
           expect(@mock_console_ui).to receive(:username_does_not_exist_message)
 
-          expect(@mock_employee_repo).to receive(:find_by).with("rstarr").and_return(employee_1)
+          expect(@mock_employee_repo).to receive(:find_by_username).with("rstarr").and_return(employee_1)
 
           expect_any_instance_of(MenuSelection).to receive(:run)
 

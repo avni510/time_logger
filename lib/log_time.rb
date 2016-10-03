@@ -1,4 +1,3 @@
-require 'pry'
 module TimeLogger
   class LogTime
     def initialize(console_ui, validation)
@@ -6,15 +5,13 @@ module TimeLogger
       @validation = validation
     end
 
-    def execute(employee_id, repository)
-      @repository = repository
-
+    def execute(employee_id)
       log_date 
-      log_hours_worked(employee_id, repository)
+      log_hours_worked(employee_id)
       log_timecode
 
       if @timecode_entered == "Billable"
-        all_client = client_repo.all
+        all_clients = client_repo.all
       end
       
       log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered)
@@ -24,11 +21,11 @@ module TimeLogger
     private
 
     def log_time_repo
-      @repository.for(:log_time)
+      Repository.for(:log_time)
     end
 
     def client_repo
-      @repository.for(:client)
+      Repository.for(:client)
     end
 
     def log_date
@@ -37,10 +34,10 @@ module TimeLogger
       future_date_loop
     end
 
-    def log_hours_worked(employee_id, repository)
+    def log_hours_worked(employee_id)
       @hours_entered = @console_ui.hours_log_time_message
       @hours_entered = digit_loop
-      exceeds_hours_in_a_day(employee_id, repository)
+      exceeds_hours_in_a_day(employee_id)
     end
 
     def log_timecode
@@ -75,11 +72,11 @@ module TimeLogger
       @hours_entered
     end
 
-    def exceeds_hours_in_a_day(employee_id, repository)
-      log_time_entries = log_time_repo.find_by(employee_id, @date_entered)
+    def exceeds_hours_in_a_day(employee_id)
+      log_time_entries = log_time_repo.find_by_employee_id_and_date(employee_id, @date_entered)
       unless @validation.hours_worked_per_day_valid?(log_time_entries, @hours_entered)
         @console_ui.valid_hours_message
-        execute(employee_id, repository)
+        execute(employee_id)
       end
       @hours_entered
     end

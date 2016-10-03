@@ -45,7 +45,23 @@ module TimeLogger
     end
 
     describe ".find_by" do
-      context ".find_by is used to filter only by employee_id" do
+      it "takes in a log entry id and returns the object that corresponds to that id" do
+        create_log_entry(1, "09-05-2016", "10", "PTO")
+
+        result = log_time_repo.find_by(1)
+
+        expect(result.id).to eq(1)
+        expect(result.date.day).to eq(5)
+      end
+
+      it "returns nil if the id does not exist" do
+        result = log_time_repo.find_by(1)
+
+        expect(result).to eq(nil)
+      end
+    end
+
+    describe ".find_by_employee_id" do
         context "the employee has logged times" 
           it "retrieves all the log times for a given employee" do
 
@@ -55,7 +71,7 @@ module TimeLogger
 
             create_log_entry(2,"09-07-2016", "8","Non-Billable")
 
-            result_array = log_time_repo.find_by(1)
+            result_array = log_time_repo.find_by_employee_id(1)
 
             result_array.each do |result|
               expect(result.employee_id).to eq(1)
@@ -64,39 +80,39 @@ module TimeLogger
 
         context "the employee does not have logged times" do
           it "returns nil" do
-            result = log_time_repo.find_by(5)
+            result = log_time_repo.find_by_employee_id(5)
 
             expect(result).to eq(nil)
           end
         end
       end
 
-      context ".find_by is used to filter for employee id and date entered" do
-        context "an employee has logged times for the date entered" do
-          it "retrieves the hours worked for a given employee and given date" do
-            create_log_entry(1,"09-07-2016", "8","Non-Billable")
+    describe ".find_by_employee_id_and_date" do
+      context "an employee has logged times for the date entered" do
+        it "retrieves the hours worked for a given employee and given date" do
+          create_log_entry(1,"09-07-2016", "8","Non-Billable")
 
-            create_log_entry(1,"09-07-2016", "8","Non-Billable")
+          create_log_entry(1,"09-07-2016", "8","Non-Billable")
 
-            create_log_entry(1,"09-07-2016", "8","Non-Billable")
+          create_log_entry(1,"09-07-2016", "8","Non-Billable")
 
-            create_log_entry(1,"09-08-2016", "7","Non-Billable")
+          create_log_entry(1,"09-08-2016", "7","Non-Billable")
 
-            result_array = log_time_repo.find_by(1, "09-07-2016")
 
-            result_array.each do |result|
-              expect(result.date).to eq("09-07-2016")
-            end
+          result_array = log_time_repo.find_by_employee_id_and_date(1, "09-07-2016")
+
+          result_array.each do |result|
+            expect(result.date.day).to eq(7)
           end
         end
+      end
 
-        context "the employee has no logged times for the date entered" do
-          it "retrieves the hours worked for a given employee and given date" do
+      context "the employee has no logged times for the date entered" do
+        it "retrieves the hours worked for a given employee and given date" do
 
-            result_array = log_time_repo.find_by(1, "09-07-2016")
+          result_array = log_time_repo.find_by_employee_id_and_date(1, "09-07-2016")
 
-            expect(result_array).to eq(nil)
-          end
+          expect(result_array).to eq(nil)
         end
       end
     end
@@ -120,8 +136,106 @@ module TimeLogger
         result = log_time_repo.all
 
         expect(result.count).to eq(3)
-        expect(result[-1].date).to eq("09-07-2016")
       end
+    end
+
+    describe ".sorted_current_month_entries_by_employee_id" do
+      it "returns the log entries for the current month sorted by date and filtered by employee id" do
+        create_log_entry(1,"09-04-2016", "8","Non-Billable")
+
+        create_log_entry(1,"09-02-2016", "8","Non-Billable")
+
+        create_log_entry(1,"08-07-2016", "8","Non-Billable")
+
+        create_log_entry(1,"12-07-2015", "8","Non-Billable")
+
+        create_log_entry(2,"9-07-2016", "8","Non-Billable")
+
+        allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+        result = log_time_repo.sorted_current_month_entries_by_employee_id(1)
+
+        expect(result[0].date.day).to eq(2)
+        expect(result.count).to eq(2)
+      end
+
+      it "returns nil if there are no entries for an employee" do
+        create_log_entry(2,"9-07-2016", "8","Non-Billable")
+
+        result = log_time_repo.sorted_current_month_entries_by_employee_id(1)
+
+        expect(result).to eq(nil)
+
+      end
+    end
+
+    describe ".client_hours_for_current_month" do
+      context "all entries have a client" do
+        it "returns a hash of the client name and hours worked for each client" do
+          create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+
+          create_log_entry(1,"09-07-2016", "8","Billable", "Google")
+
+          create_log_entry(1,"09-07-2016", "6","Billable", "Microsoft")
+
+          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+
+          allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+
+          result = log_time_repo.client_hours_for_current_month(1)
+
+          client_hash = 
+            {
+              "Google" => 16,
+              "Microsoft" => 6
+            }
+
+          expect(result).to eq(client_hash)
+        end
+      end
+
+      context "not all entries have a client" do
+        it "returns a hash of the client name and hours worked for each client" do
+        create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+
+        create_log_entry(1,"09-07-2016", "8","Billable", "Google")
+
+        create_log_entry(1,"09-07-2016", "6","Billable", "Microsoft")
+
+        create_log_entry(1,"09-07-2016", "6", "PTO")
+
+        allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+
+        result = log_time_repo.client_hours_for_current_month(1)
+
+        client_hash = 
+          {
+            "Google" => 16,
+            "Microsoft" => 6
+          }
+
+        expect(result).to eq(client_hash)
+        end
+      end
+
+      context "no entries have a client" do
+        it "returns an empty hash" do
+
+          create_log_entry(1,"09-05-2016", "8","PTO")
+
+          create_log_entry(1,"09-07-2016", "6", "PTO")
+
+          allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+
+          result = log_time_repo.client_hours_for_current_month(1)
+
+          client_hash = {}
+
+          expect(result).to eq(client_hash)
+        end
+      end
+    end
+
+    describe ".timecode_hours_for_current_month" do
     end
   end
 end

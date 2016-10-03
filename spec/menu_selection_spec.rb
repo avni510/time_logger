@@ -3,8 +3,7 @@ module TimeLogger
 
   describe MenuSelection do
     let(:mock_console_ui) { double }
-    let(:repository) { double }
-    let(:menu_selection) { MenuSelection.new(@employee, mock_console_ui, repository) }
+    let(:menu_selection) { MenuSelection.new(@employee, mock_console_ui) }
 
     before(:each) do
       @employee = Employee.new(1, "rstarr", false)

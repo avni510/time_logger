@@ -44,7 +44,7 @@ module TimeLogger
 
         expect_any_instance_of(LogTimeRepo).to receive(:create).exactly(2).times
         
-        expect(load_data_to_repos.run).to be_a_kind_of(Repository)
+        load_data_to_repos.run
       end
     end
   end

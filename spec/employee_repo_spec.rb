@@ -25,11 +25,28 @@ module TimeLogger
     end
 
     describe ".find_by" do
+      it "takes in an employee id and returns an object that corresponds to that id" do
+        employee_repo.create(@username, @admin)
+
+        result = employee_repo.find_by(1)
+
+        expect(result.id).to eq(1)
+        expect(result.username).to eq("jlennon")
+      end
+
+      it "returns nil if the id does not exist" do
+        result = employee_repo.find_by(2)
+
+        expect(result).to eq(nil)
+      end
+    end
+
+    describe ".find_by_username" do
       context "the username exists in memory" do
         it "returns an employee object for a given username" do
           employee_repo.create(@username, @admin)
 
-          result = employee_repo.find_by(@username)
+          result = employee_repo.find_by_username(@username)
           
           expect(result.username).to eq("jlennon")
         end
@@ -39,7 +56,7 @@ module TimeLogger
         it "returns nil" do
           employee_repo.create(@username, @admin)
 
-          result = employee_repo.find_by("rstarr")
+          result = employee_repo.find_by_username("rstarr")
 
           expect(result).to eq(nil)
         end

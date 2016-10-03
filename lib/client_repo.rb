@@ -13,7 +13,14 @@ module TimeLogger
       @clients << client
     end
 
-    def find_by(name)
+    def find_by(id)
+      @clients.each do |client|
+        return client if client.id == id
+      end
+      nil
+    end
+
+    def find_by_name(name)
       @clients.each do |client|
         return client if client.name == name
       end

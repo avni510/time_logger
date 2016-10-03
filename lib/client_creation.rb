@@ -5,14 +5,12 @@ module TimeLogger
       @console_ui = console_ui
     end
 
-    def execute(repository)
-      @repository = repository
-
+    def execute
       @console_ui.new_client_name_message
 
       new_client_name = @console_ui.get_user_input
 
-      while client_repo.find_by(new_client_name)
+      while client_repo.find_by_name(new_client_name)
         @console_ui.client_exists_message
         new_client_name = @console_ui.get_user_input
       end
@@ -24,7 +22,7 @@ module TimeLogger
     private
 
     def client_repo
-      @repository.for(:client)
+      Repository.for(:client)
     end
   end
 end

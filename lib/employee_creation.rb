@@ -6,9 +6,7 @@ module TimeLogger
       @validation = validation
     end
 
-    def execute(repository)
-      @repository = repository
-
+    def execute
       new_username = enter_new_username
 
       admin_option_num = enter_new_user_admin_authority
@@ -17,6 +15,10 @@ module TimeLogger
     end
 
     private
+
+    def employee_repo
+      Repository.for(:employee)
+    end
 
     def enter_new_username
       @console_ui.enter_new_username_message
@@ -35,7 +37,7 @@ module TimeLogger
     end
 
     def valid_username_loop(username)
-      while employee_repo.find_by(username)
+      while employee_repo.find_by_username(username)
         @console_ui.username_exists_message
         username = @console_ui.get_user_input
       end
@@ -48,10 +50,6 @@ module TimeLogger
         admin_option_num = @console_ui.get_user_input
       end
       admin_option_num
-    end
-
-    def employee_repo
-      @repository.for(:employee)
     end
 
     def save_user(username, admin_num_value)

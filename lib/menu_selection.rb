@@ -1,11 +1,10 @@
 module TimeLogger
   class MenuSelection
 
-    def initialize(employee_object, console_ui, repository)
+    def initialize(employee_object, console_ui)
       @employee = employee_object
       @console_ui = console_ui
       @validation = Validation.new
-      @repository = repository
     end
 
     def run
@@ -33,10 +32,10 @@ module TimeLogger
       user_input = user_input.to_sym
       if user_input == @menu_hash.key("1. Do you want to log your time?")
         log_time = instaniate_log_time
-        log_time.execute(@employee.id, @repository)
+        log_time.execute(@employee.id)
       elsif user_input == @menu_hash.key("2. Do you want to run a report on yourself?")
         report = instaniate_report
-        report.execute(@employee.id, @repository)
+        report.execute(@employee.id)
       end
     end
 
