@@ -25,6 +25,7 @@ module TimeLogger
 
         allow(@mock_log_time_repo).to receive(:find_by_employee_id_and_date).and_return(nil)
 
+        allow(@mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(0)
         allow(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
         allow(@mock_log_time_repo).to receive(:create)
@@ -95,31 +96,7 @@ module TimeLogger
 
           allow(@mock_console_ui).to receive(:hours_log_time_message).and_return("5", "7")
 
-          params_entry_1 = 
-            { 
-              "id": 1, 
-              "employee_id": 1, 
-              "date": "06-30-2016", 
-              "hours_worked": "10", 
-              "timecode": "PTO", 
-              "client": nil 
-            }
-
-          params_entry_2 = 
-            { 
-              "id": 2, 
-              "employee_id": 1, 
-              "date": "06-30-2016", 
-              "hours_worked": "12", 
-              "timecode": "PTO", 
-              "client": nil 
-            }
-
-          expect(@mock_log_time_repo).to receive(:find_by_employee_id_and_date).and_return(
-            [ 
-              LogTimeEntry.new(params_entry_1), 
-              LogTimeEntry.new(params_entry_2)
-            ], [])
+          expect(@mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(20, 0)
 
           expect(@mock_console_ui).to receive(:valid_hours_message)
 
@@ -149,7 +126,7 @@ module TimeLogger
 
         expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
-        expect(@mock_log_time_repo).to receive(:create).with(@employee_id, "04-15-2016", "8", "Non-Billable")
+        expect(@mock_log_time_repo).to receive(:create).with(@employee_id, "04-15-2016", "8", "Non-Billable", nil)
 
         expect(@mock_log_time_repo).to receive(:save)
 
@@ -166,6 +143,50 @@ module TimeLogger
               Client.new(2, "Microsoft")
             ])
 
+          clients_hash = 
+            {
+              1 => "1. Google",
+              2 => "2. Microsoft" 
+            }
+
+          expect(@mock_console_ui).to receive(:display_menu_options).with(clients_hash)
+
+          expect(@mock_console_ui).to receive(:get_user_input).and_return("2")
+
+          expect(@mock_log_time_repo).to receive(:create).with(
+            @employee_id,
+            "09-15-2016",
+            "8",
+            "Billable", 
+            "Microsoft"
+          )
+            
+          @log_time.execute(@employee_id)
+        end
+      end
+
+      context "the user selects 'Billable' as their timecode and selects a client not on the list" do
+        it "prompts them to enter a valid client" do
+          expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("1")
+
+          expect(@mock_client_repo).to receive(:all).and_return(
+            [ 
+              Client.new(1, "Google"), 
+              Client.new(2, "Microsoft")
+            ])
+
+          clients_hash = 
+            {
+              1 => "1. Google",
+              2 => "2. Microsoft" 
+            }
+
+          expect(@mock_console_ui).to receive(:display_menu_options).with(clients_hash)
+
+          expect(@mock_console_ui).to receive(:get_user_input).and_return("5", "2")
+
+          expect(@mock_console_ui).to receive(:invalid_client_selection_message)
+            
           @log_time.execute(@employee_id)
         end
       end

@@ -87,6 +87,29 @@ module TimeLogger
         end
       end
 
+    describe ".find_total_hours_worked_for_date" do
+      it "returns the total hours for a given date" do
+        create_log_entry(1,"09-07-2016", "8","Non-Billable")
+
+        create_log_entry(1,"09-07-2016", "8","Non-Billable")
+
+        create_log_entry(1,"09-08-2016", "7","Non-Billable")
+
+        result = log_time_repo.find_total_hours_worked_for_date(1, "09-07-2016")
+        expect(result).to eq(16)
+      end
+
+      context "there are no entries for a given date" do
+        it "returns 0" do
+          create_log_entry(1,"09-08-2016", "7","Non-Billable")
+
+          result = log_time_repo.find_total_hours_worked_for_date(1, "09-07-2016")
+
+          expect(result).to eq(0)
+        end
+      end
+    end
+
     describe ".find_by_employee_id_and_date" do
       context "an employee has logged times for the date entered" do
         it "retrieves the hours worked for a given employee and given date" do
@@ -236,6 +259,26 @@ module TimeLogger
     end
 
     describe ".timecode_hours_for_current_month" do
+      it "returns a hash of timecode and hours worked for each timecode" do
+        create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+
+        create_log_entry(1,"09-07-2016", "8","PTO")
+
+        create_log_entry(1,"09-07-2016", "6", "PTO")
+
+        allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+
+        result = log_time_repo.timecode_hours_for_current_month(1)
+
+        timecode_hash = 
+          {
+            "Billable" => 8,
+            "PTO" => 14
+          }
+
+        expect(result).to eq(timecode_hash)
+
+      end
     end
   end
 end

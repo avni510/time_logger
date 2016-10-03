@@ -1,4 +1,3 @@
-require 'pry'
 module TimeLogger
   class LogTimeRepo
     attr_reader :entries
@@ -33,11 +32,24 @@ module TimeLogger
       
       entries_empty?(filtered_entries)
     end
+
+    def find_total_hours_worked_for_date(employee_id, date_string)
+      total_hours_worked = 0
+
+      entries_by_date = find_by_employee_id_and_date(employee_id, date_string)
+      return total_hours_worked unless entries_by_date
+
+      entries_by_date.each do |entry|
+        total_hours_worked += entry.hours_worked
+      end
+
+      total_hours_worked
+    end
   
-    def find_by_employee_id_and_date(employee_id, date)
-      date = Date.strptime(date,'%m-%d-%Y')
+    def find_by_employee_id_and_date(employee_id, date_string)
+      date = Date.strptime(date_string,'%m-%d-%Y')
       filtered_entries = @entries.select { |entry| 
-        entry.employee_id == employee_id && entry.date.day == date.day 
+        entry.employee_id == employee_id && (entry.date.day == date.day && entry.date.month == date.month && entry.date.year == date.year)
       }
 
       entries_empty?(filtered_entries)
@@ -50,7 +62,6 @@ module TimeLogger
     def all
       @entries
     end
-
 
 
     def sorted_current_month_entries_by_employee_id(employee_id)
@@ -70,6 +81,12 @@ module TimeLogger
       entries_with_clients = filter_entries_with_clients(sorted_entries)
 
       create_clients_hash(entries_with_clients)
+    end
+
+    def timecode_hours_for_current_month(employee_id)
+      sorted_entries = sorted_current_month_entries_by_employee_id(employee_id)
+
+      create_timecode_hash(sorted_entries)
     end
 
     private 
@@ -103,6 +120,45 @@ module TimeLogger
 
       clients_hash
     end
+
+    def create_timecode_hash(entries)
+      timecode_hash = {}
+
+      entries.each do |log_time|
+        timecode = log_time.timecode
+        if timecode_hash.include?(timecode)
+          timecode_hash[timecode] += log_time.hours_worked
+        else
+          timecode_hash[timecode] = log_time.hours_worked
+        end
+      end
+
+      timecode_hash
+    end
+
+    def client_attribute(log_time)
+      log_time.client
+    end
+
+#    def populate_hash(attribute, entries)
+#      
+#      item_hash = {}
+#
+#      entries.each do |log_time|
+##        if attribute == "client"
+##          attribute = client_attribute(log_time)
+##        end
+#        client_attribute(log_time)
+#
+#        if item_hash.include?(attribute)
+#          item_hash[attribute] += log_time_hours_worked
+#        else
+#          item_hash[attribute] = log_time_hours_worked
+#        end
+#      end
+#     
+#      item_hash
+#    end
 
     def entries_empty?(entries)
       entries.empty? ? nil : entries

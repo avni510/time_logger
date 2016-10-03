@@ -96,34 +96,14 @@ module TimeLogger
     describe ".hours_worked_per_day_valid?" do
       context "the user enters a digit" do
         it "returns true if total hours worked in a day is less than hours in a day and false otherwise" do
-          params_entry_1 = 
-            { 
-              "id": 1, 
-              "employee_id": 1, 
-              "date": "09-08-2016", 
-              "hours_worked": "10", 
-              "timecode": "PTO", 
-              "client": nil 
-            }
-          params_entry_2 = 
-            { 
-              "id": 2, 
-              "employee_id": 1, 
-              "date": "09-08-2016", 
-              "hours_worked": "12", 
-              "timecode": "PTO", 
-              "client": nil 
-            }
-
           [
-            [ [LogTimeEntry.new(params_entry_1)], "2", true ],
-            [ [LogTimeEntry.new(params_entry_1), 
-               LogTimeEntry.new(params_entry_2)], "10", false],
-               [nil, "10", true]
-          ].each do |log_time_entry, hours_entered, bool|
+            [ 24, 2, false ],
+            [ 10, 10, true ],
+            [ 0, 10, true ]
+          ].each do |past_hours_worked, hours_entered, bool|
 
             result = validation.hours_worked_per_day_valid?(
-                log_time_entry,
+                past_hours_worked,
                 hours_entered
               )
 

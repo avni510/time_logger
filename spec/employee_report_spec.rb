@@ -16,8 +16,8 @@ module TimeLogger
         { 
           "id": 1, 
           "employee_id": 1, 
-          "date": "09-03-2016", 
-          "hours_worked": "6", 
+          "date": Date.strptime("09-03-2016",'%m-%d-%Y'), 
+          "hours_worked": 6, 
           "timecode": "Non-Billable", 
           "client": nil 
         }
@@ -25,8 +25,8 @@ module TimeLogger
         { 
           "id": 2, 
           "employee_id": 1, 
-          "date": "09-04-2016", 
-          "hours_worked": "8", 
+          "date": Date.strptime("09-04-2016",'%m-%d-%Y'), 
+          "hours_worked": 8, 
           "timecode": "PTO", 
           "client": nil 
         }
@@ -35,8 +35,8 @@ module TimeLogger
         { 
           "id": 3, 
           "employee_id": 1, 
-          "date": "09-06-2016", 
-          "hours_worked": "7", 
+          "date": Date.strptime("09-06-2016",'%m-%d-%Y'), 
+          "hours_worked": 7, 
           "timecode": "Billable", 
           "client": "Google"
         }
@@ -58,9 +58,9 @@ module TimeLogger
 
           sorted_log_times_array = 
             [
-              ["09-03-2016", "6", "Non-Billable", nil],
-              ["09-04-2016", "8", "PTO", nil],
-              ["09-06-2016", "7", "Billable", "Google"],
+              ["9-3-2016", "6", "Non-Billable", nil],
+              ["9-4-2016", "8", "PTO", nil],
+              ["9-6-2016", "7", "Billable", "Google"],
             ]
 
           clients_hash = { "Google": 7 } 
@@ -74,7 +74,8 @@ module TimeLogger
               "PTO": "8"
             }
           
-          timecode_hash = JSON.parse(JSON.generate(timecode_hash))
+          expect(@mock_log_time_repo).to receive(:timecode_hours_for_current_month).and_return(timecode_hash)
+
           expect(@mock_console_ui).to receive(:format_employee_report).with(sorted_log_times_array, clients_hash, timecode_hash)
 
           employee_id = 1

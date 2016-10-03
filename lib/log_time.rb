@@ -9,12 +9,22 @@ module TimeLogger
       log_date 
       log_hours_worked(employee_id)
       log_timecode
+      client = nil
 
       if @timecode_entered == "Billable"
         all_clients = client_repo.all
+        clients_hash = generate_clients_hash(all_clients)
+        @console_ui.display_menu_options(clients_hash)
+        user_client_selection = @console_ui.get_user_input
+        until clients_hash.has_key?(user_client_selection.to_i)
+          @console_ui.invalid_client_selection_message
+          user_client_selection = @console_ui.get_user_input
+        end
+        client = clients_hash[user_client_selection.to_i]
+        client = client[3..-1]
       end
       
-      log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered)
+      log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered, client)
       log_time_repo.save
     end
 
@@ -73,8 +83,9 @@ module TimeLogger
     end
 
     def exceeds_hours_in_a_day(employee_id)
-      log_time_entries = log_time_repo.find_by_employee_id_and_date(employee_id, @date_entered)
-      unless @validation.hours_worked_per_day_valid?(log_time_entries, @hours_entered)
+      hours_worked = log_time_repo.find_total_hours_worked_for_date(employee_id, @date_entered)
+      integer_hours = @hours_entered.to_i
+      unless @validation.hours_worked_per_day_valid?(hours_worked, integer_hours)
         @console_ui.valid_hours_message
         execute(employee_id)
       end
@@ -87,6 +98,14 @@ module TimeLogger
         timecode_entered = @console_ui.get_user_input
       end
       timecode_entered
+    end
+
+    def generate_clients_hash(client_objects)
+      clients_hash = {}
+      client_objects.each do |client|
+        clients_hash[client.id] = "#{client.id}. #{client.name}"
+      end
+      clients_hash
     end
 
     def generate_timecode_hash

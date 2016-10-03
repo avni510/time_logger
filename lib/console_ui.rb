@@ -9,7 +9,6 @@ module TimeLogger
       @io_wrapper.puts_string("")
     end
 
-
     def username_display_message
       general_message_format("Please enter your username")
     end
@@ -37,6 +36,10 @@ module TimeLogger
     def get_user_input
       @io_wrapper.get_action
       puts_space
+    end
+
+    def invalid_client_selection_message
+      general_message_format("Please enter a client number from the list")
     end
 
     def new_client_name_message
@@ -141,13 +144,6 @@ module TimeLogger
       end
     end
 
-    def format_clients_hash(client_hash)
-      puts_space
-      client_hash.each do |id, client| 
-        @io_wrapper.puts_string("#{id}. #{client}")
-      end
-      puts_space
-    end
 
     private 
 
