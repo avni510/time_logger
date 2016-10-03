@@ -141,6 +141,14 @@ module TimeLogger
       end
     end
 
+    def format_clients_hash(client_hash)
+      puts_space
+      client_hash.each do |id, client| 
+        @io_wrapper.puts_string("#{id}. #{client}")
+      end
+      puts_space
+    end
+
     private 
 
     def general_message_format(string)
@@ -151,5 +159,6 @@ module TimeLogger
     def general_item_exists(item)
       general_message_format("This #{item} already exists, please enter a different one")
     end
+
   end
 end

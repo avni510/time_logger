@@ -19,7 +19,6 @@ module TimeLogger
       
       client_repo.create(new_client_name)
       client_repo.save
-
     end
 
     private

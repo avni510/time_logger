@@ -254,5 +254,21 @@ module TimeLogger
         console_ui.format_employee_report(log_times_sorted, total_hours_worked_per_client, total_hours_worked_per_timecode)
       end
     end
+
+    describe ".format_clients_hash" do
+      it "displays a list of clients when the user selects Billable as their timecode" do
+        expect(mock_io_wrapper).to receive(:puts_string).with("1. Google")
+        expect(mock_io_wrapper).to receive(:puts_string).with("2. Microsoft")
+
+        expect(console_ui).to receive(:puts_space).exactly(2).times
+        clients_hash = 
+          {
+            "1" => "Google", 
+            "2" => "Microsoft"
+          }
+
+        console_ui.format_clients_hash(clients_hash)
+      end
+    end
   end
 end

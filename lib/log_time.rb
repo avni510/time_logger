@@ -1,3 +1,4 @@
+require 'pry'
 module TimeLogger
   class LogTime
     def initialize(console_ui, validation)
@@ -11,8 +12,11 @@ module TimeLogger
       log_date 
       log_hours_worked(employee_id, repository)
       log_timecode
+
+      if @timecode_entered == "Billable"
+        all_client = client_repo.all
+      end
       
-      #add ability to select client 
       log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered)
       log_time_repo.save
     end
@@ -20,7 +24,11 @@ module TimeLogger
     private
 
     def log_time_repo
-      log_time_repo = @repository.for(:log_time)
+      @repository.for(:log_time)
+    end
+
+    def client_repo
+      @repository.for(:client)
     end
 
     def log_date
