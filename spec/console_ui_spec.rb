@@ -28,12 +28,52 @@ module TimeLogger
       end
     end
 
+    describe ".no_company_log_entries_message" do
+      context "an admin runs a report and there are no log entries" do
+        it "displays a message that there no log entries" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("The company doesn't have any log entries for the current month")
+          expect(console_ui).to receive(:puts_space)
+          console_ui.no_company_log_entries_message
+        end
+      end
+    end
+
+    describe ".no_company_timecode_hours" do
+      context "an admin runs a report and there are no log times with timecodes" do
+        it "displays a message that there no hours logged for the timecodes" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("There are no hours logged for the timecodes")
+          expect(console_ui).to receive(:puts_space)
+          console_ui.no_company_timecode_hours
+        end
+      end
+    end
+
+    describe ".no_client_hours" do
+      context "an admin runs a report and there are no log times for clients" do
+        it "displays a message that there no hours logged clients" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("There are no hours logged clients")
+          expect(console_ui).to receive(:puts_space)
+          console_ui.no_client_hours
+        end
+      end
+    end
+
     describe ".invalid_client_selection_message" do
       context "the user selects a client not on the list" do
         it "displays a message to enter a valid client" do
           expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a client number from the list")
           expect(console_ui).to receive(:puts_space)
           console_ui.invalid_client_selection_message
+        end
+      end
+    end
+
+    describe ".no_clients_message" do
+      context "there are no clients in memory" do
+        it "displays a message to select a different timecode" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("There are no clients. Please select a different timecode")
+          expect(console_ui).to receive(:puts_space)
+          console_ui.no_clients_message
         end
       end
     end
@@ -221,7 +261,7 @@ module TimeLogger
     end
 
     describe ".format_employee_report" do
-      it "given an array of log times it returns a report for the employee" do
+      it "returns a report for the employee" do
         log_times_sorted = [
           [ "09-02-2016", "7", "Billable", "Microsoft" ],
           [ "09-04-2016", "5", "Billable", "Microsoft" ],
@@ -262,6 +302,35 @@ module TimeLogger
         expect(mock_io_wrapper).to receive(:puts_string).with("Total PTO hours worked" + " : " + "5") 
 
         console_ui.format_employee_report(log_times_sorted, total_hours_worked_per_client, total_hours_worked_per_timecode)
+      end
+    end
+
+    describe ".format_admin_report" do
+      it "returns an admin report" do
+        expect(mock_io_wrapper).to receive(:puts_string).with("This is a report for the current month")
+        expect(console_ui).to receive(:puts_space).exactly(3).times
+        timecode_hash = 
+          { 
+            "Billable" => 7, 
+            "PTO" => 5
+          }
+
+        client_hash = 
+          {
+            "Microsoft" => 4, 
+            "Google" => 6
+          }
+
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Company total Billable hours: 7")
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Company total PTO hours: 5")
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Company total hours for Microsoft: 4")
+
+        expect(mock_io_wrapper).to receive(:puts_string).with("Company total hours for Google: 6")
+
+        console_ui.format_admin_report(timecode_hash, client_hash)
       end
     end
   end

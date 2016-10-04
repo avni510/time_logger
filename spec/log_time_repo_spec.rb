@@ -280,5 +280,139 @@ module TimeLogger
 
       end
     end
+
+    describe ".company_timecode_hours" do
+      context "all entries are for the current month of September" do
+        it "returns a hash of the timecode and total hours per timecode" do
+          allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+
+          create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+
+          create_log_entry(2,"09-07-2016", "8","Non-Billable")
+
+          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+
+          create_log_entry(3,"09-07-2016", "6", "PTO")
+
+          result = log_time_repo.company_timecode_hours
+
+          timecode_hash = 
+            {
+              "Billable" => 14,
+              "Non-Billable" => 8,
+              "PTO" => 6
+            }
+
+          expect(result).to eq(timecode_hash)
+        end
+      end
+
+      context "entries have date entries other than current month or year" do
+        it "returns a hash of timecodes for the current month and year" do
+          allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+
+          create_log_entry(1,"08-05-2016", "8","Billable", "Google")
+
+          create_log_entry(2,"09-07-2015", "8","Non-Billable")
+
+          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+
+          create_log_entry(3,"09-07-2016", "6", "PTO")
+
+          result = log_time_repo.company_timecode_hours
+
+          timecode_hash = 
+            {
+              "Billable" => 6,
+              "PTO" => 6
+            }
+
+          expect(result).to eq(timecode_hash)
+        end
+      end
+
+      context "there are no entries" do
+        it "returns nil" do
+          result = log_time_repo.company_timecode_hours
+          expect(result).to eq(nil)
+        end
+      end
+    end
+
+    describe ".company_client_hours" do
+      context "all entries are for the current month of September" do
+        it "returns a hash of the client and total hours per client" do
+          allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+
+          create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+
+          create_log_entry(2,"09-07-2016", "8","Non-Billable")
+
+          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+
+          create_log_entry(3,"09-07-2016", "6", "PTO")
+
+          result = log_time_repo.company_client_hours
+
+          client_hash = 
+            {
+              "Google" => 8,
+              "Microsoft" => 6,
+            }
+
+          expect(result).to eq(client_hash)
+        end
+      end
+
+      context "entries have date entries other than current month or year" do
+        it "returns a hash of clients for the current month and year" do
+          allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+
+          create_log_entry(1,"08-05-2016", "8","Billable", "Google")
+
+          create_log_entry(2,"09-07-2015", "8","Non-Billable")
+
+          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+
+          create_log_entry(3,"09-07-2016", "6", "PTO")
+
+          result = log_time_repo.company_client_hours
+
+          client_hash = 
+            {
+              "Microsoft" => 6
+            }
+
+          expect(result).to eq(client_hash)
+        end
+      end
+
+      context "there are no entries" do
+        it "returns nil" do
+          result = log_time_repo.company_client_hours
+
+          expect(result).to eq(nil)
+        end
+      end
+
+      describe ".filter_for_current_month" do
+        it "returns an array of entries for the current month" do
+          allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
+
+          create_log_entry(1,"08-05-2016", "8","Billable", "Google")
+
+          create_log_entry(2,"09-07-2015", "8","Non-Billable")
+
+          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+
+          create_log_entry(3,"09-07-2016", "6", "PTO")
+
+          result = log_time_repo.filter_for_current_month(log_time_repo.entries)
+
+          expect(result.count).to eq(2)
+          expect(result[0].date.month).to eq(9)
+        end
+      end
+    end
   end
 end

@@ -38,8 +38,24 @@ module TimeLogger
       puts_space
     end
 
+    def no_company_log_entries_message
+      general_message_format("The company doesn't have any log entries for the current month")
+    end
+
+    def no_company_timecode_hours
+      general_message_format("There are no hours logged for the timecodes")
+    end
+
+    def no_client_hours
+      general_message_format("There are no hours logged clients")
+    end
+
     def invalid_client_selection_message
       general_message_format("Please enter a client number from the list")
+    end
+
+    def no_clients_message
+      general_message_format("There are no clients. Please select a different timecode")
     end
 
     def new_client_name_message
@@ -132,6 +148,17 @@ module TimeLogger
       puts_space
     end
 
+    def format_admin_report(timecode_hash, client_hash)
+      @io_wrapper.puts_string("This is a report for the current month")
+      puts_space
+
+      format_company_timecode_hours_worked(timecode_hash)
+      puts_space
+
+      format_company_client_hours_worked(client_hash)
+      puts_space
+    end
+
     def format_client_hours_worked(clients_hash)
       clients_hash.each do |client, hours_worked|
           @io_wrapper.puts_string("Total hours worked for #{client}" + " : " + "#{hours_worked}")
@@ -147,6 +174,18 @@ module TimeLogger
 
     private 
 
+    def format_company_timecode_hours_worked(timecode_hash)
+      timecode_hash.each do |timecode, hours_worked| 
+        @io_wrapper.puts_string("Company total #{timecode} hours: #{hours_worked.to_s}")
+      end
+    end
+
+    def format_company_client_hours_worked(client_hash)
+      client_hash.each do |client, hours_worked|
+        @io_wrapper.puts_string("Company total hours for #{client}: #{hours_worked.to_s}")
+      end
+    end
+
     def general_message_format(string)
       @io_wrapper.puts_string(string)
       puts_space
@@ -155,6 +194,5 @@ module TimeLogger
     def general_item_exists(item)
       general_message_format("This #{item} already exists, please enter a different one")
     end
-
   end
 end

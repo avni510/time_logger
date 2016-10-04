@@ -1,3 +1,4 @@
+require 'pry'
 module TimeLogger
   class LogTime
     def initialize(console_ui, validation)
@@ -13,18 +14,10 @@ module TimeLogger
 
       if @timecode_entered == "Billable"
         all_clients = client_repo.all
-        clients_hash = generate_clients_hash(all_clients)
-        @console_ui.display_menu_options(clients_hash)
-        user_client_selection = @console_ui.get_user_input
-        until clients_hash.has_key?(user_client_selection.to_i)
-          @console_ui.invalid_client_selection_message
-          user_client_selection = @console_ui.get_user_input
-        end
-        client = clients_hash[user_client_selection.to_i]
-        client = client[3..-1]
+        select_clients(all_clients)
       end
       
-      log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered, client)
+      log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered, @client)
       log_time_repo.save
     end
 
@@ -36,6 +29,18 @@ module TimeLogger
 
     def client_repo
       Repository.for(:client)
+    end
+
+    def select_clients(all_clients)
+      clients_hash = generate_clients_hash(all_clients)
+      @console_ui.display_menu_options(clients_hash)
+      user_client_selection = @console_ui.get_user_input
+      until clients_hash.has_key?(user_client_selection.to_i)
+        @console_ui.invalid_client_selection_message
+        user_client_selection = @console_ui.get_user_input
+      end
+      client = clients_hash[user_client_selection.to_i]
+      @client = client[3..-1]
     end
 
     def log_date

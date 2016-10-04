@@ -89,6 +89,32 @@ module TimeLogger
       create_timecode_hash(sorted_entries)
     end
 
+    def company_timecode_hours
+      filtered_entries = filter_for_current_month(@entries)
+      
+      company_timecode_hash = create_company_timecode_hash(filtered_entries)
+
+      entries_empty?(company_timecode_hash)
+    end
+
+    def company_client_hours
+      filtered_entries = filter_for_current_month(@entries)
+
+      client_entries = filter_entries_with_clients(filtered_entries)
+
+      company_client_hash = create_company_client_hash(client_entries)
+
+      entries_empty?(company_client_hash)
+    end
+
+    def filter_for_current_month(entries)
+      today = Date.today
+      entries.reject do |log_time|
+        log_time.date.month < today.month ||
+        log_time.date.year < today.year 
+      end
+    end
+
     private 
 
     def generate_log_entry_hash(log_entry_id, params)
@@ -104,6 +130,36 @@ module TimeLogger
 
     def filter_entries_with_clients(entries)
       entries.reject { |log_time| log_time.client.nil? }
+    end
+
+    def create_company_client_hash(entries)
+      company_client_hours = {}
+
+      entries.each do |entry|
+        client = entry.client
+        if company_client_hours.include?(client)
+          company_client_hours[client] += entry.hours_worked
+        else
+          company_client_hours[client] = entry.hours_worked
+        end
+      end
+
+      company_client_hours
+    end
+    
+    def create_company_timecode_hash(entries)
+      company_timecode_hash = {}
+
+      entries.each do |entry|
+        timecode = entry.timecode
+        if company_timecode_hash.include?(timecode)
+          company_timecode_hash[timecode] += entry.hours_worked
+        else
+          company_timecode_hash[timecode] = entry.hours_worked
+        end
+      end
+
+      company_timecode_hash
     end
 
     def create_clients_hash(entries)
@@ -136,9 +192,9 @@ module TimeLogger
       timecode_hash
     end
 
-    def client_attribute(log_time)
-      log_time.client
-    end
+#    def client_attribute(log_time)
+#      log_time.client
+#    end
 
 #    def populate_hash(attribute, entries)
 #      
@@ -170,13 +226,6 @@ module TimeLogger
       end
     end
 
-    def filter_for_current_month(entries)
-      today = Date.today
-      entries.reject do |log_time|
-        log_time.date.month < today.month ||
-        log_time.date.year < today.year 
-      end
-    end
   end
 end
 
