@@ -10,6 +10,11 @@ module TimeLogger
 
       new_client_name = @console_ui.get_user_input
 
+      until new_client_name !~ /^\s*$/ 
+        @console_ui.valid_client_name_message
+        new_client_name = @console_ui.get_user_input
+      end
+
       while client_repo.find_by_name(new_client_name)
         @console_ui.client_exists_message
         new_client_name = @console_ui.get_user_input

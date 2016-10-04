@@ -37,6 +37,11 @@ module TimeLogger
     end
 
     def valid_username_loop(username)
+      until username !~ /^\s*$/
+        @console_ui.valid_username_message
+        username = @console_ui.get_user_input
+      end
+
       while employee_repo.find_by_username(username)
         @console_ui.username_exists_message
         username = @console_ui.get_user_input
@@ -68,6 +73,5 @@ module TimeLogger
     def convert_input_to_boolean(user_input)
       user_input.to_sym == generate_admin_hash.key("1. yes") ? true : false
     end
-
   end
 end

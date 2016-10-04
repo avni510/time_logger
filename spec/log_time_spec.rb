@@ -126,7 +126,16 @@ module TimeLogger
 
         expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
-        expect(@mock_log_time_repo).to receive(:create).with(@employee_id, "04-15-2016", "8", "Non-Billable", nil)
+        params = 
+          { 
+            "employee_id": @employee_id,
+            "date": "04-15-2016", 
+            "hours_worked": "8",
+            "timecode": "Non-Billable", 
+            "client": nil
+          }
+
+        expect(@mock_log_time_repo).to receive(:create).with(params)
 
         expect(@mock_log_time_repo).to receive(:save)
 
@@ -153,13 +162,16 @@ module TimeLogger
 
           expect(@mock_console_ui).to receive(:get_user_input).and_return("2")
 
-          expect(@mock_log_time_repo).to receive(:create).with(
-            @employee_id,
-            "09-15-2016",
-            "8",
-            "Billable", 
-            "Microsoft"
-          )
+          params = 
+            { 
+              "employee_id": @employee_id,
+              "date": "09-15-2016", 
+              "hours_worked": "8",
+              "timecode": "Billable", 
+              "client": "Microsoft"
+            }
+
+          expect(@mock_log_time_repo).to receive(:create).with(params)
             
           @log_time.execute(@employee_id)
         end

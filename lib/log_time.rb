@@ -17,7 +17,14 @@ module TimeLogger
         select_clients(all_clients)
       end
       
-      log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered, @client)
+      log_times_hash = generate_log_times_hash(
+          employee_id, 
+          @date_entered, 
+          @hours_entered, 
+          @timecode_entered, 
+          @client
+        )
+      log_time_repo.create(log_times_hash)
       log_time_repo.save
     end
 
@@ -29,6 +36,17 @@ module TimeLogger
 
     def client_repo
       Repository.for(:client)
+    end
+
+    def generate_log_times_hash(employee_id, date, hours_worked, timecode, client)
+      params = 
+        { 
+          "employee_id": employee_id,
+          "date": Date.strptime(date, '%m-%d-%Y').to_s,
+          "hours_worked": hours_worked,
+          "timecode": timecode, 
+          "client": client
+        }
     end
 
     def select_clients(all_clients)

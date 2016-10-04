@@ -65,7 +65,7 @@ module TimeLogger
 
 
     def sorted_current_month_entries_by_employee_id(employee_id)
-      entries_by_employee = find_by_employee_id(1)
+      entries_by_employee = find_by_employee_id(employee_id)
 
       return nil unless entries_by_employee
 
@@ -121,7 +121,7 @@ module TimeLogger
       {
         "id": log_entry_id,
         "employee_id": params[:employee_id], 
-        "date": Date.strptime(params[:date],'%m-%d-%Y'),
+        "date": Date.strptime(params[:date],'%Y-%m-%d'),
         "hours_worked": params[:hours_worked].to_i, 
         "timecode": params[:timecode], 
         "client": params[:client]

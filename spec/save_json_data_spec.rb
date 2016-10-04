@@ -67,13 +67,13 @@ module TimeLogger
               "log_time": [
                 {
                   "id": 1,
-                  "date": "09-07-2016",
+                  "date": "2016-09-07",
                   "hours_worked": "8",
                   "timecode": "Non-Billable",
                   "client": nil
                 }, {
                   "id": 2,
-                  "date": "09-08-2016",
+                  "date": "2016-09-08",
                   "hours_worked": "8",
                   "timecode": "PTO",
                   "client": nil
@@ -105,14 +105,14 @@ module TimeLogger
                 log_time: [
                   {
                     id: 1,
-                    date: "09-07-2016",
+                    date: "2016-09-07",
                     hours_worked: "8",
                     timecode: "Non-Billable",
                     client: nil
                   }, 
                   {
                     id: 2,
-                    date: "09-08-2016",
+                    date: "2016-09-08",
                     hours_worked: "8",
                     timecode: "PTO",
                     client: nil
@@ -155,7 +155,7 @@ module TimeLogger
             { 
               "id": 1, 
               "employee_id": 1, 
-              "date": "09-07-2016", 
+              "date": "2016-09-07", 
               "hours_worked": "8", 
               "timecode": "Non-Billable", 
               "client": nil 
@@ -164,7 +164,7 @@ module TimeLogger
             { 
               "id": 2, 
               "employee_id": 1, 
-              "date": "09-08-2016", 
+              "date": "2016-09-08", 
               "hours_worked": "8", 
               "timecode": "PTO", 
               "client": nil 
@@ -190,14 +190,14 @@ module TimeLogger
                   [ 
                     {
                       "id": 1,
-                      "date": "09-07-2016",
+                      "date": "2016-09-07",
                       "hours_worked": "8", 
                       "timecode": "Non-Billable",
                       "client": nil
                     },
                     {
                       "id": 2,
-                      "date": "09-08-2016",
+                      "date": "2016-09-08",
                       "hours_worked": "8", 
                       "timecode": "PTO",
                       "client": nil
@@ -227,13 +227,13 @@ module TimeLogger
               "log_time": [
                 {
                   "id": 1,
-                  "date": "09-07-2016",
+                  "date": "2016-09-07",
                   "hours_worked": "8",
                   "timecode": "Non-Billable",
                   "client": nil
                 }, {
                   "id": 2,
-                  "date": "09-08-2016",
+                  "date": "2016-09-08",
                   "hours_worked": "8",
                   "timecode": "PTO",
                   "client": nil
@@ -248,7 +248,7 @@ module TimeLogger
             { 
               "id": 1, 
               "employee_id": 1, 
-              "date": "09-07-2016", 
+              "date": "2016-09-07", 
               "hours_worked": "8", 
               "timecode": "Non-Billable", 
               "client": nil 
@@ -257,7 +257,7 @@ module TimeLogger
             { 
               "id": 2, 
               "employee_id": 1, 
-              "date": "09-08-2016", 
+              "date": "2016-09-08", 
               "hours_worked": "8", 
               "timecode": "PTO", 
               "client": nil 
@@ -267,7 +267,7 @@ module TimeLogger
             { 
               "id": 3, 
               "employee_id": 1, 
-              "date": "09-05-2016", 
+              "date": "2016-09-05", 
               "hours_worked": "8", 
               "timecode": "Non-Billable", 
               "client": nil 
@@ -294,21 +294,21 @@ module TimeLogger
                   [ 
                     {
                       "id": 1,
-                      "date": "09-07-2016",
+                      "date": "2016-09-07",
                       "hours_worked": "8", 
                       "timecode": "Non-Billable",
                       "client": nil
                     },
                     {
                       "id": 2,
-                      "date": "09-08-2016",
+                      "date": "2016-09-08",
                       "hours_worked": "8", 
                       "timecode": "PTO",
                       "client": nil
                     },
                     {
                       "id": 3,
-                      "date": "09-05-2016",
+                      "date": "2016-09-05",
                       "hours_worked": "8", 
                       "timecode": "Non-Billable",
                       "client": nil

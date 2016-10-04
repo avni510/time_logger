@@ -28,7 +28,16 @@ module TimeLogger
               "client": nil
             }]
         }],
-        "clients": []
+        "clients": [
+          {
+            "id": 1, 
+            "name": "Google"
+          },
+          { 
+            "id": 2, 
+            "name": "Microsoft"
+          }
+        ]
       }
 
       JSON.parse(JSON.generate(data_hash))
@@ -43,9 +52,14 @@ module TimeLogger
         expect_any_instance_of(EmployeeRepo).to receive(:create).exactly(1).times
 
         expect_any_instance_of(LogTimeRepo).to receive(:create).exactly(2).times
+
+        expect_any_instance_of(ClientRepo).to receive(:create).exactly(2).times
+
+        expect(Repository).to receive(:register).exactly(3).times
         
         load_data_to_repos.run
       end
+
     end
   end
 end

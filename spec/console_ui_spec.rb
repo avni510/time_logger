@@ -23,8 +23,23 @@ module TimeLogger
     describe ".get_user_input" do 
       it "prompts the user for input" do
         expect(mock_io_wrapper).to receive(:get_action).exactly(1).times
-        expect(console_ui).to receive(:puts_space)
         console_ui.get_user_input
+      end
+    end
+
+    describe ".valid_client_name_message" do
+      it "prompts the user to enter a valid client name" do
+        expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid client name")
+        expect(console_ui).to receive(:puts_space)
+        console_ui.valid_client_name_message
+      end
+    end
+
+    describe ".valid_username_message" do
+      it "prompts the user to enter a valid username name" do
+        expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid username")
+        expect(console_ui).to receive(:puts_space)
+        console_ui.valid_username_message
       end
     end
 
@@ -331,6 +346,26 @@ module TimeLogger
         expect(mock_io_wrapper).to receive(:puts_string).with("Company total hours for Google: 6")
 
         console_ui.format_admin_report(timecode_hash, client_hash)
+      end
+
+      context "there are no clients" do
+        it "returns an admin report" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("This is a report for the current month")
+          expect(console_ui).to receive(:puts_space).exactly(3).times
+          timecode_hash = 
+            { 
+              "Billable" => 7, 
+              "PTO" => 5
+            }
+
+          expect(mock_io_wrapper).to receive(:puts_string).with("Company total Billable hours: 7")
+
+          expect(mock_io_wrapper).to receive(:puts_string).with("Company total PTO hours: 5")
+
+          expect(console_ui).to receive(:no_client_hours)
+
+          console_ui.format_admin_report(timecode_hash, nil)
+        end
       end
     end
   end

@@ -13,14 +13,18 @@ module TimeLogger
 
       @log_time_repo = LogTimeRepo.new(@save_json_data)
 
-      load_repos(data_hash)
+      @client_repo = ClientRepo.new(@save_json_data)
+
+      load_repos_workers(data_hash)
+
+      load_repos_clients(data_hash)
       
       setup_main_repository
     end
 
     private
 
-    def load_repos(data_hash)
+    def load_repos_workers(data_hash)
       data_hash["workers"].each do |worker|
         @employee_repo.create(
           worker["username"], 
@@ -39,6 +43,12 @@ module TimeLogger
       end
     end
 
+    def load_repos_clients(data_hash)
+      data_hash["clients"].each do |client|
+        @client_repo.create(client["name"])
+      end
+    end
+
     def generate_log_time_hash(employee_id, date, hours_worked, timecode, client)
       { 
         "employee_id": employee_id,
@@ -53,6 +63,7 @@ module TimeLogger
       Repository.repositories
       Repository.register("log_time", @log_time_repo)
       Repository.register("employee", @employee_repo)
+      Repository.register("client", @client_repo)
     end
   end
 end

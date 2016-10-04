@@ -56,6 +56,18 @@ module TimeLogger
         end
       end
 
+      context "the user enters a blank space" do
+        it "prompts the user to create a different user name" do
+          expect(@mock_console_ui).to receive(:get_user_input).and_return("", "pmccartney", "2")
+
+          expect(@mock_console_ui).to receive(:valid_username_message)
+
+          expect(@mock_employee_repo).to receive(:find_by_username).and_return( nil)
+
+          @employee_creation.execute
+        end
+      end
+
       context "the user enters an invalid admin option for the new username" do
         it "prompts the user to enter another admin option" do
           expect(@mock_console_ui).to receive(:get_user_input).and_return("pmccartney", "6", "2")

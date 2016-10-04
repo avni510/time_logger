@@ -34,10 +34,18 @@ module TimeLogger
 
       workers_array = data_hash["workers"]
       workers_array.each do |worker|
+
         worker["log_time"] = []
+
         entries.each do |entry|
           if worker["id"] == entry.employee_id
-            log_time_hash = generate_log_time_hash(entry.id, entry.date, entry.hours_worked, entry.timecode, entry.client)
+            log_time_hash = generate_log_time_hash(
+              entry.id, 
+              entry.date.to_s, 
+              entry.hours_worked, 
+              entry.timecode, 
+              entry.client)
+
             worker["log_time"] << log_time_hash
           end
         end
@@ -49,11 +57,11 @@ module TimeLogger
     def clients(clients)
       data_hash = @file_wrapper.read_data
 
-      clients_array = data_hash["clients"]
-
+      data_hash["clients"] = []
+      
       clients.each do |client|
         client_hash = generate_client_hash(client.id, client.name)
-        clients_array << client_hash
+        data_hash["clients"] << client_hash
       end
 
       @file_wrapper.write_data(data_hash)
@@ -72,7 +80,7 @@ module TimeLogger
     def generate_log_time_hash(id, date, hours_worked, timecode, client)
       {
         "id": id,
-        "date": date,
+        "date": date.to_s,
         "hours_worked": hours_worked,
         "timecode": timecode,
         "client": client

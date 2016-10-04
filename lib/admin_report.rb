@@ -11,8 +11,6 @@ module TimeLogger
 
       client_hash = log_time_repo.company_client_hours
 
-      return @console_ui.no_client_hours unless client_hash
-
       @console_ui.format_admin_report(timecode_hash, client_hash)
     end
 

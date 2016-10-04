@@ -44,6 +44,19 @@ module TimeLogger
           @client_creation.execute
         end
       end
+
+      context "the user enters a blank space" do
+        it "prompts the user to enter a valid client name and saves it" do
+
+          expect(@mock_console_ui).to receive(:get_user_input).and_return("", "Microsoft")
+
+          expect(@mock_console_ui).to receive(:valid_client_name_message)
+
+          expect(@mock_client_repo).to receive(:find_by_name).and_return(nil)
+
+          @client_creation.execute
+        end
+      end
     end
   end
 end

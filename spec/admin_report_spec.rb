@@ -50,8 +50,7 @@ module TimeLogger
 
           expect(@mock_log_time_repo).to receive(:company_client_hours).and_return(nil)
 
-          expect(@mock_console_ui).to receive(:no_client_hours)
-
+          expect(@mock_console_ui).to receive(:format_admin_report).with(company_timecode_hash, nil)
           @admin_report.execute
         end
       end

@@ -1,5 +1,6 @@
 module TimeLogger
   class Validation
+    MAX_DATE_LENGTH = 10
 
     HOURS_IN_A_DAY = 24
 
@@ -13,6 +14,7 @@ module TimeLogger
         rescue => e
           return false
       end
+      return false if date_entered.size > MAX_DATE_LENGTH
       true
     end
 

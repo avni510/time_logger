@@ -40,7 +40,8 @@ module TimeLogger
         [ 
           ["09-19-2016", true],
           ["000000000", false],
-          ["02-12-16", true]
+          ["02-12-16", true],
+          ["02-12-20-16", false]
         ].each do |date_entered, bool|
 
           result = validation.date_valid_format?(date_entered)

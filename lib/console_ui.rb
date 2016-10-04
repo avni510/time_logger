@@ -9,6 +9,14 @@ module TimeLogger
       @io_wrapper.puts_string("")
     end
 
+    def valid_client_name_message
+      general_message_format("Please enter a valid client name")
+    end
+
+    def valid_username_message
+      general_message_format("Please enter a valid username")
+    end
+
     def username_display_message
       general_message_format("Please enter your username")
     end
@@ -35,7 +43,6 @@ module TimeLogger
 
     def get_user_input
       @io_wrapper.get_action
-      puts_space
     end
 
     def no_company_log_entries_message
@@ -155,7 +162,11 @@ module TimeLogger
       format_company_timecode_hours_worked(timecode_hash)
       puts_space
 
-      format_company_client_hours_worked(client_hash)
+      if client_hash
+        format_company_client_hours_worked(client_hash)
+      else
+        no_client_hours
+      end
       puts_space
     end
 
