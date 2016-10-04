@@ -3,16 +3,18 @@ module TimeLogger
 
   describe MenuSelection do
     let(:mock_console_ui) { double }
-    let(:menu_selection) { MenuSelection.new(@employee, mock_console_ui) }
 
     before(:each) do
       @employee = Employee.new(1, "rstarr", false)
+      @admin_employee = Employee.new(2, "jlennon", true)
 
       allow(mock_console_ui).to receive(:menu_selection_message)
       allow(mock_console_ui).to receive(:display_menu_options)
     end
 
     describe ".run" do
+      let(:menu_selection) { MenuSelection.new(@employee, mock_console_ui) }
+
       it "displays the beginning messages after an employee logins"do
         expect(mock_console_ui).to receive(:menu_selection_message)
         menu_options_hash = 
@@ -70,6 +72,64 @@ module TimeLogger
           expect(mock_console_ui).to receive(:valid_menu_option_message)
 
           menu_selection.run
+        end
+      end
+
+      context "the employee is an admin" do
+        let(:menu_selection) { MenuSelection.new(@admin_employee, mock_console_ui) }
+        
+        it "displays a menu with more options" do
+
+          expect(mock_console_ui).to receive(:menu_selection_message)
+
+          menu_options_hash = 
+            { 
+              "1": "1. Do you want to log your time?", 
+              "2": "2. Do you want to run a report on yourself?",
+              "3": "3. Quit the program", 
+              "4": "4. Do you want to create a client?", 
+              "5": "5. Do you want to create an employee?", 
+              "6": "6. Do you want to run a company report?"
+            }
+
+          expect(mock_console_ui).to receive(:display_menu_options).with(menu_options_hash)
+
+          expect(mock_console_ui).to receive(:get_user_input).and_return("3")
+
+          menu_selection.run
+        end
+
+        context "the user selects the option to create a client" do
+          it "runs the action of creating a client" do
+
+            expect(mock_console_ui).to receive(:get_user_input).and_return("4", "3")
+
+            expect_any_instance_of(ClientCreation).to receive(:execute)
+
+            menu_selection.run
+          end
+        end
+
+        context "the user selects the option to create an employee" do
+          it "runs the action of creating a client" do
+
+            expect(mock_console_ui).to receive(:get_user_input).and_return("5", "3")
+
+            expect_any_instance_of(EmployeeCreation).to receive(:execute)
+
+            menu_selection.run
+          end
+        end
+
+        context "the user selects the option to run an admin report" do
+          it "runs the action of running a report" do
+
+            expect(mock_console_ui).to receive(:get_user_input).and_return("6", "3")
+
+            expect_any_instance_of(AdminReport).to receive(:execute)
+
+            menu_selection.run
+          end
         end
       end
     end
