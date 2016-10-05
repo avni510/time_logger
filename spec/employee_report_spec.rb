@@ -1,5 +1,4 @@
 module TimeLogger
-  output_file = "/Users/avnikothari/Desktop/8thlight/time_logger/time_logger_data.json"
   require "spec_helper"
   
   describe EmployeeReport do

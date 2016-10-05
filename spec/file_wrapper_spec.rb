@@ -1,7 +1,7 @@
 module TimeLogger
   require "spec_helper"
 
-  output_file_name = "/Users/avnikothari/Desktop/8thlight/time_logger/time_logger_data.json"
+  output_file_name = "../time_logger/time_logger_data.json"
 
   describe FileWrapper do
 
