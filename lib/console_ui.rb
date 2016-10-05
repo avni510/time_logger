@@ -62,7 +62,7 @@ module TimeLogger
     end
 
     def no_clients_message
-      general_message_format("There are no clients. Please select a different timecode")
+      general_message_format("There are no clients")
     end
 
     def new_client_name_message
@@ -98,6 +98,7 @@ module TimeLogger
     end
 
     def menu_selection_message
+      puts_space
       @io_wrapper.puts_string("Please select an option")
       puts_space
       @io_wrapper.puts_string("Enter the number next to the choice")
@@ -120,16 +121,21 @@ module TimeLogger
     end
 
     def general_log_time_message(display_string)
+      puts_space
       @io_wrapper.puts_string(display_string)
       get_user_input
     end
     
     def timecode_log_time_message(timecode_hash)
+      puts_space
+      @io_wrapper.puts_string("Please select an option from below")
+      puts_space
       display_menu_options(timecode_hash)
       get_user_input
     end
 
     def format_employee_report(log_times_sorted, client_hash, timecode_hash)
+      puts_space
       @io_wrapper.puts_string("This is a report for the current month")
 
       puts_space
@@ -162,11 +168,15 @@ module TimeLogger
       format_company_timecode_hours_worked(timecode_hash)
       puts_space
 
-      if client_hash
-        format_company_client_hours_worked(client_hash)
-      else
-        no_client_hours
-      end
+      display_client_hash(client_hash)
+    end
+
+
+
+    private 
+
+    def display_client_hash(client_hash)
+      client_hash ? format_company_client_hours_worked(client_hash) : no_client_hours
       puts_space
     end
 
@@ -182,9 +192,6 @@ module TimeLogger
       end
     end
 
-
-    private 
-
     def format_company_timecode_hours_worked(timecode_hash)
       timecode_hash.each do |timecode, hours_worked| 
         @io_wrapper.puts_string("Company total #{timecode} hours: #{hours_worked.to_s}")
@@ -198,6 +205,7 @@ module TimeLogger
     end
 
     def general_message_format(string)
+      puts_space
       @io_wrapper.puts_string(string)
       puts_space
     end

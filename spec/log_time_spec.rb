@@ -26,6 +26,7 @@ module TimeLogger
         allow(@mock_log_time_repo).to receive(:find_by_employee_id_and_date).and_return(nil)
 
         allow(@mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(0)
+        allow(@mock_client_repo).to receive(:all).and_return( [ Client.new(1, "Google") ] )
         allow(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
         allow(@mock_log_time_repo).to receive(:create)
@@ -129,7 +130,7 @@ module TimeLogger
         params = 
           { 
             "employee_id": @employee_id,
-            "date": "04-15-2016", 
+            "date": "2016-04-15", 
             "hours_worked": "8",
             "timecode": "Non-Billable", 
             "client": nil
@@ -141,7 +142,7 @@ module TimeLogger
 
         @log_time.execute(@employee_id)
       end
-      
+     
       context "the user selects 'Billable' as their timecode" do
         it "prompts the user to select their client" do
           expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("1")
@@ -165,7 +166,7 @@ module TimeLogger
           params = 
             { 
               "employee_id": @employee_id,
-              "date": "09-15-2016", 
+              "date": "2016-09-15", 
               "hours_worked": "8",
               "timecode": "Billable", 
               "client": "Microsoft"
@@ -203,27 +204,23 @@ module TimeLogger
         end
       end
 
-#      context "the user selects 'Billable' as their timecode and there are no clients" do
-#        it "prompts the user to select a different timecode" do
-#          expect(@mock_client_repo).to receive(:all).and_return([])
-#
-#          timecode_hash = 
-#            { 
-#              "1": "1. Non-Billable",
-#              "2": "2. PTO"
-#            }
-#              
-#          expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("1")
-#
-#          expect(@mock_client_repo).to receive(:all).and_return([])
-#
-#          expect(@mock_console_ui).to receive(:no_clients_message)
-#
-#          expect(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
-#
-#          @log_time.execute(@employee_id)
-#        end
-#      end
+      context "the user selects 'Billable' as their timecode and there are no clients" do
+        it "prompts the user to select a different timecode" do
+          expect(@mock_client_repo).to receive(:all).and_return([])
+
+          timecode_hash = 
+            { 
+              "1": "1. Non-Billable",
+              "2": "2. PTO"
+            }
+              
+          expect(@mock_console_ui).to receive(:no_clients_message)
+
+          expect(@mock_console_ui).to receive(:timecode_log_time_message).with(timecode_hash)
+
+          @log_time.execute(@employee_id)
+        end
+      end
     end
   end
 end

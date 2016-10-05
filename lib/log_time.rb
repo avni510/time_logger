@@ -9,14 +9,15 @@ module TimeLogger
     def execute(employee_id)
       log_date 
       log_hours_worked(employee_id)
-      log_timecode
-      client = nil
+
+      all_client_objects = client_repo.all
+
+      log_timecode(all_client_objects)
 
       if @timecode_entered == "Billable"
-        all_clients = client_repo.all
-        select_clients(all_clients)
+        select_clients(all_client_objects)
       end
-      
+
       log_times_hash = generate_log_times_hash(
           employee_id, 
           @date_entered, 
@@ -73,8 +74,13 @@ module TimeLogger
       exceeds_hours_in_a_day(employee_id)
     end
 
-    def log_timecode
-      timecode_options_hash = generate_timecode_hash
+    def log_timecode(all_clients)
+      if all_clients.empty?
+        @console_ui.no_clients_message
+        timecode_options_hash = generate_timecode_hash_without_billable
+      else
+        timecode_options_hash = generate_timecode_hash_with_billable
+      end
       timecode_num_entered = @console_ui.timecode_log_time_message(timecode_options_hash)
       timecode_num_entered = valid_timecode_loop(timecode_options_hash, timecode_num_entered)
       timecode_type = timecode_options_hash[timecode_num_entered.to_sym]
@@ -131,7 +137,14 @@ module TimeLogger
       clients_hash
     end
 
-    def generate_timecode_hash
+    def generate_timecode_hash_without_billable
+      { 
+        "1": "1. Non-Billable",
+        "2": "2. PTO"
+      }
+    end
+
+    def generate_timecode_hash_with_billable
       { 
         "1": "1. Billable", 
         "2": "2. Non-Billable",
