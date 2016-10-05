@@ -20,7 +20,7 @@ module TimeLogger
         
         result = employee_repo.employees
 
-        expect(result[0]).to be_a_kind_of(Employee)
+        expect(result[0].username).to eq("jlennon")
       end
     end
 

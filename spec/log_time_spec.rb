@@ -26,7 +26,9 @@ module TimeLogger
         allow(@mock_log_time_repo).to receive(:find_by_employee_id_and_date).and_return(nil)
 
         allow(@mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(0)
+
         allow(@mock_client_repo).to receive(:all).and_return( [ Client.new(1, "Google") ] )
+
         allow(@mock_console_ui).to receive(:timecode_log_time_message).and_return("2")
 
         allow(@mock_log_time_repo).to receive(:create)
@@ -204,8 +206,8 @@ module TimeLogger
         end
       end
 
-      context "the user selects 'Billable' as their timecode and there are no clients" do
-        it "prompts the user to select a different timecode" do
+      context "there are no clients" do
+        it "does not display the option to select 'Billable' as a timecode" do
           expect(@mock_client_repo).to receive(:all).and_return([])
 
           timecode_hash = 

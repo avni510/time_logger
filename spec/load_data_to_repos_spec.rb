@@ -9,36 +9,36 @@ module TimeLogger
     def setup_with_data
       data_hash = 
         {
-        "workers": [{
-          "id": 1,
-          "username": "rstarr",
-          "admin": false,
-          "log_time": [
+          "workers": [{
+            "id": 1,
+            "username": "rstarr",
+            "admin": false,
+            "log_time": [
+              {
+                "id": 1,
+                "date": "09-07-2016",
+                "hours_worked": "8",
+                "timecode": "Non-Billable",
+                "client": nil
+              }, {
+                "id": 2,
+                "date": "09-08-2016",
+                "hours_worked": "8",
+                "timecode": "PTO",
+                "client": nil
+              }]
+          }],
+          "clients": [
             {
-              "id": 1,
-              "date": "09-07-2016",
-              "hours_worked": "8",
-              "timecode": "Non-Billable",
-              "client": nil
-            }, {
-              "id": 2,
-              "date": "09-08-2016",
-              "hours_worked": "8",
-              "timecode": "PTO",
-              "client": nil
-            }]
-        }],
-        "clients": [
-          {
-            "id": 1, 
-            "name": "Google"
-          },
-          { 
-            "id": 2, 
-            "name": "Microsoft"
-          }
-        ]
-      }
+              "id": 1, 
+              "name": "Google"
+            },
+            { 
+              "id": 2, 
+              "name": "Microsoft"
+            }
+          ]
+        }
 
       JSON.parse(JSON.generate(data_hash))
     end

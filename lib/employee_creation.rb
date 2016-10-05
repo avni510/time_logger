@@ -28,25 +28,40 @@ module TimeLogger
 
     def enter_new_user_admin_authority
       @console_ui.create_admin_message
-
-      admin_options_hash = generate_admin_hash
-      @console_ui.display_menu_options(admin_options_hash)
-
-      admin_option_num = @console_ui.get_user_input
-      admin_option_num = valid_admin_option_loop(admin_options_hash, admin_option_num)
+      admin_options_hash = display_admin_options
+      new_user_admin_num = get_admin_authority(admin_options_hash)
     end
 
     def valid_username_loop(username)
-      until username !~ /^\s*$/
-        @console_ui.valid_username_message
-        username = @console_ui.get_user_input
-      end
+      username = blank_employee_name_loop(username)
+      employee_exists_loop(username)
+    end
 
+    def employee_exists_loop(username)
       while employee_repo.find_by_username(username)
         @console_ui.username_exists_message
         username = @console_ui.get_user_input
       end
       username
+    end
+
+    def blank_employee_name_loop(username)
+      until username !~ /^\s*$/
+        @console_ui.valid_username_message
+        username = @console_ui.get_user_input
+      end
+      username
+    end
+
+    def display_admin_options
+      admin_options_hash = generate_admin_hash
+      @console_ui.display_menu_options(admin_options_hash)
+      admin_options_hash
+    end
+
+    def get_admin_authority(admin_options_hash)
+      admin_option_num = @console_ui.get_user_input
+      valid_admin_option_loop(admin_options_hash, admin_option_num)
     end
 
     def valid_admin_option_loop(admin_options_hash, admin_option_num)

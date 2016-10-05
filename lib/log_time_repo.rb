@@ -24,6 +24,14 @@ module TimeLogger
       nil
     end
 
+    def save
+      @save_json_data.log_time(@entries)
+    end
+
+    def all
+      @entries
+    end
+
     def find_by_employee_id(employee_id)
       filtered_entries = @entries.select do |entry|
         entry.employee_id == employee_id 
@@ -48,20 +56,14 @@ module TimeLogger
     def find_by_employee_id_and_date(employee_id, date_string)
       date = Date.strptime(date_string,'%m-%d-%Y')
       filtered_entries = @entries.select { |entry| 
-        entry.employee_id == employee_id && (entry.date.day == date.day && entry.date.month == date.month && entry.date.year == date.year)
+        entry.employee_id == employee_id && 
+          (entry.date.day == date.day && 
+           entry.date.month == date.month && 
+           entry.date.year == date.year)
       }
 
       entries_empty?(filtered_entries)
     end
-
-    def save
-      @save_json_data.log_time(@entries)
-    end
-
-    def all
-      @entries
-    end
-
 
     def sorted_current_month_entries_by_employee_id(employee_id)
       entries_by_employee = find_by_employee_id(employee_id)
@@ -130,90 +132,55 @@ module TimeLogger
     def filter_entries_with_clients(entries)
       entries.reject { |log_time| log_time.client.nil? }
     end
-
-    def create_company_client_hash(entries)
-      company_client_hours = {}
-
-      entries.each do |entry|
-        client = entry.client
-        if company_client_hours.include?(client)
-          company_client_hours[client] += entry.hours_worked
-        else
-          company_client_hours[client] = entry.hours_worked
-        end
-      end
-
-      company_client_hours
-    end
     
+    def create_company_client_hash(entries)
+      array_of_client_name_and_hours = client_name_and_hours(entries)
+      populate_hash(array_of_client_name_and_hours)
+    end
+
     def create_company_timecode_hash(entries)
-      company_timecode_hash = {}
-
-      entries.each do |entry|
-        timecode = entry.timecode
-        if company_timecode_hash.include?(timecode)
-          company_timecode_hash[timecode] += entry.hours_worked
-        else
-          company_timecode_hash[timecode] = entry.hours_worked
-        end
-      end
-
-      company_timecode_hash
+      array_of_timecode_name_and_hours = timecode_and_hours(entries)
+      populate_hash(array_of_timecode_name_and_hours)
     end
 
     def create_clients_hash(entries)
-      clients_hash = {}
-
-      entries.each do |log_time|
-        client = log_time.client
-        if clients_hash.include?(client)
-          clients_hash[client] += log_time.hours_worked
-        else
-          clients_hash[client] = log_time.hours_worked
-        end
-      end
-
-      clients_hash
+      array_of_client_name_and_hours = client_name_and_hours(entries)
+      populate_hash(array_of_client_name_and_hours)
     end
 
     def create_timecode_hash(entries)
-      timecode_hash = {}
-
-      entries.each do |log_time|
-        timecode = log_time.timecode
-        if timecode_hash.include?(timecode)
-          timecode_hash[timecode] += log_time.hours_worked
-        else
-          timecode_hash[timecode] = log_time.hours_worked
-        end
-      end
-
-      timecode_hash
+      array_of_timecode_name_and_hours = timecode_and_hours(entries)
+      populate_hash(array_of_timecode_name_and_hours)
     end
 
-#    def client_attribute(log_time)
-#      log_time.client
-#    end
+    def timecode_and_hours(entries)
+      timecodes_array = []
+      entries.each do |entry|
+        timecodes_array << [entry.timecode, entry.hours_worked]
+      end
+      timecodes_array
+    end
+    
+    def client_name_and_hours(entries)
+      clients_array = []
 
-#    def populate_hash(attribute, entries)
-#      
-#      item_hash = {}
-#
-#      entries.each do |log_time|
-##        if attribute == "client"
-##          attribute = client_attribute(log_time)
-##        end
-#        client_attribute(log_time)
-#
-#        if item_hash.include?(attribute)
-#          item_hash[attribute] += log_time_hours_worked
-#        else
-#          item_hash[attribute] = log_time_hours_worked
-#        end
-#      end
-#     
-#      item_hash
-#    end
+      entries.each do |entry|
+        clients_array << [entry.client, entry.hours_worked]
+      end
+      clients_array
+    end
+
+    def populate_hash(array_of_attribute_and_hours_worked)
+      item_hash = {}
+      array_of_attribute_and_hours_worked.each do |(attribute, hours)|
+        if item_hash.include?(attribute)
+          item_hash[attribute] += hours
+        else
+          item_hash[attribute] = hours
+        end
+      end
+      item_hash
+    end
 
     def entries_empty?(entries)
       entries.empty? ? nil : entries

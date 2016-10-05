@@ -28,7 +28,7 @@ module TimeLogger
       not user_input !~ /^\d*$/
     end
 
-    def hours_worked_per_day_valid?(past_hours_worked, hours_entered)
+    def hours_in_a_day_exceeded?(past_hours_worked, hours_entered)
       total_hours = past_hours_worked + hours_entered
 
       total_hours > HOURS_IN_A_DAY ? false : true

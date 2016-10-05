@@ -15,12 +15,14 @@ module TimeLogger
       before(:each) do
         allow(@mock_console_ui).to receive(:enter_new_username_message)
         allow(@mock_console_ui).to receive(:create_admin_message)
+
         allow(@mock_console_ui).to receive(:display_menu_options)
+
         allow(@mock_employee_repo).to receive(:create)
         allow(@mock_employee_repo).to receive(:save)
       end
 
-      context "all fields entered are valid" do
+      context "the user enters a username that does not exist and a valid option for an admin" do
         it "prompts the user to create a new employee and saves it" do
           expect(@mock_console_ui).to receive(:enter_new_username_message)
           expect(@mock_console_ui).to receive(:get_user_input).and_return("pmccartney", "1")
@@ -50,7 +52,6 @@ module TimeLogger
           expect(@mock_employee_repo).to receive(:find_by_username).and_return(Employee.new(1, "rstarr", false), nil)
           
           expect(@mock_console_ui).to receive(:username_exists_message).exactly(1).times
-
 
           @employee_creation.execute
         end

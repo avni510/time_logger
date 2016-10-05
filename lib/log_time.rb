@@ -1,4 +1,3 @@
-require 'pry'
 module TimeLogger
   class LogTime
     def initialize(console_ui, validation)
@@ -14,22 +13,13 @@ module TimeLogger
 
       log_timecode(all_client_objects)
 
-      if @timecode_entered == "Billable"
-        select_clients(all_client_objects)
-      end
+      select_clients(all_client_objects) if @timecode_entered == "Billable"
 
-      log_times_hash = generate_log_times_hash(
-          employee_id, 
-          @date_entered, 
-          @hours_entered, 
-          @timecode_entered, 
-          @client
-        )
-      log_time_repo.create(log_times_hash)
-      log_time_repo.save
+      save_log_time(employee_id)
     end
 
     private
+
 
     def log_time_repo
       Repository.for(:log_time)
@@ -54,12 +44,21 @@ module TimeLogger
       clients_hash = generate_clients_hash(all_clients)
       @console_ui.display_menu_options(clients_hash)
       user_client_selection = @console_ui.get_user_input
+      user_client_selection = valid_client_loop(clients_hash, user_client_selection)
+      client_selection_num_to_name(clients_hash, user_client_selection)
+    end
+
+    def client_selection_num_to_name(clients_hash, user_client_selection)
+      client = clients_hash[user_client_selection.to_i]
+      @client = client[3..-1]
+    end
+
+    def valid_client_loop(clients_hash, user_client_selection)
       until clients_hash.has_key?(user_client_selection.to_i)
         @console_ui.invalid_client_selection_message
         user_client_selection = @console_ui.get_user_input
       end
-      client = clients_hash[user_client_selection.to_i]
-      @client = client[3..-1]
+      user_client_selection
     end
 
     def log_date
@@ -114,7 +113,7 @@ module TimeLogger
     def exceeds_hours_in_a_day(employee_id)
       hours_worked = log_time_repo.find_total_hours_worked_for_date(employee_id, @date_entered)
       integer_hours = @hours_entered.to_i
-      unless @validation.hours_worked_per_day_valid?(hours_worked, integer_hours)
+      unless @validation.hours_in_a_day_exceeded?(hours_worked, integer_hours)
         @console_ui.valid_hours_message
         execute(employee_id)
       end
@@ -150,6 +149,18 @@ module TimeLogger
         "2": "2. Non-Billable",
         "3": "3. PTO"
       }
+    end
+
+    def save_log_time(employee_id)
+      log_times_hash = generate_log_times_hash(
+          employee_id, 
+          @date_entered, 
+          @hours_entered, 
+          @timecode_entered, 
+          @client
+        )
+      log_time_repo.create(log_times_hash)
+      log_time_repo.save
     end
   end
 end

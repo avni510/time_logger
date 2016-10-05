@@ -8,11 +8,11 @@ module TimeLogger
         @mock_console_ui = double
         @client_creation = ClientCreation.new(@mock_console_ui)
 
+        @mock_client_repo = double
+        allow(Repository).to receive(:for).and_return(@mock_client_repo)
+
         allow(@mock_console_ui).to receive(:new_client_name_message)
         allow(@mock_console_ui).to receive(:client_exists_message)
-        @mock_client_repo = double
-
-        allow(Repository).to receive(:for).and_return(@mock_client_repo)
 
         allow(@mock_client_repo).to receive(:create)
         allow(@mock_client_repo).to receive(:save)

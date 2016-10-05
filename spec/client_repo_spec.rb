@@ -19,7 +19,7 @@ module TimeLogger
 
         result = client_repo.clients
 
-        expect(result[0]).to be_a_kind_of(Client)
+        expect(result[0].name).to eq("Google")
       end
     end
 

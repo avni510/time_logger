@@ -78,7 +78,7 @@ module TimeLogger
       context "the employee is an admin" do
         let(:menu_selection) { MenuSelection.new(@admin_employee, mock_console_ui) }
         
-        it "displays a menu with more options" do
+        it "displays a menu with 3 additional options" do
 
           expect(mock_console_ui).to receive(:menu_selection_message)
 

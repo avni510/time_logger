@@ -31,7 +31,7 @@ module TimeLogger
         end
       end
 
-      context "the user does exists in the data" do
+      context "the user does not exist in the data" do
         it "prompts the user for their username" do
           allow(@mock_console_ui).to receive(:username_display_message)
 

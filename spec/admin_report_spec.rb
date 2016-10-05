@@ -59,7 +59,7 @@ module TimeLogger
         it "returns a message that there are no logged timecodes for the current month" do
           expect(@mock_log_time_repo).to receive(:company_timecode_hours).and_return(nil)
 
-          expect(@mock_console_ui).to receive(:no_company_timecode_hours)
+          expect(@mock_console_ui).to receive(:no_company_log_entries_message)
 
           @admin_report.execute
         end

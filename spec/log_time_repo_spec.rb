@@ -23,23 +23,11 @@ module TimeLogger
 
     describe ".create" do
       context "the user has entered their log time" do
-        it "creates an instance of the object LogTimeEntry and saves that to entries" do
+        it "creates an instance of the object LogTimeEntry and add it to entries" do
           create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
-          expect(log_time_repo.entries[0].client).to eq(nil)
-          expect(log_time_repo.entries[0]).to be_a_kind_of(LogTimeEntry)
-        end
-      end
-
-      context "an entry is already been entered" do
-        it "adds the user's log time to entries" do
-          create_log_entry(1,"2016-09-07", "8","Non-Billable")
-
-          create_log_entry(1,"2016-09-08", "8","PTO")
-
-          log_time_repo.entries.each do |entry|
-            expect(entry).to be_a_kind_of(LogTimeEntry)
-          end
+          expect(log_time_repo.entries[0].id).to eq(1) 
+          expect(log_time_repo.entries[0].hours_worked).to eq(8)
         end
       end
     end
@@ -58,6 +46,28 @@ module TimeLogger
         result = log_time_repo.find_by(1)
 
         expect(result).to eq(nil)
+      end
+    end
+
+    describe ".save" do
+      it "passes the entries to a method that will handle storing the data in the proper format" do
+        expect(mock_save_json_data).to receive(:log_time).with(log_time_repo.entries)
+
+        log_time_repo.save
+       end
+    end
+
+    describe ".all" do
+      it "returns a list of objects of all the log time entries that exist" do
+        create_log_entry(1,"2016-09-04", "8","Non-Billable")
+
+        create_log_entry(1,"2016-09-02", "8","Non-Billable")
+
+        create_log_entry(1,"2016-09-07", "8","Non-Billable")
+
+        result = log_time_repo.all
+
+        expect(result.count).to eq(3)
       end
     end
 
@@ -140,28 +150,6 @@ module TimeLogger
       end
     end
 
-    describe ".save" do
-      it "passes the entries to a method that will handle storing the data in the proper format" do
-        expect(mock_save_json_data).to receive(:log_time).with(log_time_repo.entries)
-
-        log_time_repo.save
-       end
-    end
-
-    describe ".all" do
-      it "returns a list of objects of all the log time entries that exist" do
-        create_log_entry(1,"2016-09-04", "8","Non-Billable")
-
-        create_log_entry(1,"2016-09-02", "8","Non-Billable")
-
-        create_log_entry(1,"2016-09-07", "8","Non-Billable")
-
-        result = log_time_repo.all
-
-        expect(result.count).to eq(3)
-      end
-    end
-
     describe ".sorted_current_month_entries_by_employee_id" do
       it "returns the log entries for the current month sorted by date and filtered by employee id" do
         create_log_entry(1,"2016-09-04", "8","Non-Billable")
@@ -217,7 +205,8 @@ module TimeLogger
       end
 
       context "not all entries have a client" do
-        it "returns a hash of the client name and hours worked for each client" do
+        it "filters out the entries without a client and returns a hash hours worked for each client" do
+
         create_log_entry(1,"2016-09-05", "8","Billable", "Google")
 
         create_log_entry(1,"2016-09-07", "8","Billable", "Google")
@@ -277,7 +266,6 @@ module TimeLogger
           }
 
         expect(result).to eq(timecode_hash)
-
       end
     end
 
@@ -396,7 +384,7 @@ module TimeLogger
       end
 
       describe ".filter_for_current_month" do
-        it "returns an array of entries for the current month" do
+        it "returns an array of log entry objects for the current month" do
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
           create_log_entry(1,"2016-08-05", "8","Billable", "Google")

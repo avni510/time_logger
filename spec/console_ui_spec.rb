@@ -232,6 +232,7 @@ module TimeLogger
     
     describe ".display_menu_options" do
       it "displays the menu options" do
+        expect(mock_io_wrapper).to receive(:puts_string).with("Please select an option from below")
         employee_menu_options = 
           {
             "1" => "1. Do you want to log your time?", 
@@ -264,7 +265,6 @@ module TimeLogger
 
     describe ".timecode_log_time_message" do
       it "displays a message to the user to enter their timecode" do
-        expect(mock_io_wrapper).to receive(:puts_string).with("Please select an option from below")
         expect(console_ui).to receive(:puts_space).exactly(2).times
 
         timecode_hash = {

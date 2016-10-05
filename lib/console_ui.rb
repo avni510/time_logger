@@ -106,10 +106,11 @@ module TimeLogger
     end
 
     def display_menu_options(options_hash)
+      @io_wrapper.puts_string("Please select an option from below")
+      puts_space
       options_hash.each do |selection_num, option|
         @io_wrapper.puts_string(option)
       end
-      puts_space
     end
 
     def date_log_time_message
@@ -128,7 +129,6 @@ module TimeLogger
     
     def timecode_log_time_message(timecode_hash)
       puts_space
-      @io_wrapper.puts_string("Please select an option from below")
       puts_space
       display_menu_options(timecode_hash)
       get_user_input
@@ -170,8 +170,6 @@ module TimeLogger
 
       display_client_hash(client_hash)
     end
-
-
 
     private 
 

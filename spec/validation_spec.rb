@@ -50,7 +50,8 @@ module TimeLogger
         end
       end
 
-      it "returns true if the date entered is valid date and false otherwise" do
+      context "numbers are entered in the correct format"
+      it "returns true if the date entered is an actual date and false otherwise" do
         [ 
           ["02-30-2016", false], 
           ["05-32-2016", false], 
@@ -66,7 +67,7 @@ module TimeLogger
 
     describe ".previous_date?" do
       context "the date entered is in a valid format" do
-        it "returns true if the date entered is prior to the current day and false otherwise" do
+        it "returns true if the date entered is prior to the current date  and false otherwise" do
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
           [ 
             ["10-05-2016", false], 
@@ -95,16 +96,16 @@ module TimeLogger
       end
     end
 
-    describe ".hours_worked_per_day_valid?" do
+    describe ".hours_in_a_day_exceeded?" do
       context "the user enters a digit" do
-        it "returns true if total hours worked in a day is less than hours in a day and false otherwise" do
+        it "returns true if total hours worked in a day is less than 24 and false otherwise" do
           [
             [ 24, 2, false ],
             [ 10, 10, true ],
             [ 0, 10, true ]
           ].each do |past_hours_worked, hours_entered, bool|
 
-            result = validation.hours_worked_per_day_valid?(
+            result = validation.hours_in_a_day_exceeded?(
                 past_hours_worked,
                 hours_entered
               )

@@ -46,14 +46,20 @@ module TimeLogger
           LogTimeEntry.new(params_entry_2),
           LogTimeEntry.new(params_entry_3),
         ]
-
-      expect(@mock_log_time_repo).to receive(:sorted_current_month_entries_by_employee_id).and_return(log_times)
     end
     
     describe ".execute" do
       context "the employee_id 1 exists with log times and the current month is September" do
         it "returns a report of the current month of sorted log times, total client hours, and total timecode" do
-          set_up_log_time_entries
+
+          employee_id = 1
+
+          log_times = set_up_log_time_entries
+
+          expect(@mock_log_time_repo).
+            to receive(:sorted_current_month_entries_by_employee_id).
+            with(employee_id).
+            and_return(log_times)
 
           sorted_log_times_array = 
             [
@@ -77,21 +83,22 @@ module TimeLogger
 
           expect(@mock_console_ui).to receive(:format_employee_report).with(sorted_log_times_array, clients_hash, timecode_hash)
 
-          employee_id = 1
           result = @employee_report.execute(employee_id)
         end
       end
 
-      context "the employee id 2 exists with no log times" do
+      context "the employee exists with no log times" do
         it "displays a message to the user that there are no log times" do
 
-          expect(@mock_log_time_repo).to receive(:sorted_current_month_entries_by_employee_id).and_return(nil)
+          employee_id = 2
 
-          allow(@mock_log_time_repo).to receive(:find_by_employee_id).and_return(nil)
+          expect(@mock_log_time_repo).
+            to receive(:sorted_current_month_entries_by_employee_id).
+            with(employee_id).
+            and_return(nil)
 
           expect(@mock_console_ui).to receive(:no_log_times_message)
 
-          employee_id = 2
           result = @employee_report.execute(employee_id)
         end
       end
