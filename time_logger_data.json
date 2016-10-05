@@ -2,24 +2,9 @@
   "workers": [
     {
       "id": 1,
-      "username": "rstarr",
+      "username": "defaultadmin",
       "admin": true,
-      "log_time": [
-        {
-          "id": 1,
-          "date": "2016-09-07",
-          "hours_worked": 8,
-          "timecode": "Non-Billable",
-          "client": null
-        },
-        {
-          "id": 2,
-          "date": "2016-09-08",
-          "hours_worked": 8,
-          "timecode": "PTO",
-          "client": null
-        }
-      ]
+      "log_time": []
     }
   ],
   "clients": [

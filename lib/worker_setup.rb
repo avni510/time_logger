@@ -11,7 +11,7 @@ module TimeLogger
       username = @console_ui.get_user_input
       
       @worker = return_worker(username)
-      
+     
       valid_username_loop(employee_repo)
 
       menu_selection = MenuSelection.new(@worker, @console_ui)

@@ -61,7 +61,6 @@ module TimeLogger
     def instaniate_client_creation
       ClientCreation.new(@console_ui)
     end
-
     
     def instaniate_report
       EmployeeReport.new(@console_ui)

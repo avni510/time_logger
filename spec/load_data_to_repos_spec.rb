@@ -6,7 +6,7 @@ module TimeLogger
     let(:mock_save_json_data) { double }
     let(:load_data_to_repos) { LoadDataToRepos.new(mock_file_wrapper, mock_save_json_data) }
 
-    def setup_data
+    def setup_with_data
       data_hash = 
         {
         "workers": [{
@@ -45,7 +45,7 @@ module TimeLogger
 
     describe ".run" do
       it "loads data from a file" do
-        data_hash = setup_data
+        data_hash = setup_with_data
 
         expect(mock_file_wrapper).to receive(:read_data).and_return(data_hash)
         
