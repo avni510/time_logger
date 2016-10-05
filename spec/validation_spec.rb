@@ -67,6 +67,7 @@ module TimeLogger
     describe ".previous_date?" do
       context "the date entered is in a valid format" do
         it "returns true if the date entered is prior to the current day and false otherwise" do
+          allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
           [ 
             ["10-05-2016", false], 
             ["02-02-2020", false],

@@ -7,7 +7,24 @@ module TimeLogger
 
     let(:file_wrapper) { FileWrapper.new(output_file_name) }
 
+    def read_original_file_data
+      data_hash = file_wrapper.read_data
+      @original_data_hash = JSON.parse(JSON.generate(data_hash))
+    end
+
+    def setup_initial_test_data
+      data_hash =  { "workers": [], "clients": [] }
+      file_wrapper.write_data(data_hash)
+    end
+
+    def rewrite_original_file_data
+      file_wrapper.write_data(@original_data_hash)
+    end
+
     it "reads and writes data to a json file" do
+      read_original_file_data
+
+      setup_initial_test_data
 
       data_hash = file_wrapper.read_data
       original_data_hash = JSON.parse(JSON.generate(data_hash))
@@ -36,6 +53,8 @@ module TimeLogger
       )
 
       file_wrapper.write_data(original_data_hash)
+
+      rewrite_original_file_data
     end
   end
 end

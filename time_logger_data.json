@@ -20,57 +20,9 @@
           "client": null
         }
       ]
-    },
-    {
-      "id": 2,
-      "username": "avni",
-      "admin": true,
-      "log_time": [
-        {
-          "id": 4,
-          "date": "2016-10-01",
-          "hours_worked": 5,
-          "timecode": "Non-Billable",
-          "client": null
-        },
-        {
-          "id": 5,
-          "date": "2016-10-02",
-          "hours_worked": 10,
-          "timecode": "Billable",
-          "client": "Google"
-        },
-        {
-          "id": 6,
-          "date": "2016-10-02",
-          "hours_worked": 10,
-          "timecode": "Billable",
-          "client": "Google"
-        },
-        {
-          "id": 7,
-          "date": "0020-10-02",
-          "hours_worked": 12,
-          "timecode": "Billable",
-          "client": "Google"
-        },
-        {
-          "id": 8,
-          "date": "2016-10-01",
-          "hours_worked": 4,
-          "timecode": "Billable",
-          "client": "Google"
-        },
-        {
-          "id": 9,
-          "date": "2016-10-02",
-          "hours_worked": 3,
-          "timecode": "Billable",
-          "client": "Google"
-        }
-      ]
     }
   ],
   "clients": [
+
   ]
 }

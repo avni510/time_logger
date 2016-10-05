@@ -7,7 +7,6 @@ module TimeLogger
       @entries = []
     end
 
-
     def create(params)
       log_entry_id = @entries.count + 1
 

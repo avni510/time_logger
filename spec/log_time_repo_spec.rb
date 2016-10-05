@@ -5,7 +5,7 @@ module TimeLogger
     let(:mock_save_json_data) { double }
     let(:log_time_repo) { LogTimeRepo.new(mock_save_json_data) }
 
-    def create_log_entry(employee_id, date, hours_worked, timecode, client=nil)
+    def create_log_entry(employee_id, date, hours_worked, timecode,client=nil)
       params = 
         { 
           "employee_id": employee_id,
@@ -24,7 +24,7 @@ module TimeLogger
     describe ".create" do
       context "the user has entered their log time" do
         it "creates an instance of the object LogTimeEntry and saves that to entries" do
-          create_log_entry(1,"09-07-2016", "8","Non-Billable")
+          create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
           expect(log_time_repo.entries[0].client).to eq(nil)
           expect(log_time_repo.entries[0]).to be_a_kind_of(LogTimeEntry)
@@ -33,9 +33,9 @@ module TimeLogger
 
       context "an entry is already been entered" do
         it "adds the user's log time to entries" do
-          create_log_entry(1,"09-07-2016", "8","Non-Billable")
+          create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
-          create_log_entry(1,"09-08-2016", "8","PTO")
+          create_log_entry(1,"2016-09-08", "8","PTO")
 
           log_time_repo.entries.each do |entry|
             expect(entry).to be_a_kind_of(LogTimeEntry)
@@ -46,7 +46,7 @@ module TimeLogger
 
     describe ".find_by" do
       it "takes in a log entry id and returns the object that corresponds to that id" do
-        create_log_entry(1, "09-05-2016", "10", "PTO")
+        create_log_entry(1, "2016-09-05", "10", "PTO")
 
         result = log_time_repo.find_by(1)
 
@@ -65,11 +65,11 @@ module TimeLogger
         context "the employee has logged times" 
           it "retrieves all the log times for a given employee" do
 
-            create_log_entry(1,"09-07-2016", "8","Non-Billable")
+            create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
-            create_log_entry(1,"09-08-2016", "8","PTO")
+            create_log_entry(1,"2016-09-08", "8","PTO")
 
-            create_log_entry(2,"09-07-2016", "8","Non-Billable")
+            create_log_entry(2,"2016-09-07", "8","Non-Billable")
 
             result_array = log_time_repo.find_by_employee_id(1)
 
@@ -89,11 +89,11 @@ module TimeLogger
 
     describe ".find_total_hours_worked_for_date" do
       it "returns the total hours for a given date" do
-        create_log_entry(1,"09-07-2016", "8","Non-Billable")
+        create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
-        create_log_entry(1,"09-07-2016", "8","Non-Billable")
+        create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
-        create_log_entry(1,"09-08-2016", "7","Non-Billable")
+        create_log_entry(1,"2016-09-08", "7","Non-Billable")
 
         result = log_time_repo.find_total_hours_worked_for_date(1, "09-07-2016")
         expect(result).to eq(16)
@@ -101,7 +101,7 @@ module TimeLogger
 
       context "there are no entries for a given date" do
         it "returns 0" do
-          create_log_entry(1,"09-08-2016", "7","Non-Billable")
+          create_log_entry(1,"2016-09-08", "7","Non-Billable")
 
           result = log_time_repo.find_total_hours_worked_for_date(1, "09-07-2016")
 
@@ -113,13 +113,13 @@ module TimeLogger
     describe ".find_by_employee_id_and_date" do
       context "an employee has logged times for the date entered" do
         it "retrieves the hours worked for a given employee and given date" do
-          create_log_entry(1,"09-07-2016", "8","Non-Billable")
+          create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
-          create_log_entry(1,"09-07-2016", "8","Non-Billable")
+          create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
-          create_log_entry(1,"09-07-2016", "8","Non-Billable")
+          create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
-          create_log_entry(1,"09-08-2016", "7","Non-Billable")
+          create_log_entry(1,"2016-09-08", "7","Non-Billable")
 
 
           result_array = log_time_repo.find_by_employee_id_and_date(1, "09-07-2016")
@@ -150,11 +150,11 @@ module TimeLogger
 
     describe ".all" do
       it "returns a list of objects of all the log time entries that exist" do
-        create_log_entry(1,"09-04-2016", "8","Non-Billable")
+        create_log_entry(1,"2016-09-04", "8","Non-Billable")
 
-        create_log_entry(1,"09-02-2016", "8","Non-Billable")
+        create_log_entry(1,"2016-09-02", "8","Non-Billable")
 
-        create_log_entry(1,"09-07-2016", "8","Non-Billable")
+        create_log_entry(1,"2016-09-07", "8","Non-Billable")
 
         result = log_time_repo.all
 
@@ -164,15 +164,15 @@ module TimeLogger
 
     describe ".sorted_current_month_entries_by_employee_id" do
       it "returns the log entries for the current month sorted by date and filtered by employee id" do
-        create_log_entry(1,"09-04-2016", "8","Non-Billable")
+        create_log_entry(1,"2016-09-04", "8","Non-Billable")
 
-        create_log_entry(1,"09-02-2016", "8","Non-Billable")
+        create_log_entry(1,"2016-09-02", "8","Non-Billable")
 
-        create_log_entry(1,"08-07-2016", "8","Non-Billable")
+        create_log_entry(1,"2016-08-07", "8","Non-Billable")
 
-        create_log_entry(1,"12-07-2015", "8","Non-Billable")
+        create_log_entry(1,"2015-12-07", "8","Non-Billable")
 
-        create_log_entry(2,"9-07-2016", "8","Non-Billable")
+        create_log_entry(2,"2016-9-07", "8","Non-Billable")
 
         allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
         result = log_time_repo.sorted_current_month_entries_by_employee_id(1)
@@ -182,7 +182,7 @@ module TimeLogger
       end
 
       it "returns nil if there are no entries for an employee" do
-        create_log_entry(2,"9-07-2016", "8","Non-Billable")
+        create_log_entry(2,"2016-9-07", "8","Non-Billable")
 
         result = log_time_repo.sorted_current_month_entries_by_employee_id(1)
 
@@ -194,13 +194,13 @@ module TimeLogger
     describe ".client_hours_for_current_month" do
       context "all entries have a client" do
         it "returns a hash of the client name and hours worked for each client" do
-          create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+          create_log_entry(1,"2016-09-05", "8","Billable", "Google")
 
-          create_log_entry(1,"09-07-2016", "8","Billable", "Google")
+          create_log_entry(1,"2016-09-07", "8","Billable", "Google")
 
-          create_log_entry(1,"09-07-2016", "6","Billable", "Microsoft")
+          create_log_entry(1,"2016-09-07", "6","Billable", "Microsoft")
 
-          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+          create_log_entry(2,"2016-09-07", "6","Billable", "Microsoft")
 
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
@@ -218,13 +218,13 @@ module TimeLogger
 
       context "not all entries have a client" do
         it "returns a hash of the client name and hours worked for each client" do
-        create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+        create_log_entry(1,"2016-09-05", "8","Billable", "Google")
 
-        create_log_entry(1,"09-07-2016", "8","Billable", "Google")
+        create_log_entry(1,"2016-09-07", "8","Billable", "Google")
 
-        create_log_entry(1,"09-07-2016", "6","Billable", "Microsoft")
+        create_log_entry(1,"2016-09-07", "6","Billable", "Microsoft")
 
-        create_log_entry(1,"09-07-2016", "6", "PTO")
+        create_log_entry(1,"2016-09-07", "6", "PTO")
 
         allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
@@ -243,9 +243,9 @@ module TimeLogger
       context "no entries have a client" do
         it "returns an empty hash" do
 
-          create_log_entry(1,"09-05-2016", "8","PTO")
+          create_log_entry(1,"2016-09-05", "8","PTO")
 
-          create_log_entry(1,"09-07-2016", "6", "PTO")
+          create_log_entry(1,"2016-09-07", "6", "PTO")
 
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
@@ -260,11 +260,11 @@ module TimeLogger
 
     describe ".timecode_hours_for_current_month" do
       it "returns a hash of timecode and hours worked for each timecode" do
-        create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+        create_log_entry(1,"2016-09-05", "8","Billable", "Google")
 
-        create_log_entry(1,"09-07-2016", "8","PTO")
+        create_log_entry(1,"2016-09-07", "8","PTO")
 
-        create_log_entry(1,"09-07-2016", "6", "PTO")
+        create_log_entry(1,"2016-09-07", "6", "PTO")
 
         allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
@@ -286,13 +286,13 @@ module TimeLogger
         it "returns a hash of the timecode and total hours per timecode" do
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
-          create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+          create_log_entry(1,"2016-09-05", "8","Billable", "Google")
 
-          create_log_entry(2,"09-07-2016", "8","Non-Billable")
+          create_log_entry(2,"2016-09-07", "8","Non-Billable")
 
-          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+          create_log_entry(2,"2016-09-07", "6","Billable", "Microsoft")
 
-          create_log_entry(3,"09-07-2016", "6", "PTO")
+          create_log_entry(3,"2016-09-07", "6", "PTO")
 
           result = log_time_repo.company_timecode_hours
 
@@ -311,13 +311,13 @@ module TimeLogger
         it "returns a hash of timecodes for the current month and year" do
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
-          create_log_entry(1,"08-05-2016", "8","Billable", "Google")
+          create_log_entry(1,"2016-08-05", "8","Billable", "Google")
 
-          create_log_entry(2,"09-07-2015", "8","Non-Billable")
+          create_log_entry(2,"2015-09-07", "8","Non-Billable")
 
-          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+          create_log_entry(2,"2016-09-07", "6","Billable", "Microsoft")
 
-          create_log_entry(3,"09-07-2016", "6", "PTO")
+          create_log_entry(3,"2016-09-07", "6", "PTO")
 
           result = log_time_repo.company_timecode_hours
 
@@ -344,13 +344,13 @@ module TimeLogger
         it "returns a hash of the client and total hours per client" do
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
-          create_log_entry(1,"09-05-2016", "8","Billable", "Google")
+          create_log_entry(1,"2016-09-05", "8","Billable", "Google")
 
-          create_log_entry(2,"09-07-2016", "8","Non-Billable")
+          create_log_entry(2,"2016-09-07", "8","Non-Billable")
 
-          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+          create_log_entry(2,"2016-09-07", "6","Billable", "Microsoft")
 
-          create_log_entry(3,"09-07-2016", "6", "PTO")
+          create_log_entry(3,"2016-09-07", "6", "PTO")
 
           result = log_time_repo.company_client_hours
 
@@ -368,13 +368,13 @@ module TimeLogger
         it "returns a hash of clients for the current month and year" do
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
-          create_log_entry(1,"08-05-2016", "8","Billable", "Google")
+          create_log_entry(1,"2016-08-05", "8","Billable", "Google")
 
-          create_log_entry(2,"09-07-2015", "8","Non-Billable")
+          create_log_entry(2,"2015-09-07", "8","Non-Billable")
 
-          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+          create_log_entry(2,"2016-09-07", "6","Billable", "Microsoft")
 
-          create_log_entry(3,"09-07-2016", "6", "PTO")
+          create_log_entry(3,"2016-09-07", "6", "PTO")
 
           result = log_time_repo.company_client_hours
 
@@ -399,13 +399,13 @@ module TimeLogger
         it "returns an array of entries for the current month" do
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
-          create_log_entry(1,"08-05-2016", "8","Billable", "Google")
+          create_log_entry(1,"2016-08-05", "8","Billable", "Google")
 
-          create_log_entry(2,"09-07-2015", "8","Non-Billable")
+          create_log_entry(2,"2015-09-07", "8","Non-Billable")
 
-          create_log_entry(2,"09-07-2016", "6","Billable", "Microsoft")
+          create_log_entry(2,"2016-09-07", "6","Billable", "Microsoft")
 
-          create_log_entry(3,"09-07-2016", "6", "PTO")
+          create_log_entry(3,"2016-09-07", "6", "PTO")
 
           result = log_time_repo.filter_for_current_month(log_time_repo.entries)
 

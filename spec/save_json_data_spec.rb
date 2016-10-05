@@ -1,4 +1,3 @@
-require 'pry'
 module TimeLogger
   require "spec_helper"
 
@@ -12,6 +11,11 @@ module TimeLogger
       @original_data_hash = JSON.parse(JSON.generate(data_hash))
     end
 
+    def setup_initial_test_data
+      data_hash =  { "workers": [], "clients": [] }
+      file_wrapper.write_data(data_hash)
+    end
+
     def rewrite_original_file_data
       file_wrapper.write_data(@original_data_hash)
     end
@@ -20,6 +24,8 @@ module TimeLogger
       context "no users are in the JSON file" do
         it "adds all the employees to a JSON file" do
           read_original_file_data
+
+          setup_initial_test_data
 
           employee_entry_1 = Employee.new(1, "gharrison", false)
           employee_entry_2 = Employee.new(2, "jlennon", false)
@@ -57,6 +63,8 @@ module TimeLogger
         it "adds all the employees to a JSON file" do
           read_original_file_data
           
+          setup_initial_test_data
+
           data_hash = 
 
             {
@@ -145,6 +153,7 @@ module TimeLogger
         it "adds all entries of log time to the JSON file" do
           read_original_file_data
 
+          setup_initial_test_data
           
           employee_entry_1 = Employee.new(1, "rstarr", false)
           employees = [ employee_entry_1 ]
@@ -213,6 +222,8 @@ module TimeLogger
       context "log data exists in the JSON" do
         it "adds the newly entered log time into the JSON" do
           read_original_file_data
+
+          setup_initial_test_data
 
           employee_entry_1 = Employee.new(1, "rstarr", false)
           employees = [ employee_entry_1 ]
@@ -327,13 +338,7 @@ module TimeLogger
       it "adds the client data to a JSON file" do
         read_original_file_data
 
-        data_hash = 
-          {
-            "workers": [],
-            "clients": []
-          }
-
-        file_wrapper.write_data(data_hash)
+        setup_initial_test_data
 
         client_entry_1 = Client.new(1, "Google")
         client_entry_2 = Client.new(2, "Microsoft")
