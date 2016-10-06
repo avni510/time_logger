@@ -216,8 +216,6 @@ module TimeLogger
               "2": "2. PTO"
             }
               
-          expect(@mock_console_ui).to receive(:no_clients_message)
-
           expect(@mock_console_ui).to receive(:timecode_log_time_message).with(timecode_hash)
 
           @log_time.execute(@employee_id)
