@@ -10,7 +10,17 @@ module TimeLogger
     let(:log_timecode) { LogTimecode.new(mock_console_ui, validation) }
     let(:log_client) { LogClient.new(mock_console_ui, validation) }
 
-    let(:log_time) { LogTime.new(log_date, log_hours_worked, log_timecode, log_client) } 
+    let(:params) {
+      { :log_date => log_date,
+        :log_hours_worked => log_hours_worked,
+        :log_timecode => log_timecode,
+        :log_client => log_client,
+        :employee_id => 1
+      }}
+
+    let(:log_time) { LogTime.new(params) }
+
+
 
     before(:each) do
       @employee_id = 1
@@ -73,7 +83,7 @@ module TimeLogger
           with(@clients).
           and_return("Non-Billable")
 
-        log_time.execute(@employee_id)
+        log_time.execute
       end
 
       it "creates a new entry in the repository and saves it" do
@@ -90,7 +100,7 @@ module TimeLogger
 
         expect(@mock_log_time_repo).to receive(:save)
 
-        log_time.execute(@employee_id)
+        log_time.execute
       end
     end
 
@@ -117,7 +127,7 @@ module TimeLogger
 
         expect(@mock_log_time_repo).to receive(:save)
 
-        log_time.execute(@employee_id)
+        log_time.execute
       end
     end
 
@@ -133,7 +143,7 @@ module TimeLogger
         expect(log_hours_worked).to receive(:run).
           and_return(nil, "5")
 
-        log_time.execute(@employee_id)
+        log_time.execute
       end
     end
   end

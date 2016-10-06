@@ -1,16 +1,17 @@
 module TimeLogger
   class EmployeeReport
     
-    def initialize(console_ui)
+    def initialize(console_ui, employee_id)
       @console_ui = console_ui
+      @employee_id = employee_id
     end
 
-    def execute(employee_id)
-      sorted_log_time_objects = retrieve_log_times(employee_id)
+    def execute
+      sorted_log_time_objects = retrieve_log_times
 
       return @console_ui.no_log_times_message unless sorted_log_time_objects
 
-      retrieve_times_for_report(sorted_log_time_objects, employee_id)
+      retrieve_times_for_report(sorted_log_time_objects, @employee_id)
 
       @console_ui.format_employee_report(
         @sorted_log_times_array, 
@@ -25,8 +26,8 @@ module TimeLogger
       Repository.for(:log_time)
     end
 
-    def retrieve_log_times(employee_id) 
-      log_time_repo.sorted_current_month_entries_by_employee_id(employee_id)
+    def retrieve_log_times
+      log_time_repo.sorted_current_month_entries_by_employee_id(@employee_id)
     end
 
     def retrieve_times_for_report(sorted_log_time_objects, employee_id)
