@@ -31,7 +31,7 @@ Usage
 The application is used for employees to log in their time worked 
 
 Default Admin
-______
+-----
 The default admin username is 'defaultadmin'
 
 Test Suite
@@ -40,3 +40,12 @@ Executing the test suite
 ```
 $ rspec
 ```
+
+First Version of Time Logger
+-----
+As this is the first version of the Time Logger it has limited functionality
+* Users are only able to enter integers for hours worked (no decimals)
+* The program is case sensitive for employee usernames and client usernames
+(ex: you can enter employee_username and Employee_username and it will create
+2 different users)
+* spaces after your input will cause the input to be invalid

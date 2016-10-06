@@ -215,7 +215,7 @@ module TimeLogger
     describe ".enter_digit_message" do
       context "the user enters a non digit for hours worked" do
         it "displays a message to enter a number" do
-          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a number")
+          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a number greater than 0")
           expect(console_ui).to receive(:puts_space).exactly(2).times
           console_ui.enter_digit_message
         end
@@ -297,15 +297,15 @@ module TimeLogger
 
         expect(mock_io_wrapper).to receive(:puts_string).with("Date" + "            "  + "Hours Worked" +            "            " + "Timecode" + "            " + "Client")
 
-        expect(mock_io_wrapper).to receive(:puts_string).with("09-02-2016" + "            "  + "7" + "            " + "Billable" + "            " + "Microsoft")
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-02-2016" + "            "  + "7" + "                  " + "Billable" + "            " + "Microsoft")
 
-        expect(mock_io_wrapper).to receive(:puts_string).with("09-04-2016" + "            "  + "5" + "            " + "Billable" + "            " + "Microsoft")
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-04-2016" + "            "  + "5" + "                  " + "Billable" + "            " + "Microsoft")
 
-        expect(mock_io_wrapper).to receive(:puts_string).with("09-06-2016" + "            "  + "6" + "            " + "Non-Billable")
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-06-2016" + "            "  + "6" + "                  " + "Non-Billable")
 
-        expect(mock_io_wrapper).to receive(:puts_string).with("09-07-2016" + "            "  + "10" + "            " + "Billable" + "            " + "Google")
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-07-2016" + "            "  + "10" + "                  " + "Billable" + "            " + "Google")
 
-        expect(mock_io_wrapper).to receive(:puts_string).with("09-08-2016" + "            "  + "5" + "            " + "PTO")
+        expect(mock_io_wrapper).to receive(:puts_string).with("09-08-2016" + "            "  + "5" + "                  " + "PTO")
 
 
         total_hours_worked_per_client = { "Google": "10", "Microsoft": "12" }

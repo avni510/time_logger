@@ -87,10 +87,27 @@ module TimeLogger
           ["r", false], 
           ["!", false],
           ["6", true],
+          ["-1", false], 
+          ["0", false],
           ["899999", true],
-          ["helloworld", false]
+          ["helloworld", false],
+          [" ", false],
+          ["", false],
         ].each do |user_input, bool|
           result = validation.digit_entered?(user_input)
+          expect(result).to eq(bool)
+        end
+      end
+    end
+
+    describe ".blank_space_entered?" do
+      it "returns true if there is text entered and false otherwise" do
+        [ 
+          ["", true],
+          ["   ", true],
+          ["Google", false]
+        ].each do |user_input, bool|
+          result = validation.blank_space?(user_input)
           expect(result).to eq(bool)
         end
       end

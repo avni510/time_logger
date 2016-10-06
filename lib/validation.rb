@@ -25,7 +25,11 @@ module TimeLogger
     end
 
     def digit_entered?(user_input)
-      not user_input !~ /^\d*$/
+      user_input.to_i > 0 
+    end
+
+    def blank_space?(user_input)
+      not user_input !~ /^\s*$/ 
     end
 
     def hours_in_a_day_exceeded?(past_hours_worked, hours_entered)

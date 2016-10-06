@@ -1,8 +1,9 @@
 module TimeLogger
   class ClientCreation
 
-    def initialize(console_ui)
+    def initialize(console_ui, validation)
       @console_ui = console_ui
+      @validation = validation
     end
 
     def execute
@@ -24,7 +25,7 @@ module TimeLogger
     end
 
     def blank_client_name_loop(client_name)
-      until client_name !~ /^\s*$/ 
+      while @validation.blank_space?(client_name)
         @console_ui.valid_client_name_message
         client_name = @console_ui.get_user_input
       end

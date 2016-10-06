@@ -6,7 +6,8 @@ module TimeLogger
     describe ".execute" do
       before(:each) do
         @mock_console_ui = double
-        @client_creation = ClientCreation.new(@mock_console_ui)
+        @validation = Validation.new
+        @client_creation = ClientCreation.new(@mock_console_ui, @validation)
 
         @mock_client_repo = double
         allow(Repository).to receive(:for).and_return(@mock_client_repo)
