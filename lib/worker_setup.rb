@@ -1,9 +1,8 @@
 module TimeLogger
   class WorkerSetup
 
-    def initialize(console_ui, repository)
+    def initialize(console_ui)
       @console_ui = console_ui
-      @repository = repository
     end
 
     def run
@@ -12,10 +11,10 @@ module TimeLogger
       username = @console_ui.get_user_input
       
       @worker = return_worker(username)
-      
+     
       valid_username_loop(employee_repo)
 
-      menu_selection = MenuSelection.new(@worker, @console_ui, @repository)
+      menu_selection = MenuSelection.new(@worker, @console_ui)
 
       menu_selection.run
     end
@@ -23,18 +22,18 @@ module TimeLogger
     private
 
     def return_worker(username)
-      employee_repo.find_by(username)
+      employee_repo.find_by_username(username)
     end
 
     def employee_repo
-      @repository.for("employee")
+      Repository.for("employee")
     end
 
     def valid_username_loop(employee_repo)
       until @worker
         @console_ui.username_does_not_exist_message
         username = @console_ui.get_user_input
-        @worker = employee_repo.find_by(username)
+        @worker = employee_repo.find_by_username(username)
       end
     end
   end

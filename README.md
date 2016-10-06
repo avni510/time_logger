@@ -30,6 +30,10 @@ Usage
 -----
 The application is used for employees to log in their time worked 
 
+Default Admin
+______
+The default admin username is 'defaultadmin'
+
 Test Suite
 ----------
 Executing the test suite

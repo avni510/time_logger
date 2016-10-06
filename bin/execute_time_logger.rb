@@ -6,7 +6,7 @@ io_wrapper = TimeLogger::IOWrapper.new
 
 console_ui = TimeLogger::ConsoleUI.new(io_wrapper)
 
-file_path = "/Users/avnikothari/Desktop/8thlight/time_logger/time_logger_data.json"
+file_path = "../time_logger/time_logger_data.json"
 
 file_wrapper = TimeLogger::FileWrapper.new(file_path)
 

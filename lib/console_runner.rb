@@ -9,9 +9,9 @@ module TimeLogger
 
     def run
       load_data = LoadDataToRepos.new(@file_wrapper, @save_json_data)
-      repository = load_data.run
+      load_data.run
 
-      worker_setup = WorkerSetup.new(@console_ui, repository)
+      worker_setup = WorkerSetup.new(@console_ui)
       worker_setup.run
     end
   end

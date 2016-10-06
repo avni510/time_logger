@@ -9,18 +9,64 @@ module TimeLogger
       @io_wrapper.puts_string("")
     end
 
+    def get_user_input
+      @io_wrapper.get_action
+    end
 
     def username_display_message
       general_message_format("Please enter your username")
+    end
+
+    def valid_client_name_message
+      general_message_format("Please enter a valid client name")
+    end
+
+    def valid_username_message
+      general_message_format("Please enter a valid username")
     end
 
     def username_does_not_exist_message
       general_message_format("This username does not exist")
     end
 
-    def get_user_input
-      @io_wrapper.get_action
-      puts_space
+    def enter_new_username_message
+      general_message_format("Please enter the username you would like to create")
+    end
+
+    def create_admin_message
+      general_message_format("Would you like the user to be an admin?")
+    end
+
+    def client_exists_message
+      general_item_exists("client")
+    end
+
+    def username_exists_message
+      general_item_exists("username")
+    end
+
+    def no_company_log_entries_message
+      general_message_format("The company doesn't have any log entries for the current month")
+    end
+
+    def no_company_timecode_hours
+      general_message_format("There are no hours logged for the timecodes")
+    end
+
+    def no_client_hours
+      general_message_format("There are no hours logged clients")
+    end
+
+    def invalid_client_selection_message
+      general_message_format("Please enter a client number from the list")
+    end
+
+    def no_clients_message
+      general_message_format("There are no clients")
+    end
+
+    def new_client_name_message
+      general_message_format("Please enter the new client's name")
     end
 
     def no_log_times_message
@@ -52,6 +98,7 @@ module TimeLogger
     end
 
     def menu_selection_message
+      puts_space
       @io_wrapper.puts_string("Please select an option")
       puts_space
       @io_wrapper.puts_string("Enter the number next to the choice")
@@ -59,10 +106,11 @@ module TimeLogger
     end
 
     def display_menu_options(options_hash)
+      @io_wrapper.puts_string("Please select an option from below")
+      puts_space
       options_hash.each do |selection_num, option|
         @io_wrapper.puts_string(option)
       end
-      puts_space
     end
 
     def date_log_time_message
@@ -73,17 +121,15 @@ module TimeLogger
       general_log_time_message("Hours Worked")
     end
 
-    def general_log_time_message(display_string)
-      @io_wrapper.puts_string(display_string)
-      get_user_input
-    end
-    
     def timecode_log_time_message(timecode_hash)
+      puts_space
+      puts_space
       display_menu_options(timecode_hash)
       get_user_input
     end
 
-    def format_employee_self_report(log_times_sorted, client_hash, timecode_hash)
+    def format_employee_report(log_times_sorted, client_hash, timecode_hash)
+      puts_space
       @io_wrapper.puts_string("This is a report for the current month")
 
       puts_space
@@ -109,6 +155,29 @@ module TimeLogger
       puts_space
     end
 
+    def format_admin_report(timecode_hash, client_hash)
+      @io_wrapper.puts_string("This is a report for the current month")
+      puts_space
+
+      format_company_timecode_hours_worked(timecode_hash)
+      puts_space
+
+      display_client_hash(client_hash)
+    end
+
+    private 
+
+    def general_log_time_message(display_string)
+      puts_space
+      @io_wrapper.puts_string(display_string)
+      get_user_input
+    end
+
+    def display_client_hash(client_hash)
+      client_hash ? format_company_client_hours_worked(client_hash) : no_client_hours
+      puts_space
+    end
+
     def format_client_hours_worked(clients_hash)
       clients_hash.each do |client, hours_worked|
           @io_wrapper.puts_string("Total hours worked for #{client}" + " : " + "#{hours_worked}")
@@ -121,11 +190,26 @@ module TimeLogger
       end
     end
 
-    private 
+    def format_company_timecode_hours_worked(timecode_hash)
+      timecode_hash.each do |timecode, hours_worked| 
+        @io_wrapper.puts_string("Company total #{timecode} hours: #{hours_worked.to_s}")
+      end
+    end
+
+    def format_company_client_hours_worked(client_hash)
+      client_hash.each do |client, hours_worked|
+        @io_wrapper.puts_string("Company total hours for #{client}: #{hours_worked.to_s}")
+      end
+    end
 
     def general_message_format(string)
+      puts_space
       @io_wrapper.puts_string(string)
       puts_space
+    end
+
+    def general_item_exists(item)
+      general_message_format("This #{item} already exists, please enter a different one")
     end
   end
 end

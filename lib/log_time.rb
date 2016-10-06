@@ -5,22 +5,61 @@ module TimeLogger
       @validation = validation
     end
 
-    def execute(employee_id, repository)
-      @repository = repository
-
+    def execute(employee_id)
       log_date 
-      log_hours_worked(employee_id, repository)
-      log_timecode
-      
-      #add ability to select client 
-      log_time_repo.create(employee_id, @date_entered, @hours_entered, @timecode_entered)
-      log_time_repo.save
+
+      log_hours_worked(employee_id)
+
+      all_client_objects = client_repo.all
+
+      log_timecode(all_client_objects)
+
+      select_clients(all_client_objects) if @timecode_entered == "Billable"
+
+      save_log_time(employee_id)
     end
 
     private
 
+
     def log_time_repo
-      log_time_repo = @repository.for(:log_time)
+      Repository.for(:log_time)
+    end
+
+    def client_repo
+      Repository.for(:client)
+    end
+
+    def generate_log_times_hash(employee_id, date, hours_worked, timecode, client)
+      params = 
+        { 
+          "employee_id": employee_id,
+          "date": Date.strptime(date, '%m-%d-%Y').to_s,
+          "hours_worked": hours_worked,
+          "timecode": timecode, 
+          "client": client
+        }
+    end
+
+    def select_clients(all_clients)
+      clients_hash = generate_clients_hash(all_clients)
+      @console_ui.display_menu_options(clients_hash)
+      user_client_selection = @console_ui.get_user_input
+      user_client_selection = valid_client_loop(clients_hash, user_client_selection)
+      client_selection_num_to_name(clients_hash, user_client_selection)
+    end
+
+    def client_selection_num_to_name(clients_hash, user_client_selection)
+      client = clients_hash[user_client_selection.to_i]
+      @client = client[3..-1]
+    end
+
+    def valid_client_loop(clients_hash, user_client_selection)
+      until clients_hash.has_key?(user_client_selection.to_i)
+        @console_ui.invalid_client_selection_message
+        user_client_selection = @console_ui.get_user_input
+      end
+      user_client_selection
     end
 
     def log_date
@@ -29,14 +68,18 @@ module TimeLogger
       future_date_loop
     end
 
-    def log_hours_worked(employee_id, repository)
+    def log_hours_worked(employee_id)
       @hours_entered = @console_ui.hours_log_time_message
       @hours_entered = digit_loop
-      exceeds_hours_in_a_day(employee_id, repository)
+      exceeds_hours_in_a_day(employee_id)
     end
 
-    def log_timecode
-      timecode_options_hash = generate_timecode_hash
+    def log_timecode(all_clients)
+      if all_clients.empty?
+        timecode_options_hash = generate_timecode_hash_without_billable
+      else
+        timecode_options_hash = generate_timecode_hash_with_billable
+      end
       timecode_num_entered = @console_ui.timecode_log_time_message(timecode_options_hash)
       timecode_num_entered = valid_timecode_loop(timecode_options_hash, timecode_num_entered)
       timecode_type = timecode_options_hash[timecode_num_entered.to_sym]
@@ -67,11 +110,12 @@ module TimeLogger
       @hours_entered
     end
 
-    def exceeds_hours_in_a_day(employee_id, repository)
-      log_time_entries = log_time_repo.find_by(employee_id, @date_entered)
-      unless @validation.hours_worked_per_day_valid?(log_time_entries, @hours_entered)
+    def exceeds_hours_in_a_day(employee_id)
+      hours_worked = log_time_repo.find_total_hours_worked_for_date(employee_id, @date_entered)
+      integer_hours = @hours_entered.to_i
+      unless @validation.hours_in_a_day_exceeded?(hours_worked, integer_hours)
         @console_ui.valid_hours_message
-        execute(employee_id, repository)
+        execute(employee_id)
       end
       @hours_entered
     end
@@ -84,12 +128,39 @@ module TimeLogger
       timecode_entered
     end
 
-    def generate_timecode_hash
+    def generate_clients_hash(client_objects)
+      clients_hash = {}
+      client_objects.each do |client|
+        clients_hash[client.id] = "#{client.id}. #{client.name}"
+      end
+      clients_hash
+    end
+
+    def generate_timecode_hash_without_billable
+      { 
+        "1": "1. Non-Billable",
+        "2": "2. PTO"
+      }
+    end
+
+    def generate_timecode_hash_with_billable
       { 
         "1": "1. Billable", 
         "2": "2. Non-Billable",
         "3": "3. PTO"
       }
+    end
+
+    def save_log_time(employee_id)
+      log_times_hash = generate_log_times_hash(
+          employee_id, 
+          @date_entered, 
+          @hours_entered, 
+          @timecode_entered, 
+          @client
+        )
+      log_time_repo.create(log_times_hash)
+      log_time_repo.save
     end
   end
 end

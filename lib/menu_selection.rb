@@ -1,16 +1,15 @@
 module TimeLogger
   class MenuSelection
 
-    def initialize(employee_object, console_ui, repository)
+    def initialize(employee_object, console_ui)
       @employee = employee_object
       @console_ui = console_ui
       @validation = Validation.new
-      @repository = repository
     end
 
     def run
       @console_ui.menu_selection_message
-      @menu_hash = generate_menu_hash
+      set_menu_hash
       begin
         @console_ui.display_menu_options(@menu_hash)
         user_input = @console_ui.get_user_input
@@ -33,22 +32,65 @@ module TimeLogger
       user_input = user_input.to_sym
       if user_input == @menu_hash.key("1. Do you want to log your time?")
         log_time = instaniate_log_time
-        log_time.execute(@employee.id, @repository)
+        log_time.execute(@employee.id)
       elsif user_input == @menu_hash.key("2. Do you want to run a report on yourself?")
         report = instaniate_report
-        report.execute(@employee.id, @repository)
+        report.execute(@employee.id)
+      elsif user_input == @menu_hash.key("4. Do you want to create a client?")
+        client_creation = instaniate_client_creation
+        client_creation.execute
+      elsif user_input == @menu_hash.key("5. Do you want to create an employee?")
+        employee_creation = instaniate_employee_creation
+        employee_creation.execute
+      elsif user_input == @menu_hash.key("6. Do you want to run a company report?")
+        admin_report = instaniate_admin_report
+        admin_report.execute
       end
     end
 
+    private
+
+    def instaniate_admin_report
+      AdminReport.new(@console_ui)
+    end
+
+    def instaniate_employee_creation
+      EmployeeCreation.new(@console_ui, @validation)
+    end
+
+    def instaniate_client_creation
+      ClientCreation.new(@console_ui)
+    end
+    
     def instaniate_report
-      Report.new(@console_ui)
+      EmployeeReport.new(@console_ui)
     end
 
     def instaniate_log_time
       LogTime.new(@console_ui, @validation)
     end
 
-    def generate_menu_hash
+    def set_menu_hash
+      if @employee.admin
+        @menu_hash = generate_admin_menu_hash 
+      else 
+        @menu_hash = generate_employee_menu_hash
+      end
+    end
+    
+    def generate_admin_menu_hash
+      { 
+        "1": "1. Do you want to log your time?", 
+        "2": "2. Do you want to run a report on yourself?", 
+        "3": "3. Quit the program",
+        "4": "4. Do you want to create a client?", 
+        "5": "5. Do you want to create an employee?", 
+        "6": "6. Do you want to run a company report?"
+      }
+    end
+
+
+    def generate_employee_menu_hash
       { 
         "1": "1. Do you want to log your time?", 
         "2": "2. Do you want to run a report on yourself?", 

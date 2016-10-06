@@ -1,6 +1,54 @@
 {
   "workers": [
-
+    {
+      "id": 1,
+      "username": "defaultadmin",
+      "admin": true,
+      "log_time": [
+        {
+          "id": 1,
+          "date": "2016-10-01",
+          "hours_worked": 20,
+          "timecode": "PTO",
+          "client": null
+        },
+        {
+          "id": 2,
+          "date": "2016-10-02",
+          "hours_worked": 3,
+          "timecode": "PTO",
+          "client": null
+        },
+        {
+          "id": 3,
+          "date": "2016-01-20",
+          "hours_worked": 2,
+          "timecode": "Non-Billable",
+          "client": null
+        },
+        {
+          "id": 4,
+          "date": "2016-10-03",
+          "hours_worked": 2,
+          "timecode": "PTO",
+          "client": null
+        },
+        {
+          "id": 5,
+          "date": "2016-10-05",
+          "hours_worked": 3,
+          "timecode": "Non-Billable",
+          "client": null
+        },
+        {
+          "id": 6,
+          "date": "2015-10-04",
+          "hours_worked": 1,
+          "timecode": "Non-Billable",
+          "client": null
+        }
+      ]
+    }
   ],
   "clients": [
 

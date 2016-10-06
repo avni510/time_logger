@@ -1,5 +1,6 @@
 module TimeLogger
   class Validation
+    MAX_DATE_LENGTH = 10
 
     HOURS_IN_A_DAY = 24
 
@@ -13,6 +14,7 @@ module TimeLogger
         rescue => e
           return false
       end
+      return false if date_entered.size > MAX_DATE_LENGTH
       true
     end
 
@@ -26,23 +28,10 @@ module TimeLogger
       not user_input !~ /^\d*$/
     end
 
-    def hours_worked_per_day_valid?(previous_entries_array, hours_entered)
-      if previous_entries_array
-        total_hours_logged = previous_entries_array.reduce(0) { 
-          |sum, entry| sum + entry.hours_worked.to_i 
-        }
+    def hours_in_a_day_exceeded?(past_hours_worked, hours_entered)
+      total_hours = past_hours_worked + hours_entered
 
-        total_hours = total_hours_logged + hours_entered.to_i 
-        hours_exceed_hours_in_a_day?(total_hours)
-      else
-        hours_exceed_hours_in_a_day?(hours_entered)
-      end
-    end
-
-    private
-
-    def hours_exceed_hours_in_a_day?(hours)
-      hours.to_i > HOURS_IN_A_DAY ? false : true
+      total_hours > HOURS_IN_A_DAY ? false : true
     end
   end
 end

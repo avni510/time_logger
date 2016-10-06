@@ -6,46 +6,60 @@ module TimeLogger
     let(:mock_save_json_data) { double }
     let(:load_data_to_repos) { LoadDataToRepos.new(mock_file_wrapper, mock_save_json_data) }
 
-    def setup_data
+    def setup_with_data
       data_hash = 
         {
-        "workers": [{
-          "id": 1,
-          "username": "rstarr",
-          "admin": false,
-          "log_time": [
+          "workers": [{
+            "id": 1,
+            "username": "rstarr",
+            "admin": false,
+            "log_time": [
+              {
+                "id": 1,
+                "date": "09-07-2016",
+                "hours_worked": "8",
+                "timecode": "Non-Billable",
+                "client": nil
+              }, {
+                "id": 2,
+                "date": "09-08-2016",
+                "hours_worked": "8",
+                "timecode": "PTO",
+                "client": nil
+              }]
+          }],
+          "clients": [
             {
-              "id": 1,
-              "date": "09-07-2016",
-              "hours_worked": "8",
-              "timecode": "Non-Billable",
-              "client": nil
-            }, {
-              "id": 2,
-              "date": "09-08-2016",
-              "hours_worked": "8",
-              "timecode": "PTO",
-              "client": nil
-            }]
-        }],
-        "clients": []
-      }
+              "id": 1, 
+              "name": "Google"
+            },
+            { 
+              "id": 2, 
+              "name": "Microsoft"
+            }
+          ]
+        }
 
       JSON.parse(JSON.generate(data_hash))
     end
 
     describe ".run" do
       it "loads data from a file" do
-        data_hash = setup_data
+        data_hash = setup_with_data
 
         expect(mock_file_wrapper).to receive(:read_data).and_return(data_hash)
         
         expect_any_instance_of(EmployeeRepo).to receive(:create).exactly(1).times
 
         expect_any_instance_of(LogTimeRepo).to receive(:create).exactly(2).times
+
+        expect_any_instance_of(ClientRepo).to receive(:create).exactly(2).times
+
+        expect(Repository).to receive(:register).exactly(3).times
         
-        expect(load_data_to_repos.run).to be_a_kind_of(Repository)
+        load_data_to_repos.run
       end
+
     end
   end
 end
