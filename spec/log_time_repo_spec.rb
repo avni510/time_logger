@@ -179,7 +179,7 @@ module TimeLogger
       end
     end
 
-    describe ".client_hours_for_current_month" do
+    describe ".employee_client_hours" do
       context "all entries have a client" do
         it "returns a hash of the client name and hours worked for each client" do
           create_log_entry(1,"2016-09-05", "8","Billable", "Google")
@@ -192,7 +192,7 @@ module TimeLogger
 
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
-          result = log_time_repo.client_hours_for_current_month(1)
+          result = log_time_repo.employee_client_hours(1)
 
           client_hash = 
             {
@@ -217,7 +217,7 @@ module TimeLogger
 
         allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
-        result = log_time_repo.client_hours_for_current_month(1)
+        result = log_time_repo.employee_client_hours(1)
 
         client_hash = 
           {
@@ -238,7 +238,7 @@ module TimeLogger
 
           allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
-          result = log_time_repo.client_hours_for_current_month(1)
+          result = log_time_repo.employee_client_hours(1)
 
           client_hash = {}
 
@@ -247,7 +247,7 @@ module TimeLogger
       end
     end
 
-    describe ".timecode_hours_for_current_month" do
+    describe ".employee_timecode_hours" do
       it "returns a hash of timecode and hours worked for each timecode" do
         create_log_entry(1,"2016-09-05", "8","Billable", "Google")
 
@@ -257,7 +257,7 @@ module TimeLogger
 
         allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
 
-        result = log_time_repo.timecode_hours_for_current_month(1)
+        result = log_time_repo.employee_timecode_hours(1)
 
         timecode_hash = 
           {

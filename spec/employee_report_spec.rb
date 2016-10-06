@@ -70,7 +70,7 @@ module TimeLogger
 
           clients_hash = { "Google": 7 } 
 
-          expect(@mock_log_time_repo).to receive(:client_hours_for_current_month).and_return(clients_hash)
+          expect(@mock_log_time_repo).to receive(:employee_client_hours).and_return(clients_hash)
 
           timecode_hash = 
             { 
@@ -79,7 +79,7 @@ module TimeLogger
               "PTO": "8"
             }
           
-          expect(@mock_log_time_repo).to receive(:timecode_hours_for_current_month).and_return(timecode_hash)
+          expect(@mock_log_time_repo).to receive(:employee_timecode_hours).and_return(timecode_hash)
 
           expect(@mock_console_ui).to receive(:format_employee_report).with(sorted_log_times_array, clients_hash, timecode_hash)
 

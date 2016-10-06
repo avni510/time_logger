@@ -7,6 +7,7 @@ module TimeLogger
 
     def execute(employee_id)
       log_date 
+
       log_hours_worked(employee_id)
 
       all_client_objects = client_repo.all
@@ -75,7 +76,6 @@ module TimeLogger
 
     def log_timecode(all_clients)
       if all_clients.empty?
-        @console_ui.no_clients_message
         timecode_options_hash = generate_timecode_hash_without_billable
       else
         timecode_options_hash = generate_timecode_hash_with_billable
