@@ -11,19 +11,19 @@ module TimeLogger
         console_ui.puts_space
       end
     end
+    
+    describe ".get_user_input" do 
+      it "prompts the user for input" do
+        expect(mock_io_wrapper).to receive(:get_action).exactly(1).times
+        console_ui.get_user_input
+      end
+    end
 
     describe ".username_display_message" do
       it "asks the user for their username" do
         expect(mock_io_wrapper).to receive(:puts_string).with("Please enter your username")
         expect(console_ui).to receive(:puts_space).exactly(2).times
         console_ui.username_display_message
-      end
-    end
-
-    describe ".get_user_input" do 
-      it "prompts the user for input" do
-        expect(mock_io_wrapper).to receive(:get_action).exactly(1).times
-        console_ui.get_user_input
       end
     end
 
@@ -40,6 +40,56 @@ module TimeLogger
         expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid username")
         expect(console_ui).to receive(:puts_space).exactly(2).times
         console_ui.valid_username_message
+      end
+    end
+
+    describe ".username_does_not_exist_message" do
+      context "the username entered does not exist in the data" do
+        it "displays the a message that it does not exist" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("This username does not exist")
+          expect(console_ui).to receive(:puts_space).exactly(2).times
+          console_ui.username_does_not_exist_message
+        end
+      end
+    end
+
+    describe ".enter_new_username_message" do
+      context "an admin selects the option to create a new user" do
+        it "displays a message to enter the new username" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter the username you would like to create")
+          expect(console_ui).to receive(:puts_space).exactly(2).times
+          console_ui.enter_new_username_message
+        end
+      end
+    end
+
+    describe ".create_admin_message" do
+      context "an admin creates a new user" do
+        it "displays a message to ask the user if they would like the new user to be an admin or not" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("Would you like the user to be an admin?")
+          expect(console_ui).to receive(:puts_space).exactly(2).times
+          console_ui.create_admin_message
+        end
+      end
+    end
+
+    describe ".client_exists_message" do
+      context "an admin enters a client name that already exists" do
+        it "displays a message to the user to enter a different client name" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("This client already exists, please enter a different one")
+          expect(console_ui).to receive(:puts_space).exactly(2).times
+          console_ui.client_exists_message
+        end
+      end
+    end
+
+    describe ".username_exists_message" do
+      context "an admin enters a username that already exists" do
+        it "displays a message to the user to enter a different user name" do
+          expect(mock_io_wrapper).to receive(:puts_string).with("This username already exists, please enter a different one")
+          expect(console_ui).to receive(:puts_space).exactly(2).times
+          console_ui.username_exists_message
+        end
       end
     end
 
@@ -101,48 +151,8 @@ module TimeLogger
       end
     end
 
-    describe ".enter_new_username_message" do
-      context "an admin selects the option to create a new user" do
-        it "displays a message to enter the new username" do
-          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter the username you would like to create")
-          expect(console_ui).to receive(:puts_space).exactly(2).times
-          console_ui.enter_new_username_message
-        end
-      end
-    end
-
-    describe ".create_admin_message" do
-      context "an admin creates a new user" do
-        it "displays a message to ask the user if they would like the new user to be an admin or not" do
-          expect(mock_io_wrapper).to receive(:puts_string).with("Would you like the user to be an admin?")
-          expect(console_ui).to receive(:puts_space).exactly(2).times
-          console_ui.create_admin_message
-        end
-      end
-    end
-
-    describe ".client_exists_message" do
-      context "an admin enters a client name that already exists" do
-        it "displays a message to the user to enter a different client name" do
-          expect(mock_io_wrapper).to receive(:puts_string).with("This client already exists, please enter a different one")
-          expect(console_ui).to receive(:puts_space).exactly(2).times
-          console_ui.client_exists_message
-        end
-      end
-    end
-
-    describe ".username_exists_message" do
-      context "an admin enters a username that already exists" do
-        it "displays a message to the user to enter a different user name" do
-          expect(mock_io_wrapper).to receive(:puts_string).with("This username already exists, please enter a different one")
-          expect(console_ui).to receive(:puts_space).exactly(2).times
-          console_ui.username_exists_message
-        end
-      end
-    end
-
     describe ".no_log_times_message" do
-      context "there are no log times for a give user" do
+     context "there are no log times for a give user" do
         it "displays a message to the user that there are no log times" do
           expect(mock_io_wrapper).to receive(:puts_string).with("You do not have any log times for this month")
           expect(console_ui).to receive(:puts_space).exactly(2).times
@@ -151,15 +161,6 @@ module TimeLogger
       end
     end
 
-    describe ".username_does_not_exist_message" do
-      context "the username entered does not exist in the data" do
-        it "displays the a message that it does not exist" do
-          expect(mock_io_wrapper).to receive(:puts_string).with("This username does not exist")
-          expect(console_ui).to receive(:puts_space).exactly(2).times
-          console_ui.username_does_not_exist_message
-        end
-      end
-    end
 
     describe ".valid_hours_message" do
       context "more than 24 hours are entered in" do

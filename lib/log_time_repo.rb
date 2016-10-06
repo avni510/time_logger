@@ -41,25 +41,17 @@ module TimeLogger
     end
 
     def find_total_hours_worked_for_date(employee_id, date_string)
-      total_hours_worked = 0
-
       entries_by_date = find_by_employee_id_and_date(employee_id, date_string)
-      return total_hours_worked unless entries_by_date
 
-      entries_by_date.each do |entry|
-        total_hours_worked += entry.hours_worked
-      end
-
-      total_hours_worked
+      aggregate_total_hours_worked(entries_by_date)
     end
+
   
     def find_by_employee_id_and_date(employee_id, date_string)
       date = Date.strptime(date_string,'%m-%d-%Y')
       filtered_entries = @entries.select { |entry| 
         entry.employee_id == employee_id && 
-          (entry.date.day == date.day && 
-           entry.date.month == date.month && 
-           entry.date.year == date.year)
+        entry.date == date
       }
 
       entries_empty?(filtered_entries)
@@ -76,18 +68,18 @@ module TimeLogger
       entries_empty?(sorted_entries)
     end
 
-    def client_hours_for_current_month(employee_id)
+    def employee_client_hours(employee_id)
       sorted_entries = sorted_current_month_entries_by_employee_id(employee_id)
 
       entries_with_clients = filter_entries_with_clients(sorted_entries)
 
-      create_clients_hash(entries_with_clients)
+      create_employee_clients_hash(entries_with_clients)
     end
 
-    def timecode_hours_for_current_month(employee_id)
+    def employee_timecode_hours(employee_id)
       sorted_entries = sorted_current_month_entries_by_employee_id(employee_id)
 
-      create_timecode_hash(sorted_entries)
+      create_employee_timecode_hash(sorted_entries)
     end
 
     def company_timecode_hours
@@ -118,6 +110,18 @@ module TimeLogger
 
     private 
 
+    def aggregate_total_hours_worked(entries_by_date)
+      total_hours_worked = 0
+
+      return total_hours_worked unless entries_by_date
+
+      entries_by_date.each do |entry|
+        total_hours_worked += entry.hours_worked
+      end
+
+      total_hours_worked
+    end
+
     def generate_log_entry_hash(log_entry_id, params)
       {
         "id": log_entry_id,
@@ -143,12 +147,12 @@ module TimeLogger
       populate_hash(array_of_timecode_name_and_hours)
     end
 
-    def create_clients_hash(entries)
+    def create_employee_clients_hash(entries)
       array_of_client_name_and_hours = client_name_and_hours(entries)
       populate_hash(array_of_client_name_and_hours)
     end
 
-    def create_timecode_hash(entries)
+    def create_employee_timecode_hash(entries)
       array_of_timecode_name_and_hours = timecode_and_hours(entries)
       populate_hash(array_of_timecode_name_and_hours)
     end

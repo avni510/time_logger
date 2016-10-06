@@ -14,8 +14,7 @@ module TimeLogger
 
       new_client_name = client_exists_loop(new_client_name)
 
-      client_repo.create(new_client_name)
-      client_repo.save
+      save_client(new_client_name)
     end
 
     private
@@ -38,6 +37,11 @@ module TimeLogger
         client_name = @console_ui.get_user_input
       end
       client_name
+    end
+
+    def save_client(new_client_name)
+      client_repo.create(new_client_name)
+      client_repo.save
     end
   end
 end

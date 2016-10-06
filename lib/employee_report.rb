@@ -53,11 +53,11 @@ module TimeLogger
     end
 
     def total_hours_per_client(employee_id)
-      log_time_repo.client_hours_for_current_month(employee_id)
+      log_time_repo.employee_client_hours(employee_id)
     end
 
     def total_hours_per_timecode(employee_id)
-      log_time_repo.timecode_hours_for_current_month(employee_id)
+      log_time_repo.employee_timecode_hours(employee_id)
     end
   end
 end
