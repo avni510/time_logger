@@ -3,32 +3,33 @@ module TimeLogger
 
     BILLABLE_TIMECODE = "Billable"
 
-    def initialize(log_date, log_hours_worked, log_timecode, log_client)
-      @log_date = log_date
-      @log_hours_worked = log_hours_worked
-      @log_timecode = log_timecode
-      @log_client = log_client
+    def initialize(params)
+      @log_date = params[:log_date]
+      @log_hours_worked = params[:log_hours_worked]
+      @log_timecode = params[:log_timecode]
+      @log_client = params[:log_client]
+      @employee_id = params[:employee_id]
     end
 
-    def execute(employee_id)
+    def execute
       date_entered = @log_date.run
 
       previous_hours_worked = log_time_repo.
         find_total_hours_worked_for_date(
-            employee_id, 
+            @employee_id, 
             date_entered
         )
 
       hours_entered = @log_hours_worked.run(previous_hours_worked)
 
-      execute(employee_id) unless hours_entered
+      execute unless hours_entered
 
       timecode_entered = @log_timecode.run(client_repo.all)
 
       client_entered = select_client(timecode_entered)
 
       save_log_time_entry(
-        employee_id,
+        @employee_id,
         date_entered,
         hours_entered,
         timecode_entered,

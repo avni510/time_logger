@@ -10,12 +10,14 @@ module TimeLogger
     def run
       @console_ui.menu_selection_message
       set_menu_hash
-      begin
+      user_selection = true
+      while user_selection
         @console_ui.display_menu_options(@menu_hash)
         user_input = @console_ui.get_user_input
         user_input = valid_menu_selection_loop(user_input)
+        break if user_input.to_sym == @menu_hash.key("3. Quit the program")
         menu_action(user_input)
-      end until user_input.to_sym == @menu_hash.key("3. Quit the program")
+      end 
     end
 
     private
@@ -30,25 +32,21 @@ module TimeLogger
     
     def menu_action(user_input)
       user_input = user_input.to_sym
-      if user_input == @menu_hash.key("1. Do you want to log your time?")
-        log_time = instaniate_log_time
-        log_time.execute(@employee.id)
-      elsif user_input == @menu_hash.key("2. Do you want to run a report on yourself?")
-        report = instaniate_report
-        report.execute(@employee.id)
-      elsif user_input == @menu_hash.key("4. Do you want to create a client?")
-        client_creation = instaniate_client_creation
-        client_creation.execute
-      elsif user_input == @menu_hash.key("5. Do you want to create an employee?")
-        employee_creation = instaniate_employee_creation
-        employee_creation.execute
-      elsif user_input == @menu_hash.key("6. Do you want to run a company report?")
-        admin_report = instaniate_admin_report
-        admin_report.execute
-      end
+      action = menu_action_hash[user_input]
+      action.execute
     end
 
     private
+
+    def menu_action_hash
+      {
+        "1": instaniate_log_time,
+        "2": instaniate_employee_report,
+        "4": instaniate_client_creation, 
+        "5": instaniate_employee_creation, 
+        "6": instaniate_admin_report
+      }
+    end
 
     def instaniate_admin_report
       AdminReport.new(@console_ui)
@@ -62,17 +60,13 @@ module TimeLogger
       ClientCreation.new(@console_ui, @validation)
     end
     
-    def instaniate_report
-      EmployeeReport.new(@console_ui)
+    def instaniate_employee_report
+      EmployeeReport.new(@console_ui, @employee.id)
     end
 
     def instaniate_log_time
-      log_date = LogDate.new(@console_ui, @validation)
-      log_hours_worked = LogHoursWorked.new(@console_ui, @validation)
-      log_timecode = LogTimecode.new(@console_ui, @validation)
-      log_client = LogClient.new(@console_ui, @validation)
-
-      LogTime.new(log_date, log_hours_worked, log_timecode, log_client)
+      log_time_hash = generate_log_time_hash
+      LogTime.new(log_time_hash)
     end
 
     def set_menu_hash
@@ -82,6 +76,16 @@ module TimeLogger
         @menu_hash = generate_employee_menu_hash
       end
     end
+
+    def generate_log_time_hash
+      { 
+        :log_date => LogDate.new(@console_ui, @validation),
+        :log_hours_worked => LogHoursWorked.new(@console_ui, @validation),
+        :log_timecode => LogTimecode.new(@console_ui, @validation),
+        :log_client => LogClient.new(@console_ui, @validation),
+        :employee_id => @employee.id
+      }
+  end
     
     def generate_admin_menu_hash
       { 
