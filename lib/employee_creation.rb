@@ -46,7 +46,7 @@ module TimeLogger
     end
 
     def blank_employee_name_loop(username)
-      until username !~ /^\s*$/
+      while @validation.blank_space?(username)
         @console_ui.valid_username_message
         username = @console_ui.get_user_input
       end

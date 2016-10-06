@@ -21,6 +21,10 @@ require_relative "client"
 require_relative "client_repo"
 require_relative "client_creation"
 require_relative "admin_report"
+require_relative "log_date"
+require_relative "log_hours_worked"
+require_relative "log_timecode"
+require_relative "log_client"
 
 module TimeLogger
 end

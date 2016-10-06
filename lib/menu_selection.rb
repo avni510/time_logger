@@ -59,7 +59,7 @@ module TimeLogger
     end
 
     def instaniate_client_creation
-      ClientCreation.new(@console_ui)
+      ClientCreation.new(@console_ui, @validation)
     end
     
     def instaniate_report
@@ -67,7 +67,12 @@ module TimeLogger
     end
 
     def instaniate_log_time
-      LogTime.new(@console_ui, @validation)
+      log_date = LogDate.new(@console_ui, @validation)
+      log_hours_worked = LogHoursWorked.new(@console_ui, @validation)
+      log_timecode = LogTimecode.new(@console_ui, @validation)
+      log_client = LogClient.new(@console_ui, @validation)
+
+      LogTime.new(log_date, log_hours_worked, log_timecode, log_client)
     end
 
     def set_menu_hash

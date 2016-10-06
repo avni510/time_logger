@@ -94,7 +94,7 @@ module TimeLogger
     end
 
     def enter_digit_message
-      general_message_format("Please enter a number")
+      general_message_format("Please enter a number greater than 0")
     end
 
     def menu_selection_message
@@ -137,7 +137,7 @@ module TimeLogger
       @io_wrapper.puts_string("Date" + "            "  + "Hours Worked" + "            " + "Timecode" + "            " + "Client")
       log_times_sorted.each do |log_time|
 
-        items_to_print = log_time[0] + "            " + log_time[1] + "            " + log_time[2] 
+        items_to_print = log_time[0] + "            " + log_time[1] + "                  " + log_time[2] 
         if log_time[3]
           items_to_print = items_to_print + "            " + log_time[3]
         end
