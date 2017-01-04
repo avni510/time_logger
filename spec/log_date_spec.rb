@@ -27,7 +27,7 @@ module TimeLogger
 
       context "the date entered is in the future" do
         it "prompts the user to enter a previous date" do
-          expect(mock_console_ui).to receive(:date_log_time_message).and_return("11-20-2016")
+          expect(mock_console_ui).to receive(:date_log_time_message).and_return("11-20-2020")
 
           expect(mock_console_ui).to receive(:future_date_valid_message)
 
