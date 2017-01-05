@@ -25,6 +25,7 @@ require_relative "log_date"
 require_relative "log_hours_worked"
 require_relative "log_timecode"
 require_relative "log_client"
+require_relative "worker_retrieval"
 
 module TimeLogger
 end
