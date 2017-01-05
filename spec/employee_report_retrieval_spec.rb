@@ -56,7 +56,7 @@ module TimeLogger
             to receive(:sorted_current_month_entries_by_employee_id).
             with(@employee_id).
             and_return(log_times)
-          @employee_report_retrieval.log_times
+          expect(@employee_report_retrieval.log_times).to eq(log_times)
         end
       end
 
@@ -66,7 +66,7 @@ module TimeLogger
             to receive(:sorted_current_month_entries_by_employee_id).
             with(@employee_id).
             and_return(nil)
-          @employee_report_retrieval.log_times
+          expect(@employee_report_retrieval.log_times).to eq(nil)
         end
       end
     end
