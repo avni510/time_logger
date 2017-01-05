@@ -20,130 +20,115 @@ module TimeLogger
 
     let(:log_time) { LogTime.new(params) }
 
-
-
     before(:each) do
       @employee_id = 1
-
-      @mock_log_time_repo = double
-      @mock_client_repo = double
-
-      allow(Repository).to receive(:for).with(:log_time).and_return(@mock_log_time_repo)
-      allow(Repository).to receive(:for).with(:client).and_return(@mock_client_repo)
+      @clients = [
+          Client.new(1, "Microsoft"),
+          Client.new(2, "Facebook")
+        ]
     end
 
     before(:each) do
-      allow(log_date).to receive(:run).and_return("09-15-2016")  
-
+      allow(log_date).
+        to receive(:run).
+        and_return("09-15-2016")  
       previous_hours_worked = 0
-
-      allow(@mock_log_time_repo).
-        to receive(:find_total_hours_worked_for_date).
+      allow_any_instance_of(LogTimeRetrieval).
+        to receive(:employee_hours_worked_for_date).
         with(@employee_id, "09-15-2016").
         and_return(previous_hours_worked)
-
-      allow(log_hours_worked).to receive(:run).
+      allow(log_hours_worked).
+        to receive(:run).
         with(previous_hours_worked).
         and_return("5")
-      
-
-      allow(@mock_client_repo).
-        to receive(:all).
+      allow_any_instance_of(LogTimeRetrieval).
+        to receive(:all_clients).
         and_return(@clients)
-
       allow(log_timecode).to receive(:run).
         with(@clients).
         and_return("Non-Billable")
-
-      allow(@mock_log_time_repo).to receive(:create)
-
-      allow(@mock_log_time_repo).to receive(:save)
+      allow_any_instance_of(LogTimeRetrieval).
+        to receive(:save_log_time_entry).
+        with(
+          @employee_id,
+          "09-15-2016",
+          "5",
+          "Non-Billable",
+          nil)
     end
 
-    context "the user does not select 'Billable' as their timecode" do
-      it "allows the user to log their time" do
-        expect(log_date).to receive(:run).and_return("09-15-2016")  
-
-        previous_hours_worked = 0
-
-        expect(@mock_log_time_repo).
-          to receive(:find_total_hours_worked_for_date).
-          with(@employee_id, "09-15-2016").
-          and_return(previous_hours_worked)
-
-        expect(log_hours_worked).to receive(:run).
-          with(previous_hours_worked).
-          and_return("5")
-
-        expect(@mock_client_repo).
-          to receive(:all).
-          and_return(@clients)
-
-        expect(log_timecode).to receive(:run).
-          with(@clients).
-          and_return("Non-Billable")
-
-        log_time.execute
+    describe ".execute" do
+      context "the user does not select 'Billable' as their timecode" do
+        it "allows the user to log their time" do
+          expect(log_date).to receive(:run).and_return("09-15-2016")  
+          previous_hours_worked = 0
+          expect_any_instance_of(LogTimeRetrieval).
+            to receive(:employee_hours_worked_for_date).
+            with(@employee_id, "09-15-2016").
+            and_return(previous_hours_worked)
+          expect(log_hours_worked).
+            to receive(:run).
+            with(previous_hours_worked).
+            and_return("5") 
+          expect_any_instance_of(LogTimeRetrieval).
+            to receive(:all_clients).
+            and_return(@clients)
+          expect(log_timecode).to receive(:run).
+            with(@clients).
+            and_return("Non-Billable")
+          expect_any_instance_of(LogTimeRetrieval).
+            to receive(:save_log_time_entry).
+            with(
+              @employee_id,
+              "09-15-2016",
+              "5",
+              "Non-Billable",
+              nil)
+          log_time.execute
+        end
       end
 
-      it "creates a new entry in the repository and saves it" do
-        params = 
-          { 
-            "employee_id": @employee_id,
-            "date": "2016-09-15", 
-            "hours_worked": "5",
-            "timecode": "Non-Billable", 
-            "client": nil
-          }
-
-        expect(@mock_log_time_repo).to receive(:create).with(params)
-
-        expect(@mock_log_time_repo).to receive(:save)
-
-        log_time.execute
+      context "the user selects 'Billable' as their timecode" do
+        it "makes a call to select a client and saves it" do
+          expect(log_timecode).to receive(:run).
+            with(@clients).
+            and_return("Billable")
+          expect(log_client).to receive(:run).
+            with(@clients).
+            and_return("Google")
+          expect_any_instance_of(LogTimeRetrieval).
+            to receive(:save_log_time_entry).
+            with(
+              @employee_id,
+              "09-15-2016", 
+              "5",
+              "Billable", 
+              "Google")
+          log_time.execute
+        end
       end
-    end
 
-    context "the user selects 'Billable' as their timecode" do
-      it "makes a call to select a client and saves it" do
-        expect(log_timecode).to receive(:run).
-          with(@clients).
-          and_return("Billable")
-
-        expect(log_client).to receive(:run).
-          with(@clients).
-          and_return("Google")
-
-        params = 
-          { 
-            "employee_id": @employee_id,
-            "date": "2016-09-15", 
-            "hours_worked": "5",
-            "timecode": "Billable", 
-            "client": "Google"
-          }
-
-        expect(@mock_log_time_repo).to receive(:create).with(params)
-
-        expect(@mock_log_time_repo).to receive(:save)
-
-        log_time.execute
-      end
-    end
-
-    context "hours_entered returns nil because a the user 
-            has exceeded 24 hours for the date entered" do
-      it "prompts the user to enter their date again" do
-        allow(log_date).to receive(:run).and_return("09-15-2016", "09-16-2016")
-
-        expect(@mock_log_time_repo).
-          to receive(:find_total_hours_worked_for_date).
-          and_return(20, 0)
-
-        expect(log_hours_worked).to receive(:run).
-          and_return(nil, "5")
-
-        log_time.execute
+      context "hours_entered returns nil because the user has exceeded 24 hours for the date entered" do
+        it "prompts the user to enter their date again" do
+          allow(log_date).
+            to receive(:run).
+            and_return("09-15-2016", "09-16-2016")
+          expect_any_instance_of(LogTimeRetrieval).
+            to receive(:employee_hours_worked_for_date).
+            and_return(20, 0)
+          expect(log_hours_worked).
+            to receive(:run).
+            and_return(nil, "5")
+          expect_any_instance_of(LogTimeRetrieval).
+            to receive(:save_log_time_entry).
+            with(
+              @employee_id,
+              "09-16-2016", 
+              "5",
+              "Non-Billable", 
+              nil)
+          log_time.execute
+        end
       end
     end
   end
