@@ -2,13 +2,13 @@ module TimeLogger
   class AdminReport
     def initialize(console_ui)
       @console_ui = console_ui
-      @admin_report_retrieval = AdminReportRetrieval.new
+      @report_retrieval = ReportRetrieval.new
     end
 
     def execute
-      company_timecodes = @admin_report_retrieval.timecode_hours
+      company_timecodes = @report_retrieval.company_wide_timecode_hours
       return @console_ui.no_company_log_entries_message unless company_timecodes
-      company_clients = @admin_report_retrieval.client_hours
+      company_clients = @report_retrieval.company_wide_client_hours
       @console_ui.format_admin_report(company_timecodes, company_clients)
     end
   end

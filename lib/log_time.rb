@@ -20,7 +20,13 @@ module TimeLogger
       clients = @log_time_retrieval.all_clients
       timecode_entered = @log_timecode.run(clients)
       client_entered = select_client(timecode_entered, clients)
-      @log_time_retrieval.save_log_time_entry(@employee_id, date_entered, hours_entered, timecode_entered, client_entered)
+      @log_time_retrieval.save_log_time_entry(
+        @employee_id, 
+        date_entered, 
+        hours_entered, 
+        timecode_entered, 
+        client_entered
+      )
     end
 
     private

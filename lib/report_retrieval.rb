@@ -1,7 +1,7 @@
 module TimeLogger
-  class EmployeeReportRetrieval
+  class ReportRetrieval
 
-    def initialize(employee_id)
+    def initialize(employee_id=nil)
       @employee_id = employee_id
     end
 
@@ -32,6 +32,14 @@ module TimeLogger
 
     def timecode_hours
       log_time_repo.employee_timecode_hours(@employee_id)
+    end
+
+    def company_wide_timecode_hours
+      log_time_repo.company_timecode_hours
+    end
+
+    def company_wide_client_hours
+      log_time_repo.company_client_hours
     end
 
     private
