@@ -11,7 +11,7 @@ module TimeLogger
 
       username = @console_ui.get_user_input
       
-      worker = @worker_retrieval.run(username)
+      worker = @worker_retrieval.employee(username)
      
       worker = valid_username_loop(worker)
 
@@ -26,7 +26,7 @@ module TimeLogger
       until worker
         @console_ui.username_does_not_exist_message
         username = @console_ui.get_user_input
-        worker = @worker_retrieval.run(username)
+        worker = @worker_retrieval.employee(username)
       end
       worker
     end

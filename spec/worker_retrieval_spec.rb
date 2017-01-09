@@ -13,19 +13,31 @@ module TimeLogger
       Employee.new(1, "rstarr", false)
     end
     
-    describe ".run" do
+    describe ".employee" do
       context "the user exists in the data" do
         it "returns an employee object" do
           expect(@mock_employee_repo).to receive(:find_by_username).with("rstarr").and_return(@employee_1)
-          @worker_retrieval.run("rstarr")
+          @worker_retrieval.employee("rstarr")
         end
       end
 
       context "the user does not exist in the data" do
         it "returns nil" do
           expect(@mock_employee_repo).to receive(:find_by_username).with("jlennon").and_return(nil)
-          @worker_retrieval.run("jlennon")
+          @worker_retrieval.employee("jlennon")
         end
+      end
+    end
+
+    describe ".company_employees" do
+      it "returns a list of all the employees in the company" do
+        employees = [
+          Employee.new(1, "rstarr", false),
+          Employee.new(2, "jlennon", true)
+        ]
+        expect(@mock_employee_repo).to receive(:all).and_return(employees)
+
+        @worker_retrieval.company_employees
       end
     end
   end

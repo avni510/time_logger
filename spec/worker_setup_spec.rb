@@ -12,7 +12,7 @@ module TimeLogger
       it "prompts the user for their username" do
         expect(@mock_console_ui).to receive(:username_display_message)
         expect(@mock_console_ui).to receive(:get_user_input).and_return("rstarr")
-        expect_any_instance_of(WorkerRetrieval).to receive(:run).and_return(@employee_1)
+        expect_any_instance_of(WorkerRetrieval).to receive(:employee).and_return(@employee_1)
         expect_any_instance_of(MenuSelection).to receive(:run)
         @worker_setup.run
       end
@@ -21,7 +21,7 @@ module TimeLogger
         it "displays a message of an invalid username and prompts them to enter the username again" do
           allow(@mock_console_ui).to receive(:username_display_message)
           expect(@mock_console_ui).to receive(:get_user_input).and_return("jlennon", "rstarr")
-          expect_any_instance_of(WorkerRetrieval).to receive(:run).and_return(nil, @employee_1)
+          expect_any_instance_of(WorkerRetrieval).to receive(:employee).and_return(nil, @employee_1)
           expect(@mock_console_ui).to receive(:username_does_not_exist_message)
           expect_any_instance_of(MenuSelection).to receive(:run)
           @worker_setup.run
