@@ -1,0 +1,16 @@
+source "https://rubygems.org"
+
+gem "rack"
+gem "sinatra", require: "sinatra/base"
+gem "shotgun"
+gem "json"
+
+group "test" do
+  gem "rspec"
+  gem "rack-test"
+end
+
+group "development" do
+  gem "guard"
+  gem "guard-rspec", require: false
+end

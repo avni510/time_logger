@@ -1,0 +1,7 @@
+<a href="/log_time" > Do you want to log your time?  </a> <br>
+<a href="/employee_report" > Do you want to run a report on yourself?</a> <br>
+<% if @admin %>
+  <a href= "/create_client" > Do you want to create a client? </a> <br>
+  <a href= "/create_employee"> Do you want to create an employee?</a> <br>
+  <a href= "/admin_report"> Do you want to run a company report?</a>
+<% end %>
