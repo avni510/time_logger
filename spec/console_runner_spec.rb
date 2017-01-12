@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   require "spec_helper"
 
   describe ConsoleRunner do
@@ -9,7 +9,7 @@ module TimeLogger
 
     describe ".run" do
       it "calls the class that load the repos and calls the class to prompt the user for their username" do
-        expect_any_instance_of(LoadDataToRepos).to receive(:run)
+        expect_any_instance_of(TimeLogger::LoadDataToRepos).to receive(:run)
 
         expect_any_instance_of(WorkerSetup).to receive(:run)
 

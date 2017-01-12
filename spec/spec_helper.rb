@@ -1,2 +1,3 @@
 require "rspec/json_expectations"
-require "time_logger"
+require_relative "../../time_logger/lib/time_logger_console/time_logger_console.rb"
+

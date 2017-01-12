@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   class IOWrapper
 
     def get_action

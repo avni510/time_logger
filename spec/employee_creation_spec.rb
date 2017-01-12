@@ -1,13 +1,13 @@
-module TimeLogger
+module TimeLoggerConsole
   require "spec_helper"
 
   describe EmployeeCreation do
     before(:each) do
       @mock_employee_repo = double
-      allow(Repository).to receive(:for).and_return(@mock_employee_repo)
+      allow(TimeLogger::Repository).to receive(:for).and_return(@mock_employee_repo)
 
       @mock_console_ui = double
-      validation = Validation.new
+      validation = TimeLogger::Validation.new
       @employee_creation = EmployeeCreation.new(@mock_console_ui, validation)
     end
 
@@ -49,7 +49,7 @@ module TimeLogger
         it "prompts the user to create a different user name" do
           expect(@mock_console_ui).to receive(:get_user_input).and_return("rstarr", "pmccartney", "2")
 
-          expect(@mock_employee_repo).to receive(:find_by_username).and_return(Employee.new(1, "rstarr", false), nil)
+          expect(@mock_employee_repo).to receive(:find_by_username).and_return(TimeLogger::Employee.new(1, "rstarr", false), nil)
           
           expect(@mock_console_ui).to receive(:username_exists_message).exactly(1).times
 

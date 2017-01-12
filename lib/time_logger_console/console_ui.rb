@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   class ConsoleUI
 
     def initialize(io_wrapper)

@@ -1,8 +1,8 @@
-module TimeLogger
+module TimeLoggerConsole
   class AdminReport
     def initialize(console_ui)
       @console_ui = console_ui
-      @report_retrieval = ReportRetrieval.new
+      @report_retrieval = TimeLogger::ReportRetrieval.new
     end
 
     def execute

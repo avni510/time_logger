@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   class LogHoursWorked
 
     def initialize(console_ui, validation)

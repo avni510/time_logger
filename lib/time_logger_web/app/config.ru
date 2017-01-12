@@ -7,5 +7,10 @@ file_wrapper =  TimeLogger::FileWrapper.new(FILE_PATH)
 save_json_data = TimeLogger::SaveJsonData.new(file_wrapper)
 load_data = TimeLogger::LoadDataToRepos.new(file_wrapper, save_json_data)
 worker_retrieval =  TimeLogger::WorkerRetrieval.new
-params = { load_data: load_data, worker_retrieval: worker_retrieval }
+report_retrieval = TimeLogger::ReportRetrieval.new
+params = { 
+  load_data: load_data, 
+  worker_retrieval: worker_retrieval, 
+  report_retrieval: report_retrieval 
+}
 run WebApp.new(app = nil, params)

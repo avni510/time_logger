@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   require "spec_helper"
   
   describe EmployeeReport do
@@ -40,9 +40,9 @@ module TimeLogger
 
       log_times = 
         [
-          LogTimeEntry.new(params_entry_1),
-          LogTimeEntry.new(params_entry_2),
-          LogTimeEntry.new(params_entry_3),
+          TimeLogger::LogTimeEntry.new(params_entry_1),
+          TimeLogger::LogTimeEntry.new(params_entry_2),
+          TimeLogger::LogTimeEntry.new(params_entry_3),
         ]
     end
     
@@ -50,8 +50,9 @@ module TimeLogger
       context "the employee_id 1 exists with log times and the current month is September" do
         it "returns a report of the current month of sorted log times, total client hours, and total timecode" do
           log_times_objects = set_up_log_time_entries
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:log_times).
+            with(@employee_id).
             and_return(log_times_objects)
           sorted_log_times_array = 
             [
@@ -59,12 +60,13 @@ module TimeLogger
               ["9-4-2016", "8", "PTO", nil],
               ["9-6-2016", "7", "Billable", "Google"],
             ]
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:convert_log_time_objects_to_strings).
             and_return(sorted_log_times_array)
           clients_hash = { "Google": 7 } 
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:client_hours).
+            with(@employee_id).
             and_return(clients_hash)
           timecode_hash = 
             { 
@@ -72,8 +74,9 @@ module TimeLogger
               "Billable": "7",
               "PTO": "8"
             }
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:timecode_hours).
+            with(@employee_id).
             and_return(timecode_hash)
           expect(@mock_console_ui).
             to receive(:format_employee_report).
@@ -84,7 +87,7 @@ module TimeLogger
 
       context "the employee exists with no log times" do
         it "displays a message to the user that there are no log times" do
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:log_times).
             and_return(nil)
           expect(@mock_console_ui).to receive(:no_log_times_message)

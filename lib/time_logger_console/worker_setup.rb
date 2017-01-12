@@ -1,9 +1,9 @@
-module TimeLogger
+module TimeLoggerConsole
   class WorkerSetup
 
     def initialize(console_ui)
       @console_ui = console_ui
-      @worker_retrieval = WorkerRetrieval.new
+      @worker_retrieval = TimeLogger::WorkerRetrieval.new
     end
 
     def run

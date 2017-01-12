@@ -5,6 +5,13 @@
       "username": "defaultadmin",
       "admin": true,
       "log_time": [
+      ]
+    },
+    {
+      "id": 2,
+      "username": "username2",
+      "admin": false,
+      "log_time": [
 
       ]
     }

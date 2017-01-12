@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   class ClientCreation
 
     def initialize(console_ui, validation)
@@ -21,7 +21,7 @@ module TimeLogger
     private
 
     def client_repo
-      Repository.for(:client)
+      TimeLogger::Repository.for(:client)
     end
 
     def blank_client_name_loop(client_name)

@@ -245,6 +245,16 @@ module TimeLogger
           expect(result).to eq(client_hash)
         end
       end
+
+      context "no log time entries exist" do
+        it "returns an empty hash" do
+          result = log_time_repo.employee_client_hours(1)
+
+          client_hash = {}
+
+          expect(result).to eq(client_hash)
+        end
+      end
     end
 
     describe ".employee_timecode_hours" do
@@ -266,6 +276,16 @@ module TimeLogger
           }
 
         expect(result).to eq(timecode_hash)
+      end
+
+      context "no log time entries exist" do
+        it "returns an empty hash" do
+          result = log_time_repo.employee_timecode_hours(1)
+
+          timecode_hash = {}
+
+          expect(result).to eq(timecode_hash)
+        end
       end
     end
 

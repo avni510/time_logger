@@ -1,0 +1,26 @@
+<% unless @sorted_log_times %>
+  <p> You have no log times </p>
+<% else %>
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>Hours_Worked</th>
+      <th>Timecode</th>
+      <th>Client</th>
+    </tr>
+    <% @sorted_log_times.each do |log_time| %>
+      <tr>
+        <th><%= Date.parse(log_time.date.to_s).strftime("%m/%d/%y") %></th>
+        <th><%= log_time.hours_worked %></th>
+        <th><%= log_time.timecode %></th>
+        <th><%= log_time.client %></th>
+      </tr>
+    <% end %>
+  </table>
+    <% @client_hours.each do |client, hours_worked| %> 
+      <p> Total hours worked for <%= client %> : <%= hours_worked %> </p>
+    <% end %>
+    <% @timecode_hours.each do |timecode, hours_worked| %> 
+      <p> Total <%= timecode %> hours worked : <%= hours_worked %> </p>
+    <% end %>
+<% end %>

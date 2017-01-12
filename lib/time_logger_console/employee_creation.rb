@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   class EmployeeCreation
 
     def initialize(console_ui, validation)
@@ -17,7 +17,7 @@ module TimeLogger
     private
 
     def employee_repo
-      Repository.for(:employee)
+      TimeLogger::Repository.for(:employee)
     end
 
     def enter_new_username

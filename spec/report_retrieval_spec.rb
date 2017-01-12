@@ -5,7 +5,7 @@ module TimeLogger
 
     before(:each) do
       @employee_id = 1
-      @report_retrieval = ReportRetrieval.new(@employee_id)
+      @report_retrieval = ReportRetrieval.new
       @mock_log_time_repo = double
       allow(Repository).to receive(:for).and_return(@mock_log_time_repo)
     end
@@ -56,7 +56,8 @@ module TimeLogger
             to receive(:sorted_current_month_entries_by_employee_id).
             with(@employee_id).
             and_return(log_times)
-          expect(@report_retrieval.log_times).to eq(log_times)
+          result = @report_retrieval.log_times(@employee_id)
+          expect(result).to eq(log_times)
         end
       end
 
@@ -66,7 +67,8 @@ module TimeLogger
             to receive(:sorted_current_month_entries_by_employee_id).
             with(@employee_id).
             and_return(nil)
-          expect(@report_retrieval.log_times).to eq(nil)
+          result = @report_retrieval.log_times(@employee_id)
+          expect(result).to eq(nil)
         end
       end
     end
@@ -96,7 +98,7 @@ module TimeLogger
           to receive(:employee_client_hours).
           with(@employee_id).
           and_return(clients_hash)
-        result = @report_retrieval.client_hours
+        result = @report_retrieval.client_hours(@employee_id)
         expect(result).to eq(clients_hash)
       end
     end
@@ -113,7 +115,7 @@ module TimeLogger
           to receive(:employee_timecode_hours).
           with(@employee_id).
           and_return(timecode_hash)
-        result = @report_retrieval.timecode_hours
+        result = @report_retrieval.timecode_hours(@employee_id)
         expect(result).to eq(timecode_hash)
       end
     end

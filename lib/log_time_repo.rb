@@ -71,6 +71,8 @@ module TimeLogger
     def employee_client_hours(employee_id)
       sorted_entries = sorted_current_month_entries_by_employee_id(employee_id)
 
+      return {} unless sorted_entries
+
       entries_with_clients = filter_entries_with_clients(sorted_entries)
 
       create_employee_clients_hash(entries_with_clients)
@@ -78,6 +80,8 @@ module TimeLogger
 
     def employee_timecode_hours(employee_id)
       sorted_entries = sorted_current_month_entries_by_employee_id(employee_id)
+
+      return {} unless sorted_entries
 
       create_employee_timecode_hash(sorted_entries)
     end

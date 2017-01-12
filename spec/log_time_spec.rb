@@ -1,9 +1,9 @@
-module TimeLogger
+module TimeLoggerConsole
   require 'spec_helper'
 
   describe LogTime do
     let(:mock_console_ui) { double }
-    let(:validation) { Validation.new }
+    let(:validation) { TimeLogger::Validation.new }
 
     let(:log_date) { LogDate.new(mock_console_ui, validation) }
     let(:log_hours_worked) { LogHoursWorked.new(mock_console_ui, validation) }
@@ -23,8 +23,8 @@ module TimeLogger
     before(:each) do
       @employee_id = 1
       @clients = [
-          Client.new(1, "Microsoft"),
-          Client.new(2, "Facebook")
+          TimeLogger::Client.new(1, "Microsoft"),
+          TimeLogger::Client.new(2, "Facebook")
         ]
     end
 
@@ -33,7 +33,7 @@ module TimeLogger
         to receive(:run).
         and_return("09-15-2016")  
       previous_hours_worked = 0
-      allow_any_instance_of(LogTimeRetrieval).
+      allow_any_instance_of(TimeLogger::LogTimeRetrieval).
         to receive(:employee_hours_worked_for_date).
         with(@employee_id, "09-15-2016").
         and_return(previous_hours_worked)
@@ -41,13 +41,13 @@ module TimeLogger
         to receive(:run).
         with(previous_hours_worked).
         and_return("5")
-      allow_any_instance_of(LogTimeRetrieval).
+      allow_any_instance_of(TimeLogger::LogTimeRetrieval).
         to receive(:all_clients).
         and_return(@clients)
       allow(log_timecode).to receive(:run).
         with(@clients).
         and_return("Non-Billable")
-      allow_any_instance_of(LogTimeRetrieval).
+      allow_any_instance_of(TimeLogger::LogTimeRetrieval).
         to receive(:save_log_time_entry).
         with(
           @employee_id,
@@ -62,7 +62,7 @@ module TimeLogger
         it "allows the user to log their time" do
           expect(log_date).to receive(:run).and_return("09-15-2016")  
           previous_hours_worked = 0
-          expect_any_instance_of(LogTimeRetrieval).
+          expect_any_instance_of(TimeLogger::LogTimeRetrieval).
             to receive(:employee_hours_worked_for_date).
             with(@employee_id, "09-15-2016").
             and_return(previous_hours_worked)
@@ -70,13 +70,13 @@ module TimeLogger
             to receive(:run).
             with(previous_hours_worked).
             and_return("5") 
-          expect_any_instance_of(LogTimeRetrieval).
+          expect_any_instance_of(TimeLogger::LogTimeRetrieval).
             to receive(:all_clients).
             and_return(@clients)
           expect(log_timecode).to receive(:run).
             with(@clients).
             and_return("Non-Billable")
-          expect_any_instance_of(LogTimeRetrieval).
+          expect_any_instance_of(TimeLogger::LogTimeRetrieval).
             to receive(:save_log_time_entry).
             with(
               @employee_id,
@@ -96,7 +96,7 @@ module TimeLogger
           expect(log_client).to receive(:run).
             with(@clients).
             and_return("Google")
-          expect_any_instance_of(LogTimeRetrieval).
+          expect_any_instance_of(TimeLogger::LogTimeRetrieval).
             to receive(:save_log_time_entry).
             with(
               @employee_id,
@@ -113,13 +113,13 @@ module TimeLogger
           allow(log_date).
             to receive(:run).
             and_return("09-15-2016", "09-16-2016")
-          expect_any_instance_of(LogTimeRetrieval).
+          expect_any_instance_of(TimeLogger::LogTimeRetrieval).
             to receive(:employee_hours_worked_for_date).
             and_return(20, 0)
           expect(log_hours_worked).
             to receive(:run).
             and_return(nil, "5")
-          expect_any_instance_of(LogTimeRetrieval).
+          expect_any_instance_of(TimeLogger::LogTimeRetrieval).
             to receive(:save_log_time_entry).
             with(
               @employee_id,

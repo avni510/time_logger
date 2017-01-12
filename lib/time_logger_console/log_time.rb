@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   class LogTime
 
     BILLABLE_TIMECODE = "Billable"
@@ -9,7 +9,7 @@ module TimeLogger
       @log_timecode = params[:log_timecode]
       @log_client = params[:log_client]
       @employee_id = params[:employee_id]
-      @log_time_retrieval = LogTimeRetrieval.new
+      @log_time_retrieval = TimeLogger::LogTimeRetrieval.new
     end
 
     def execute

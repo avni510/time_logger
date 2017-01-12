@@ -1,9 +1,9 @@
-module TimeLogger
+module TimeLoggerConsole
   require "spec_helper"
 
   describe LogHoursWorked do
     let(:mock_console_ui) { double }
-    let(:validation) { Validation.new }
+    let(:validation) { TimeLogger::Validation.new }
     let(:log_hours_worked) { LogHoursWorked.new(mock_console_ui, validation) }
 
     describe ".run" do 

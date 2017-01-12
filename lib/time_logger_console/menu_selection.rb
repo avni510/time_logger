@@ -1,10 +1,10 @@
-module TimeLogger
+module TimeLoggerConsole
   class MenuSelection
 
     def initialize(employee_object, console_ui)
       @employee = employee_object
       @console_ui = console_ui
-      @validation = Validation.new
+      @validation = TimeLogger::Validation.new
     end
 
     def run

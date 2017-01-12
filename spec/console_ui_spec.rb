@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   require "spec_helper"
 
   describe ConsoleUI do

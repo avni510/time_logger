@@ -1,17 +1,17 @@
-module TimeLogger
+module TimeLoggerConsole
   require "spec_helper"
 
   describe LogTimecode do
     let(:mock_console_ui) { double }
-    let(:validation) { Validation.new }
+    let(:validation) { TimeLogger::Validation.new }
     let(:log_timecode) { LogTimecode.new(mock_console_ui, validation) }
 
     describe ".run" do 
       before(:each) do
         @clients = 
             [ 
-              Client.new(1, "Google"), 
-              Client.new(2, "Microsoft")
+              TimeLogger::Client.new(1, "Google"), 
+              TimeLogger::Client.new(2, "Microsoft")
             ]
 
         @timecode_hash_with_clients = 

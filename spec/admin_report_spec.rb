@@ -1,4 +1,4 @@
-module TimeLogger
+module TimeLoggerConsole
   require "spec_helper" 
 
   describe AdminReport do
@@ -17,7 +17,7 @@ module TimeLogger
               "Non-Billable" => 6,
               "PTO" => 5
             }
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:company_wide_timecode_hours).
             and_return(company_timecode_hash)
 
@@ -26,7 +26,7 @@ module TimeLogger
               "Microsoft" => 5,
               "Google" => 3
             }
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:company_wide_client_hours).
             and_return(company_client_hash)
           expect(@mock_console_ui).to receive(:format_admin_report).with(company_timecode_hash, company_client_hash)
@@ -42,10 +42,10 @@ module TimeLogger
               "Non-Billable" => 6,
               "PTO" => 5
             }
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:company_wide_timecode_hours).
             and_return(company_timecode_hash)
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:company_wide_client_hours).
             and_return(nil)
           expect(@mock_console_ui).to receive(:format_admin_report).with(company_timecode_hash, nil)
@@ -55,7 +55,7 @@ module TimeLogger
 
       context "there are no log entries with timecodes" do
         it "returns a message that there are no logged timecodes for the current month" do
-          expect_any_instance_of(ReportRetrieval).
+          expect_any_instance_of(TimeLogger::ReportRetrieval).
             to receive(:company_wide_timecode_hours).
             and_return(nil)
           expect(@mock_console_ui).to receive(:no_company_log_entries_message)

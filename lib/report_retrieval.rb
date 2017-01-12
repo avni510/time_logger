@@ -1,12 +1,8 @@
 module TimeLogger
   class ReportRetrieval
 
-    def initialize(employee_id=nil)
-      @employee_id = employee_id
-    end
-
-    def log_times
-      log_time_repo.sorted_current_month_entries_by_employee_id(@employee_id)
+    def log_times(employee_id)
+      log_time_repo.sorted_current_month_entries_by_employee_id(employee_id)
     end
 
     def convert_log_time_objects_to_strings(sorted_log_time_objects)
@@ -26,12 +22,12 @@ module TimeLogger
       sorted_log_times_array
     end
 
-    def client_hours
-      log_time_repo.employee_client_hours(@employee_id)
+    def client_hours(employee_id)
+      log_time_repo.employee_client_hours(employee_id)
     end
 
-    def timecode_hours
-      log_time_repo.employee_timecode_hours(@employee_id)
+    def timecode_hours(employee_id)
+      log_time_repo.employee_timecode_hours(employee_id)
     end
 
     def company_wide_timecode_hours

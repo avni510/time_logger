@@ -1,12 +1,12 @@
-module TimeLogger
+module TimeLoggerConsole
   require "spec_helper"
 
   describe MenuSelection do
     let(:mock_console_ui) { double }
 
     before(:each) do
-      @employee = Employee.new(1, "rstarr", false)
-      @admin_employee = Employee.new(2, "jlennon", true)
+      @employee = TimeLogger::Employee.new(1, "rstarr", false)
+      @admin_employee = TimeLogger::Employee.new(2, "jlennon", true)
 
       allow(mock_console_ui).to receive(:menu_selection_message)
       allow(mock_console_ui).to receive(:display_menu_options)
