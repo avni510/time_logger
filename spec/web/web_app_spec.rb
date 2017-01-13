@@ -79,17 +79,27 @@ describe WebApp do
     end
   end
 
-  describe "POST menu_selection" do
+  describe "POST login" do
+    it "redirects to the menu_selection page" do
+      post '/login', :username => "defaultadmin"
+      expect(last_response.redirect?).to eq(true)
+      follow_redirect!
+      expect(last_request.path).to eq('/menu_selection')
+    end
+  end
+
+  describe "GET menu_selection" do
     it "loads a menu selection page" do
       expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
-      post "/menu_selection", :username => "defaultadmin"
+      get "/menu_selection", {}, { 'rack.session' => {username: "defaultadmin"}}
       expect(last_response).to be_ok
     end
 
     context "the user is an admin" do
       it "loads a list of 5 options the user can select" do
         expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
-        post "/menu_selection", :username => "defaultadmin"
+
+        get "/menu_selection", {}, { 'rack.session' => {username: "defaultadmin"}}
         expect(last_response.body).to include("Do you want to log your time?")
         expect(last_response.body).to include("Do you want to run a company report?")
       end
@@ -98,7 +108,8 @@ describe WebApp do
     context "the user is not an admin" do
       it "loads a list of 2 options the user can select" do
         expect(mock_worker_retrieval).to receive(:employee).and_return(employees[1])
-        post "/menu_selection", :username => "username2"
+
+        get "/menu_selection", {}, { 'rack.session' => {username: "defaultadmin"}}
         expect(last_response.body).to_not include("Do you want to create a client")
         expect(last_response.body).to_not include("Do you want to create an employee")
         expect(last_response.body).to_not include("Do you want to run a company report")
@@ -141,9 +152,18 @@ describe WebApp do
         expect(mock_report_retrieval).to receive(:client_hours).with(employees.first.id).and_return({})
         expect(mock_report_retrieval).to receive(:timecode_hours).with(employees.first.id).and_return({})
 
-
         get "/employee_report", {}, { 'rack.session' => {username: "defaultadmin"} }
         expect(last_response.body).to include("You have no log times")
+      end
+    end
+
+    describe "GET /back_to_menu_selection" do
+      it "redirects back to the menu selection page" do
+        get '/back_to_menu_selection' do 
+          expect(last_response.redirect?).to eq(true)
+          follow_redirect!
+          expect(last_request.path).to eq('/menu_selection')
+        end
       end
     end
   end

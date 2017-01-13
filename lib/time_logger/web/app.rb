@@ -17,9 +17,14 @@ class WebApp < Sinatra::Base
     erb :homepage
   end
 
-  post '/menu_selection' do
+  post '/login' do
     session[:username] = params[:username]
-    @employee = @worker_retrieval.employee(params[:username])
+    redirect to("/menu_selection")
+  end
+
+  get '/menu_selection' do
+    redirect to('/') unless session[:username]
+    @employee = @worker_retrieval.employee(session[:username])
     @admin = @employee.admin
     erb :menu_selection
   end
@@ -30,5 +35,9 @@ class WebApp < Sinatra::Base
     @client_hours = @report_retrieval.client_hours(employee.id)
     @timecode_hours = @report_retrieval.timecode_hours(employee.id)
     erb :employee_report
+  end
+
+  get "/back_to_menu_selection" do
+    redirect to('/menu_selection')
   end
 end
