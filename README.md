@@ -29,15 +29,8 @@ $ ./bin/execute_time_logger_console.rb
 
 Run Web App
 ```
-/time_logger$ cd lib/time_logger_web/app
+$ ./bin/execute_time_logger_web.rb
 ```
-```
-$ bundle install
-```
-```
-$ shotgun
-```
-
 Usage
 -----
 The application is used for employees to log in their time worked 
