@@ -1,8 +1,11 @@
 require "sinatra/base"
+require "wannabe_bool"
+require "sinatra/flash"
 
 class WebApp < Sinatra::Base
   enable :sessions
   set :session_secret, "My session secret"
+  register Sinatra::Flash
 
   def initialize(app = nil, params)
     @worker_retrieval = params[:worker_retrieval]
@@ -39,5 +42,26 @@ class WebApp < Sinatra::Base
 
   get "/back_to_menu_selection" do
     redirect to('/menu_selection')
+  end
+
+  get "/admin_report" do
+    @company_timecodes = @report_retrieval.company_wide_timecode_hours
+    @company_clients = @report_retrieval.company_wide_client_hours
+    erb :admin_report
+  end
+
+  get "/employee_creation" do
+    erb :employee_creation
+  end
+
+  post "/employee_creation_submission" do
+    @employee = @worker_retrieval.employee(params[:new_user])
+    if @employee 
+      flash[:employee_exists] = "This user already exists, please create another user"
+      redirect "/employee_creation"
+    else
+      @worker_retrieval.save_employee(params[:new_user], params[:admin_authority].to_b)
+      erb :employee_creation_submission
+    end
   end
 end

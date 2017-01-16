@@ -40,5 +40,15 @@ module TimeLogger
         @worker_retrieval.company_employees
       end
     end
+
+    describe ".save_employee" do
+      it "creates and saves an employee" do
+        username = "gharrison"
+        admin_authority = false
+        expect(@mock_employee_repo).to receive(:create).with(username, admin_authority)
+        expect(@mock_employee_repo).to receive(:save)
+        @worker_retrieval.save_employee(username, admin_authority)
+      end
+    end
   end
 end

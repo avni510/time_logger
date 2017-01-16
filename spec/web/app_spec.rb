@@ -159,10 +159,104 @@ describe WebApp do
 
     describe "GET /back_to_menu_selection" do
       it "redirects back to the menu selection page" do
-        get '/back_to_menu_selection' do 
+        get '/back_to_menu_selection' 
           expect(last_response.redirect?).to eq(true)
           follow_redirect!
           expect(last_request.path).to eq('/menu_selection')
+        end
+      end
+
+    describe "GET /admin_report" do
+      before(:each) do
+        company_timecode_hash = 
+          {
+            "Billable" => 4, 
+            "Non-Billable" => 6,
+            "PTO" => 5
+          }
+
+        company_client_hash =  
+          { 
+            "Microsoft" => 5,
+            "Google" => 3
+          }
+        allow(mock_report_retrieval).to receive(:company_wide_timecode_hours).and_return(company_timecode_hash)
+        allow(mock_report_retrieval).to receive(:company_wide_client_hours).and_return(company_client_hash)
+      end
+
+      it "loads an admin report page" do
+        get '/admin_report', {}, { 'rack.session' => {username: "defaultadmin" } }
+        expect(last_response).to be_ok
+      end
+
+      context "log times exist in the company" do
+        it "displays a report of total client hours and timecode hours for a company" do
+          get '/admin_report', {}, { 'rack.session' => {username: "defaultadmin" } }
+          expect(last_response.body).to include("Company total hours worked for Google : 3")
+          expect(last_response.body).to include("Company total Billable hours worked : 4")
+        end
+      end
+
+      context "There are no client hours worked" do
+        it "displays a message that there are no client hours worked" do
+          expect(mock_report_retrieval).to receive(:company_wide_client_hours).and_return(nil)
+          get '/admin_report', {}, { 'rack.session' => {username: "defaultadmin" } }
+          expect(last_response.body).to include("There are no hours logged for clients")
+        end
+      end
+
+      context "There are no log times" do
+        it "displays a message that there are no log times for the company" do
+          expect(mock_report_retrieval).to receive(:company_wide_client_hours).and_return(nil)
+          expect(mock_report_retrieval).to receive(:company_wide_timecode_hours).and_return(nil)
+          get '/admin_report', {}, { 'rack.session' => {username: "defaultadmin" } }
+          expect(last_response.body).to include("There are no log times for the company")
+          expect(last_response).to be_ok
+        end
+      end
+    end
+
+    describe "GET /employee_creation" do
+      it "loads an employee creation page" do
+        get '/employee_creation', {}, { 'rack.session' => {username: "defaultadmin" } }
+        expect(last_response).to be_ok
+      end
+
+      it "allows the user to enter a new employee and choose to give them admin authority" do
+        get '/employee_creation', {}, { 'rack.session' => {username: "defaultadmin" } }
+        expect(last_response.body).to include("Please enter the username of the employee you would like to create")
+        expect(last_response.body).to include("Please select from the dropdown if the user should have admin authority")
+      end
+    end
+
+    describe "POST /employee_creation_submission" do
+      before(:each) do
+        allow(mock_worker_retrieval).to receive(:employee).and_return(nil)
+
+        allow(mock_worker_retrieval).to receive(:save_employee)
+      end
+
+      it "loads a page after a new user is submitted" do
+        post "/employee_creation_submission", {:new_user => "username3", :admin_authority => "true"}
+        expect(last_response).to be_ok
+      end
+
+      context "the newly created username does not already exist" do
+        it "displays a success message and saves the user" do
+          expect(mock_worker_retrieval).to receive(:save_employee).with("username3", true)
+          post "/employee_creation_submission", {:new_user => "username3", :admin_authority => "true"}
+          expect(last_response.body).to include("You have successfully created a new employee")
+        end
+      end
+
+      context "the newly created username already exists" do
+        it "displays a message to create a new employee and redirects them to the employee creation page" do
+          expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
+          post "/employee_creation_submission", {:new_user => "defaultadmin", :admin_authority => "true"}
+          expect(last_response.redirect?).to eq(true)
+          follow_redirect!
+          expect(last_request.path).to eq('/employee_creation')
+          expect(last_response.body).to include("This user already exists, please create another user")
         end
       end
     end

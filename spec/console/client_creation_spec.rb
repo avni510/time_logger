@@ -8,16 +8,9 @@ module TimeLogger
         before(:each) do
           @mock_console_ui = double
           @validation = TimeLogger::Validation.new
-          @client_creation = ClientCreation.new(@mock_console_ui, @validation)
-
-          @mock_client_repo = double
-          allow(TimeLogger::Repository).to receive(:for).and_return(@mock_client_repo)
-
           allow(@mock_console_ui).to receive(:new_client_name_message)
           allow(@mock_console_ui).to receive(:client_exists_message)
-
-          allow(@mock_client_repo).to receive(:create)
-          allow(@mock_client_repo).to receive(:save)
+          @client_creation = ClientCreation.new(@mock_console_ui, @validation)
         end
 
         context "client name does not exist in memory" do
@@ -26,11 +19,9 @@ module TimeLogger
 
             expect(@mock_console_ui).to receive(:get_user_input).and_return("Google")
 
-            allow(@mock_client_repo).to receive(:find_by_name).and_return(nil)
+            expect_any_instance_of(TimeLogger::ClientRetrieval).to receive(:find_client).and_return(nil)
 
-            expect(@mock_client_repo).to receive(:create).with("Google")
-
-            expect(@mock_client_repo).to receive(:save)
+            expect_any_instance_of(TimeLogger::ClientRetrieval).to receive(:save_client)
 
             @client_creation.execute
           end
@@ -41,8 +32,9 @@ module TimeLogger
 
             expect(@mock_console_ui).to receive(:get_user_input).and_return("Google", "Microsoft")
 
-            expect(@mock_client_repo).to receive(:find_by_name).and_return(TimeLogger::Client.new(1, "Google"), nil)
+            expect_any_instance_of(TimeLogger::ClientRetrieval).to receive(:find_client).and_return(TimeLogger::Client.new(1, "Google"), nil)
 
+            expect_any_instance_of(TimeLogger::ClientRetrieval).to receive(:save_client)
             @client_creation.execute
           end
         end
@@ -54,7 +46,9 @@ module TimeLogger
 
             expect(@mock_console_ui).to receive(:valid_client_name_message)
 
-            expect(@mock_client_repo).to receive(:find_by_name).and_return(nil)
+            expect_any_instance_of(TimeLogger::ClientRetrieval).to receive(:find_client).and_return(nil)
+
+            expect_any_instance_of(TimeLogger::ClientRetrieval).to receive(:save_client)
 
             @client_creation.execute
           end

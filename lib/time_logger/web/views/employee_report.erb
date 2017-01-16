@@ -1,6 +1,7 @@
 <% unless @sorted_log_times %>
   <p> You have no log times </p>
 <% else %>
+  <p> This is a report for the current month </p>
   <table>
     <tr>
       <th>Date</th>
@@ -24,4 +25,4 @@
       <p> Total <%= timecode %> hours worked : <%= hours_worked %> </p>
     <% end %>
 <% end %>
-<a class = "btn" href = /back_to_menu_selection> Go Back To Menu Selection </a>
+<a class ="btn btn-default"  href = /back_to_menu_selection> Go Back To Menu Selection </a>

@@ -15,4 +15,4 @@ require "time_logger/client_repo"
 require "time_logger/worker_retrieval"
 require "time_logger/report_retrieval"
 require "time_logger/log_time_retrieval"
-
+require "time_logger/client_retrieval"

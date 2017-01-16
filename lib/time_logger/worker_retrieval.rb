@@ -9,6 +9,11 @@ module TimeLogger
       employee_repo.all
     end
 
+    def save_employee(username, admin_authority)
+      employee_repo.create(username, admin_authority)
+      employee_repo.save
+    end 
+
     private
 
     def employee_repo

@@ -5,21 +5,17 @@ module TimeLogger
       def initialize(console_ui, validation)
         @console_ui = console_ui
         @validation = validation
+        @worker_retrieval = TimeLogger::WorkerRetrieval.new
       end
 
       def execute
         new_username = enter_new_username
-
         admin_option_num = enter_new_user_admin_authority
-
-        save_user(new_username, admin_option_num)
+        admin_authority = convert_input_to_boolean(admin_option_num)
+        @worker_retrieval.save_employee(new_username, admin_authority)
       end
 
       private
-
-      def employee_repo
-        TimeLogger::Repository.for(:employee)
-      end
 
       def enter_new_username
         @console_ui.enter_new_username_message
@@ -39,7 +35,7 @@ module TimeLogger
       end
 
       def employee_exists_loop(username)
-        while employee_repo.find_by_username(username)
+        while @worker_retrieval.employee(username)
           @console_ui.username_exists_message
           username = @console_ui.get_user_input
         end
@@ -71,12 +67,6 @@ module TimeLogger
           admin_option_num = @console_ui.get_user_input
         end
         admin_option_num
-      end
-
-      def save_user(username, admin_num_value)
-        new_admin_value = convert_input_to_boolean(admin_num_value)
-        employee_repo.create(username, new_admin_value)
-        employee_repo.save
       end
 
       def generate_admin_hash
