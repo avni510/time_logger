@@ -6,20 +6,14 @@ module TimeLogger
     end
 
     def convert_log_time_objects_to_strings(sorted_log_time_objects)
-      sorted_log_times_array = []
-
-      sorted_log_time_objects.each do |log_time_entry|
-        log_time_entry_array = 
-          [
-            "#{log_time_entry.date.month}-#{log_time_entry.date.day}-#{log_time_entry.date.year}",
-            log_time_entry.hours_worked.to_s,
-            log_time_entry.timecode,
-            log_time_entry.client
-          ]
-
-        sorted_log_times_array << log_time_entry_array
+      sorted_log_time_objects.map do |log_time_entry|
+        [
+          "#{log_time_entry.date.month}-#{log_time_entry.date.day}-#{log_time_entry.date.year}",
+          log_time_entry.hours_worked.to_s,
+          log_time_entry.timecode,
+          log_time_entry.client
+        ]
       end
-      sorted_log_times_array
     end
 
     def client_hours(employee_id)

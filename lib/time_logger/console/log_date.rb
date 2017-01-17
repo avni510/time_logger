@@ -2,33 +2,18 @@ module TimeLogger
   module Console
     class LogDate
       
-      def initialize(console_ui, validation)
+      def initialize(console_ui, validation_date)
         @console_ui = console_ui
-        @validation = validation
+        @validation_date = validation_date
       end
 
       def run
         date_entered = @console_ui.date_log_time_message
-
-        date_entered = valid_date_format_loop(date_entered)
-
-        date_entered = future_date_loop(date_entered)
-      end
-      
-      private
-
-      def valid_date_format_loop(date_entered)
-        until @validation.date_valid_format?(date_entered)
-          @console_ui.valid_date_message
+        result = @validation_date.validate(date_entered)
+        until result.valid?
+          @console_ui.puts_string(result.errors)
           date_entered = @console_ui.get_user_input
-        end
-        date_entered
-      end
-
-      def future_date_loop(date_entered)
-        until @validation.previous_date?(date_entered)
-          @console_ui.future_date_valid_message
-          date_entered = @console_ui.get_user_input
+          result = @validation_date.validate(date_entered)
         end
         date_entered
       end

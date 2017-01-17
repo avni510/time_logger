@@ -6,6 +6,10 @@ module TimeLogger
         @io_wrapper = io_wrapper
       end
 
+      def puts_string(string)
+        @io_wrapper.puts_string(string)
+      end
+
       def puts_space
         @io_wrapper.puts_string("")
       end

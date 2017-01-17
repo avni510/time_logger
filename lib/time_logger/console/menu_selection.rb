@@ -6,6 +6,7 @@ module TimeLogger
         @employee = employee_object
         @console_ui = console_ui
         @validation = TimeLogger::Validation.new
+        @validation_date = TimeLogger::ValidationDate.new
       end
 
       def run
@@ -80,7 +81,7 @@ module TimeLogger
 
       def generate_log_time_hash
         { 
-          :log_date => LogDate.new(@console_ui, @validation),
+          :log_date => LogDate.new(@console_ui, @validation_date),
           :log_hours_worked => LogHoursWorked.new(@console_ui, @validation),
           :log_timecode => LogTimecode.new(@console_ui, @validation),
           :log_client => LogClient.new(@console_ui, @validation),
