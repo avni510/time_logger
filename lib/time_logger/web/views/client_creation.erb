@@ -1,0 +1,13 @@
+<% if flash[:blank_space_error] %>
+  <%= flash[:blank_space_error] %>
+<% end %>
+<% if flash[:client_exists] %>
+  <%= flash[:client_exists] %>
+<% end %>
+<br>
+<form method="post" action="/client_creation_submission"> 
+  Please enter the name of the client you would like to create <br>
+  <input type="text" name="new_client"> <br>
+  <input class="btn btn-primary" type="submit" value="Submit">
+</form>
+

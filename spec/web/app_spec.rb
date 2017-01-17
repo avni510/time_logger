@@ -53,12 +53,15 @@ describe WebApp do
   let(:mock_load_data) { double(run: nil) }
   let(:mock_worker_retrieval) { double(company_employees: employees) }
   let(:mock_report_retrieval) { double(log_times: log_times_current_month) }
+  let(:mock_client_retrieval) { double }
 
   def app
     params = { 
       load_data: mock_load_data, 
       worker_retrieval: mock_worker_retrieval, 
-      report_retrieval: mock_report_retrieval 
+      report_retrieval: mock_report_retrieval,
+      validation: TimeLogger::Validation.new,
+      client_retrieval: mock_client_retrieval
     }
     WebApp.new(app = nil, params)
   end
@@ -249,6 +252,17 @@ describe WebApp do
         end
       end
 
+      context "a blank space is entered as the new user" do
+        it "redirects them to the employee creation page and displays a message to enter a valid username" do
+          
+          post "/employee_creation_submission", {:new_user => "", :admin_authority => "true"}
+          expect(last_response.redirect?).to eq(true) 
+          follow_redirect!
+          expect(last_request.path).to eq("/employee_creation")
+          expect(last_response.body).to include("A blank space cannot be entered")
+        end
+      end
+
       context "the newly created username already exists" do
         it "displays a message to create a new employee and redirects them to the employee creation page" do
           expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
@@ -257,6 +271,58 @@ describe WebApp do
           follow_redirect!
           expect(last_request.path).to eq('/employee_creation')
           expect(last_response.body).to include("This user already exists, please create another user")
+        end
+      end
+    end
+
+    describe " GET /client_creation" do
+      it "loads a client creation page" do
+        get "/client_creation", {}, {'rack.session' => {username: "defaultadmin"}}
+        expect(last_response).to be_ok
+      end
+
+      it "allows the user to enter a new client" do
+        get "/client_creation", {}, {'rack.session' => {username: "defaultadmin"}}
+        expect(last_response.body).to include("Please enter the name of the client you would like to create")
+      end
+    end
+
+    describe "POST /client_creation_submission" do
+      before(:each) do
+        allow(mock_client_retrieval).to receive(:save_client)
+        allow(mock_client_retrieval).to receive(:find_client).and_return(nil)
+      end
+
+      it "loads a page after a new client is submitted" do
+        post "/client_creation_submission", {:new_client => "client1"}
+        expect(last_response).to be_ok
+      end
+
+      context "the newly created client does not already exist" do
+        it "displays a success message and saves the client" do
+          post "/client_creation_submission", {:new_client => "client1"}
+          expect(last_response.body).to include("You have successfully created a new client")
+        end
+      end
+
+      context "a blank space is entered as the new client" do
+        it "redirects them to the client creation page and displays a message to enter a valid client name" do
+          post "/client_creation_submission", {:new_client => ""}
+          expect(last_response.redirect?).to eq(true) 
+          follow_redirect!
+          expect(last_request.path).to eq("/client_creation")
+          expect(last_response.body).to include("A blank space cannot be entered")
+        end
+      end
+
+      context "the newly created client already exists" do
+        it "displays a message to create a new client and redirects them to the client creation page" do
+          expect(mock_client_retrieval).to receive(:find_client).and_return("clientname1")
+          post "/client_creation_submission", {:new_client => "clientname1"}
+          expect(last_response.redirect?).to eq(true)
+          follow_redirect!
+          expect(last_request.path).to eq('/client_creation')
+          expect(last_response.body).to include("This client already exists, please create another client")
         end
       end
     end
