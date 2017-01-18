@@ -10,10 +10,11 @@ class WebApp < Sinatra::Base
   def initialize(app = nil, params)
     @worker_retrieval = params[:worker_retrieval]
     @report_retrieval = params[:report_retrieval]
-    @validation = params[:validation]
     @client_retrieval = params[:client_retrieval]
-    load_data = params[:load_data]
-    load_data.run
+    @validation_client_creation = params[:validation_client_creation]
+    @validation_employee_creation = params[:validation_employee_creation]
+    @validation_date = params[:validation_date]
+    @validation_hours_worked = params[:validation_hours_worked]
     super(app)
   end
 
@@ -57,19 +58,14 @@ class WebApp < Sinatra::Base
   end
 
   post "/employee_creation_submission" do
-    if @validation.blank_space?(params[:new_user])
-      flash[:blank_space_error] = "A blank space cannot be entered"
+    result = @validation_employee_creation.validate(params[:new_user])
+    unless result.valid?
+      flash[:error] = result.error_message
       redirect "/employee_creation"
     else
-      @employee = @worker_retrieval.employee(params[:new_user])
-      if @employee 
-        flash[:employee_exists] = "This user already exists, please create another user"
-        redirect "/employee_creation"
-      else
-        @worker_retrieval.save_employee(params[:new_user], params[:admin_authority].to_b)
-        @success_message = "You have successfully created a new employee"
-        erb :submission_success
-      end
+      @worker_retrieval.save_employee(params[:new_user], params[:admin_authority].to_b)
+      @success_message = "You have successfully created a new employee"
+      erb :submission_success
     end
   end
 
@@ -78,19 +74,14 @@ class WebApp < Sinatra::Base
   end
 
   post "/client_creation_submission" do
-    if @validation.blank_space?(params[:new_client])
-      flash[:blank_space_error] = "A blank space cannot be entered"
+    result = @validation_client_creation.validate(params[:new_client])
+    unless result.valid?
+      flash[:error] = result.error_message
       redirect "/client_creation"
     else
-      @client = @client_retrieval.find_client(params[:new_client])
-      if @client 
-        flash[:client_exists] = "This client already exists, please create another client"
-        redirect "/client_creation"
-      else
-        @client_retrieval.save_client(params[:new_client])
-        @success_message = "You have successfully created a new client"
-        erb :submission_success
-      end
+      @client_retrieval.save_client(params[:new_client])
+      @success_message = "You have successfully created a new client"
+      erb :submission_success
     end
   end
 end

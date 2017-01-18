@@ -22,14 +22,6 @@ module TimeLogger
         general_message_format("Please enter your username")
       end
 
-      def valid_client_name_message
-        general_message_format("Please enter a valid client name")
-      end
-
-      def valid_username_message
-        general_message_format("Please enter a valid username")
-      end
-
       def username_does_not_exist_message
         general_message_format("This username does not exist")
       end
@@ -40,14 +32,6 @@ module TimeLogger
 
       def create_admin_message
         general_message_format("Would you like the user to be an admin?")
-      end
-
-      def client_exists_message
-        general_item_exists("client")
-      end
-
-      def username_exists_message
-        general_item_exists("username")
       end
 
       def no_company_log_entries_message
@@ -76,30 +60,6 @@ module TimeLogger
 
       def no_log_times_message
         general_message_format("You do not have any log times for this month")
-      end
-
-      def valid_hours_message
-        general_message_format("You have exceeded 24 hours for this day.")
-      end
-
-      def valid_username_message
-        general_message_format("Please enter a valid username")
-      end
-
-      def valid_menu_option_message
-        general_message_format("Please enter a valid menu option")
-      end
-      
-      def valid_date_message
-        general_message_format("Please enter a valid date")
-      end
-
-      def future_date_valid_message
-        general_message_format("Please enter a date in the past")
-      end
-
-      def enter_digit_message
-        general_message_format("Please enter a number greater than 0")
       end
 
       def menu_selection_message
@@ -211,10 +171,6 @@ module TimeLogger
         puts_space
         @io_wrapper.puts_string(string)
         puts_space
-      end
-
-      def general_item_exists(item)
-        general_message_format("This #{item} already exists, please enter a different one")
       end
     end
   end

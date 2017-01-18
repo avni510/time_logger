@@ -15,7 +15,6 @@ module TimeLogger
         worker_setup = WorkerSetup.new(@console_ui)
         worker_setup.run
       end
-
     end
   end
 end

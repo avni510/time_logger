@@ -9,6 +9,8 @@ module TimeLogger
         @employee = TimeLogger::Employee.new(1, "rstarr", false)
         @admin_employee = TimeLogger::Employee.new(2, "jlennon", true)
 
+        allow(Repository).to receive(:for).with(:employee).and_return(double)
+        allow(Repository).to receive(:for).with(:client).and_return(double)
         allow(mock_console_ui).to receive(:menu_selection_message)
         allow(mock_console_ui).to receive(:display_menu_options)
       end
@@ -70,7 +72,7 @@ module TimeLogger
             expect(mock_console_ui).to receive(:display_menu_options)
 
             expect(mock_console_ui).to receive(:get_user_input).and_return("!", "3")
-            expect(mock_console_ui).to receive(:valid_menu_option_message)
+            expect(mock_console_ui).to receive(:puts_string).with("Please enter a valid option")
 
             menu_selection.run
           end
@@ -98,7 +100,7 @@ module TimeLogger
             expect(mock_console_ui).to receive(:get_user_input).and_return("3")
 
             menu_selection.run
-          end
+         end
 
           context "the user selects the option to create a client" do
             it "runs the action of creating a client" do

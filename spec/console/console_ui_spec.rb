@@ -28,22 +28,6 @@ module TimeLogger
         end
       end
 
-      describe ".valid_client_name_message" do
-        it "prompts the user to enter a valid client name" do
-          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid client name")
-          expect(console_ui).to receive(:puts_space).exactly(2).times
-          console_ui.valid_client_name_message
-        end
-      end
-
-      describe ".valid_username_message" do
-        it "prompts the user to enter a valid username name" do
-          expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid username")
-          expect(console_ui).to receive(:puts_space).exactly(2).times
-          console_ui.valid_username_message
-        end
-      end
-
       describe ".username_does_not_exist_message" do
         context "the username entered does not exist in the data" do
           it "displays the a message that it does not exist" do
@@ -73,27 +57,7 @@ module TimeLogger
           end
         end
       end
-
-      describe ".client_exists_message" do
-        context "an admin enters a client name that already exists" do
-          it "displays a message to the user to enter a different client name" do
-            expect(mock_io_wrapper).to receive(:puts_string).with("This client already exists, please enter a different one")
-            expect(console_ui).to receive(:puts_space).exactly(2).times
-            console_ui.client_exists_message
-          end
-        end
-      end
-
-      describe ".username_exists_message" do
-        context "an admin enters a username that already exists" do
-          it "displays a message to the user to enter a different user name" do
-            expect(mock_io_wrapper).to receive(:puts_string).with("This username already exists, please enter a different one")
-            expect(console_ui).to receive(:puts_space).exactly(2).times
-            console_ui.username_exists_message
-          end
-        end
-      end
-
+      
       describe ".no_company_log_entries_message" do
         context "an admin runs a report and there are no log entries" do
           it "displays a message that there no log entries" do
@@ -158,67 +122,6 @@ module TimeLogger
             expect(mock_io_wrapper).to receive(:puts_string).with("You do not have any log times for this month")
             expect(console_ui).to receive(:puts_space).exactly(2).times
             console_ui.no_log_times_message
-          end
-        end
-      end
-
-
-      describe ".valid_hours_message" do
-        context "more than 24 hours are entered in" do
-          it "displays a message to the user to enter a valid input" do
-            expect(mock_io_wrapper).to receive(:puts_string).with("You have exceeded 24 hours for this day.")
-            expect(console_ui).to receive(:puts_space).exactly(2).times
-            console_ui.valid_hours_message
-          end
-        end
-      end
-
-      describe ".valid_username_message" do
-        context "an invalid username is entered" do
-          it "asks the user to enter a valid username" do
-            expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid username")
-            expect(console_ui).to receive(:puts_space).exactly(2).times
-            console_ui.valid_username_message
-          end
-        end
-      end
-
-      describe ".valid_menu_option_message" do
-        context "an invalid menu option is selected" do
-          it "asks the user to enter a valid menu option" do
-            expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid menu option")
-            expect(console_ui).to receive(:puts_space).exactly(2).times
-            console_ui.valid_menu_option_message
-          end
-        end
-      end
-
-      describe ".valid_date_message" do
-        context "the user doesn't enter a date in the proper format" do
-          it "displays a message to enter a valid date" do
-            expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a valid date")
-            expect(console_ui).to receive(:puts_space).exactly(2).times
-            console_ui.valid_date_message
-          end
-        end
-      end
-
-      describe ".future_date_valid_message"do
-        context "the user enters a date in the correct format and the date is in the future" do
-          it "displays a message to enter a previous date" do
-            expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a date in the past")
-            expect(console_ui).to receive(:puts_space).exactly(2).times
-            console_ui.future_date_valid_message
-          end
-        end
-      end
-
-      describe ".enter_digit_message" do
-        context "the user enters a non digit for hours worked" do
-          it "displays a message to enter a number" do
-            expect(mock_io_wrapper).to receive(:puts_string).with("Please enter a number greater than 0")
-            expect(console_ui).to receive(:puts_space).exactly(2).times
-            console_ui.enter_digit_message
           end
         end
       end

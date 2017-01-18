@@ -1,8 +1,5 @@
-<% if flash[:blank_space_error] %>
-  <%= flash[:blank_space_error] %>
-<% end %>
-<% if flash[:client_exists] %>
-  <%= flash[:client_exists] %>
+<% if flash[:error] %>
+  <%= flash[:error] %>
 <% end %>
 <br>
 <form method="post" action="/client_creation_submission"> 

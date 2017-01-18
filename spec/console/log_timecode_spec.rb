@@ -4,8 +4,8 @@ module TimeLogger
 
     describe LogTimecode do
       let(:mock_console_ui) { double }
-      let(:validation) { TimeLogger::Validation.new }
-      let(:log_timecode) { LogTimecode.new(mock_console_ui, validation) }
+      let(:validation_menu) { TimeLogger::ValidationMenu.new }
+      let(:log_timecode) { LogTimecode.new(mock_console_ui, validation_menu) }
 
       describe ".run" do 
         before(:each) do
@@ -34,7 +34,7 @@ module TimeLogger
             with(@timecode_hash_with_clients).
             and_return("2")
 
-          log_timecode.run(@clients)
+          expect(log_timecode.run(@clients)).to eq("Non-Billable")
         end
 
         context "an invalid timecode is entered that is not displayed in the menu" do
@@ -43,11 +43,11 @@ module TimeLogger
               with(@timecode_hash_with_clients).
               and_return("4")
 
-            expect(mock_console_ui).to receive(:valid_menu_option_message)
+            expect(mock_console_ui).to receive(:puts_string).with("Please enter a valid option")
 
             expect(mock_console_ui).to receive(:get_user_input).and_return("3")
 
-            log_timecode.run(@clients)
+            expect(log_timecode.run(@clients)).to eq("PTO")
           end
         end
 
@@ -59,17 +59,8 @@ module TimeLogger
               with(@timecode_hash_without_clients).
               and_return("1")
 
-            log_timecode.run(@clients)
+            expect(log_timecode.run(@clients)).to eq("Non-Billable")
           end
-        end
-
-        it "returns the timecode entered" do
-          expect(mock_console_ui).to receive(:timecode_log_time_message).
-            with(@timecode_hash_with_clients).
-            and_return("2")
-
-          result = log_timecode.run(@clients)
-          expect(result).to eq("Non-Billable")
         end
       end
     end

@@ -16,7 +16,7 @@ module TimeLogger
             ["02-30-2016", invalid_date_message]
           ].each do |date_entered, value|
             result = validation_date.validate(date_entered)
-            expect(result.errors).to eq(value)
+            expect(result.error_message).to eq(value)
           end
         end
       end
@@ -31,7 +31,21 @@ module TimeLogger
             ["09-10-2016", nil ]
           ].each do |date_entered, value|
             result = validation_date.validate(date_entered)
-            expect(result.errors).to eq(value)
+            expect(result.error_message).to eq(value)
+          end
+        end
+      end
+
+      context "the user enters a blank space for the date" do
+        it "returns an instance of the result object with the proper errors" do
+          blank_space_message = "Your input cannot be blank"
+          [ 
+            ["", blank_space_message],
+            ["   ", blank_space_message],
+            ["02-10-2016", nil]
+          ].each do |user_input, value|
+            result = validation_date.validate(user_input)
+            expect(result.error_message).to eq(value)
           end
         end
       end

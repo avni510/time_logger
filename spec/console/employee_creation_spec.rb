@@ -5,8 +5,10 @@ module TimeLogger
     describe EmployeeCreation do
       before(:each) do
         @mock_console_ui = double
-        validation = TimeLogger::Validation.new
-        @employee_creation = EmployeeCreation.new(@mock_console_ui, validation)
+        @mock_employee_repo = double
+        validation_employee_creation = TimeLogger::ValidationEmployeeCreation.new(@mock_employee_repo)
+        validation_menu = TimeLogger::ValidationMenu.new
+        @employee_creation = EmployeeCreation.new(@mock_console_ui, validation_employee_creation, validation_menu)
       end
 
       describe ".execute" do
@@ -14,7 +16,6 @@ module TimeLogger
           allow(@mock_console_ui).to receive(:enter_new_username_message)
           allow(@mock_console_ui).to receive(:create_admin_message)
           allow(@mock_console_ui).to receive(:display_menu_options)
-
           allow_any_instance_of(TimeLogger::WorkerRetrieval).to receive(:save_employee)
         end
 
@@ -23,7 +24,7 @@ module TimeLogger
             expect(@mock_console_ui).to receive(:enter_new_username_message)
             expect(@mock_console_ui).to receive(:get_user_input).and_return("pmccartney", "1")
             
-            expect_any_instance_of(TimeLogger::WorkerRetrieval).to receive(:employee).and_return(nil)
+            allow(@mock_employee_repo).to receive(:find_by_username).and_return(nil)
 
             expect(@mock_console_ui).to receive(:create_admin_message)
 
@@ -44,8 +45,9 @@ module TimeLogger
           it "prompts the user to create a different user name" do
             expect(@mock_console_ui).to receive(:get_user_input).and_return("rstarr", "pmccartney", "2")
 
-            expect_any_instance_of(TimeLogger::WorkerRetrieval).to receive(:employee).and_return(TimeLogger::Employee.new(1, "rstarr", false), nil)
-            expect(@mock_console_ui).to receive(:username_exists_message).exactly(1).times
+            allow(@mock_employee_repo).to receive(:find_by_username).and_return(TimeLogger::Employee.new(1, "rstarr", false), nil)
+
+            expect(@mock_console_ui).to receive(:puts_string).with("This user already exists, please enter a different one")
 
             @employee_creation.execute
           end
@@ -55,9 +57,9 @@ module TimeLogger
           it "prompts the user to create a different user name" do
             expect(@mock_console_ui).to receive(:get_user_input).and_return("", "pmccartney", "2")
 
-            expect(@mock_console_ui).to receive(:valid_username_message)
+            expect(@mock_console_ui).to receive(:puts_string).with("Your input cannot be blank")
 
-            expect_any_instance_of(TimeLogger::WorkerRetrieval).to receive(:employee).with("pmccartney").and_return(nil)
+            allow(@mock_employee_repo).to receive(:find_by_username).and_return(nil)
 
             @employee_creation.execute
           end
@@ -67,9 +69,9 @@ module TimeLogger
           it "prompts the user to enter another admin option" do
             expect(@mock_console_ui).to receive(:get_user_input).and_return("pmccartney", "6", "2")
 
-            expect_any_instance_of(TimeLogger::WorkerRetrieval).to receive(:employee).with("pmccartney").and_return(nil)
+            allow(@mock_employee_repo).to receive(:find_by_username).and_return(nil)
             
-            expect(@mock_console_ui).to receive(:valid_menu_option_message).exactly(1).times
+            expect(@mock_console_ui).to receive(:puts_string).with("Please enter a valid option")
 
             @employee_creation.execute
           end

@@ -5,29 +5,37 @@ module TimeLogger
       def initialize(employee_object, console_ui)
         @employee = employee_object
         @console_ui = console_ui
-        @validation = TimeLogger::Validation.new
-        @validation_date = TimeLogger::ValidationDate.new
       end
 
       def run
         @console_ui.menu_selection_message
-        set_menu_hash
+        menu_hash = set_menu_hash
         user_selection = true
         while user_selection
-          @console_ui.display_menu_options(@menu_hash)
+          @console_ui.display_menu_options(menu_hash)
           user_input = @console_ui.get_user_input
-          user_input = valid_menu_selection_loop(user_input)
-          break if user_input.to_sym == @menu_hash.key("3. Quit the program")
+          user_input = valid_menu_selection_loop(menu_hash, user_input)
+          break if user_input.to_sym == menu_hash.key("3. Quit the program")
           menu_action(user_input)
         end 
       end
-
-      private
       
-      def valid_menu_selection_loop(user_input)
-        until @validation.menu_selection_valid?(@menu_hash, user_input)
-          @console_ui.valid_menu_option_message
+      private
+
+      def employee_repo
+        Repository.for(:employee)
+      end
+
+      def client_repo
+        Repository.for(:client)
+      end
+
+      def valid_menu_selection_loop(menu_hash, user_input)
+        result = validation_menu.validate(menu_hash, user_input)
+        until result.valid?
+          @console_ui.puts_string(result.error_message)
           user_input = @console_ui.get_user_input
+          result = validation_menu.validate(menu_hash, user_input)
         end
         user_input
       end
@@ -37,8 +45,6 @@ module TimeLogger
         action = menu_action_hash[user_input]
         action.execute
       end
-
-      private
 
       def menu_action_hash
         {
@@ -50,16 +56,36 @@ module TimeLogger
         }
       end
 
+      def validation_hours_worked
+        TimeLogger::ValidationHoursWorked.new
+      end
+
+      def validation_menu
+        TimeLogger::ValidationMenu.new
+      end
+
+      def validation_date
+        TimeLogger::ValidationDate.new
+      end
+
+      def validation_client_creation
+        TimeLogger::ValidationClientCreation.new(client_repo)
+      end
+
+      def validation_employee_creation
+        TimeLogger::ValidationEmployeeCreation.new(employee_repo)
+      end
+
       def instaniate_admin_report
         AdminReport.new(@console_ui)
       end
 
       def instaniate_employee_creation
-        EmployeeCreation.new(@console_ui, @validation)
+        EmployeeCreation.new(@console_ui, validation_employee_creation, validation_menu)
       end
 
       def instaniate_client_creation
-        ClientCreation.new(@console_ui, @validation)
+        ClientCreation.new(@console_ui, validation_client_creation)
       end
       
       def instaniate_employee_report
@@ -73,18 +99,18 @@ module TimeLogger
 
       def set_menu_hash
         if @employee.admin
-          @menu_hash = generate_admin_menu_hash 
+          generate_admin_menu_hash 
         else 
-          @menu_hash = generate_employee_menu_hash
+          generate_employee_menu_hash
         end
       end
 
       def generate_log_time_hash
         { 
-          :log_date => LogDate.new(@console_ui, @validation_date),
-          :log_hours_worked => LogHoursWorked.new(@console_ui, @validation),
-          :log_timecode => LogTimecode.new(@console_ui, @validation),
-          :log_client => LogClient.new(@console_ui, @validation),
+          :log_date => LogDate.new(@console_ui, validation_date),
+          :log_hours_worked => LogHoursWorked.new(@console_ui, validation_hours_worked),
+          :log_timecode => LogTimecode.new(@console_ui, validation_menu),
+          :log_client => LogClient.new(@console_ui, validation_menu),
           :employee_id => @employee.id
         }
     end

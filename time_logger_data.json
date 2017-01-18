@@ -18,13 +18,6 @@
     }
   ],
   "clients": [
-    {
-      "id": 1,
-      "name": "clientname"
-    },
-    {
-      "id": 2,
-      "name": "client1"
-    }
+
   ]
 }

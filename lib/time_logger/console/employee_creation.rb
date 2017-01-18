@@ -2,9 +2,10 @@ module TimeLogger
   module Console
     class EmployeeCreation
 
-      def initialize(console_ui, validation)
+      def initialize(console_ui, validation_employee_creation, validation_menu)
         @console_ui = console_ui
-        @validation = validation
+        @validation_employee_creation = validation_employee_creation
+        @validation_menu = validation_menu
         @worker_retrieval = TimeLogger::WorkerRetrieval.new
       end
 
@@ -30,22 +31,11 @@ module TimeLogger
       end
 
       def valid_username_loop(username)
-        username = blank_employee_name_loop(username)
-        employee_exists_loop(username)
-      end
-
-      def employee_exists_loop(username)
-        while @worker_retrieval.employee(username)
-          @console_ui.username_exists_message
+        result = @validation_employee_creation.validate(username)
+        until result.valid?
+          @console_ui.puts_string(result.error_message)
           username = @console_ui.get_user_input
-        end
-        username
-      end
-
-      def blank_employee_name_loop(username)
-        while @validation.blank_space?(username)
-          @console_ui.valid_username_message
-          username = @console_ui.get_user_input
+          result = @validation_employee_creation.validate(username)
         end
         username
       end
@@ -62,9 +52,11 @@ module TimeLogger
       end
 
       def valid_admin_option_loop(admin_options_hash, admin_option_num)
-        until @validation.menu_selection_valid?(admin_options_hash, admin_option_num)
-          @console_ui.valid_menu_option_message
+        result = @validation_menu.validate(admin_options_hash, admin_option_num)
+        until result.valid?
+          @console_ui.puts_string(result.error_message)
           admin_option_num = @console_ui.get_user_input
+          result = @validation_menu.validate(admin_options_hash, admin_option_num)
         end
         admin_option_num
       end

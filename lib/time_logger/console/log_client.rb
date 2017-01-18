@@ -2,9 +2,9 @@ module TimeLogger
   module Console
     class LogClient
 
-      def initialize(console_ui, validation)
+      def initialize(console_ui, validation_menu)
         @console_ui = console_ui
-        @validation = validation
+        @validation_menu = validation_menu
       end
 
       def run(clients)
@@ -24,21 +24,23 @@ module TimeLogger
       def generate_clients_hash(client_objects)
         clients_hash = {}
         client_objects.each do |client|
-          clients_hash[client.id] = "#{client.id}. #{client.name}"
+          clients_hash[client.id.to_s] = "#{client.id}. #{client.name}"
         end
         clients_hash
       end
 
       def valid_client_loop(clients_hash, user_client_selection)
-        until clients_hash.has_key?(user_client_selection.to_i)
-          @console_ui.invalid_client_selection_message
+        result = @validation_menu.validate(clients_hash, user_client_selection)
+        until result.valid?
+          @console_ui.puts_string(result.error_message)
           user_client_selection = @console_ui.get_user_input
+          result = @validation_menu.validate(clients_hash, user_client_selection)
         end
         user_client_selection
       end
 
       def client_selection_num_to_name(clients_hash, user_client_selection)
-        client = clients_hash[user_client_selection.to_i]
+        client = clients_hash[user_client_selection.to_s]
         client = client[3..-1]
       end
     end

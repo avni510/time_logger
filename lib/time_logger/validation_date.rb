@@ -1,8 +1,11 @@
 module TimeLogger
   class ValidationDate
+    include Validation
+
     MAX_DATE_LENGTH = 10
 
     def validate(date_entered)
+      return Result.new("Your input cannot be blank") if blank_space?(date_entered)
       return Result.new("Please enter a date in a valid format") unless date_valid_format?(date_entered)
       return Result.new("Please enter a date in the past") unless previous_date?(date_entered)
       Result.new

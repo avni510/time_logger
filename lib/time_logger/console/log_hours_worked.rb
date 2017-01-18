@@ -2,36 +2,19 @@ module TimeLogger
   module Console
     class LogHoursWorked
 
-      def initialize(console_ui, validation)
+      def initialize(console_ui, validation_hours_worked)
         @console_ui = console_ui
-        @validation = validation
+        @validation_hours_worked = validation_hours_worked
       end
 
       def run(previous_hours_worked)
         hours_entered = @console_ui.hours_log_time_message
-
-        hours_entered = non_digit_loop(hours_entered)
-
-        hour_entered = exceeds_hours_in_a_day(
-          previous_hours_worked, 
-          hours_entered)
-      end
-
-      private
-
-      def non_digit_loop(hours_entered)
-        until @validation.digit_entered?(hours_entered)
-          @console_ui.enter_digit_message
+        result = @validation_hours_worked.validate(previous_hours_worked, hours_entered)
+        until result.valid?
+          @console_ui.puts_string(result.error_message)
+          return nil if result.code == :exceeds_24_hours
           hours_entered = @console_ui.get_user_input
-        end
-        hours_entered
-      end
-
-      def exceeds_hours_in_a_day(previous_hours_worked, hours_entered)
-        integer_hours = hours_entered.to_i
-        unless @validation.hours_in_a_day_exceeded?(previous_hours_worked, integer_hours)
-          @console_ui.valid_hours_message
-          return nil
+          result = @validation_hours_worked.validate(previous_hours_worked, hours_entered)
         end
         hours_entered
       end

@@ -2,20 +2,15 @@ module TimeLogger
   module Console
     class LogTimecode
 
-      def initialize(console_ui, validation)
+      def initialize(console_ui, validation_menu)
         @console_ui = console_ui
-        @validation = validation
+        @validation_menu = validation_menu
       end
 
       def run(clients)
         timecode_options_hash = timecode_hash(clients)
-
         timecode_num_entered = @console_ui.timecode_log_time_message(timecode_options_hash)
-
-        timecode_num_entered = valid_timecode_loop(
-            timecode_options_hash, 
-            timecode_num_entered
-          )
+        timecode_num_entered = valid_timecode_loop(timecode_options_hash, timecode_num_entered)
 
         timecode_selection_num_to_name(
             timecode_options_hash, 
@@ -24,6 +19,22 @@ module TimeLogger
       end
 
       private
+
+      def valid_timecode_loop(timecode_options_hash, timecode_num_entered)
+        result = @validation_menu.validate(
+                  timecode_options_hash, 
+                  timecode_num_entered
+        )
+        until result.valid?
+          @console_ui.puts_string(result.error_message)
+          timecode_num_entered = @console_ui.get_user_input
+          result = @validation_menu.validate(
+                    timecode_options_hash, 
+                    timecode_num_entered
+          )
+        end
+        timecode_num_entered
+      end
 
       def timecode_hash(clients)
         if clients.empty?
@@ -46,14 +57,6 @@ module TimeLogger
           "1": "1. Non-Billable",
           "2": "2. PTO"
         }
-      end
-
-      def valid_timecode_loop(timecode_hash, timecode_entered)
-        until @validation.menu_selection_valid?(timecode_hash, timecode_entered)
-          @console_ui.valid_menu_option_message
-          timecode_entered = @console_ui.get_user_input
-        end
-        timecode_entered
       end
 
       def timecode_selection_num_to_name(timecode_hash, user_selection)

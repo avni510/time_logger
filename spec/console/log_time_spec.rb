@@ -4,12 +4,17 @@ module TimeLogger
 
     describe LogTime do
       let(:mock_console_ui) { double }
-      let(:validation) { TimeLogger::Validation.new }
-
-      let(:log_date) { LogDate.new(mock_console_ui, validation) }
-      let(:log_hours_worked) { LogHoursWorked.new(mock_console_ui, validation) }
-      let(:log_timecode) { LogTimecode.new(mock_console_ui, validation) }
-      let(:log_client) { LogClient.new(mock_console_ui, validation) }
+      let(:validation_hours_worked) { TimeLogger::ValidationHoursWorked.new }
+      let(:validation_menu) { TimeLogger::ValidationMenu.new }
+      let(:validation_date) { TimeLogger::ValidationDate.new } 
+      let(:client_repo) { double }
+      let(:employee_repo) { double }
+      let(:validation_client_creation) { TimeLogger::ValidationClientCreation.new(client_repo) }
+      let(:validation_employee_creation) { TimeLogger::ValidationEmployeeCreation.new(employee_repo) }
+      let(:log_date) { LogDate.new(mock_console_ui, validation_date) }
+      let(:log_hours_worked) { LogHoursWorked.new(mock_console_ui, validation_hours_worked) }
+      let(:log_timecode) { LogTimecode.new(mock_console_ui, validation_menu) }
+      let(:log_client) { LogClient.new(mock_console_ui, validation_menu) }
 
       let(:params) {
         { :log_date => log_date,
