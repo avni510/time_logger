@@ -14,12 +14,12 @@ module TimeLogger
     private
 
     def date_valid_format?(date_entered)
+      return false if date_entered.size > MAX_DATE_LENGTH
       begin
         Date.strptime(date_entered,'%m-%d-%Y')
         rescue => e
           return false
       end
-      return false if date_entered.size > MAX_DATE_LENGTH
       true
     end
 
