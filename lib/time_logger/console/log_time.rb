@@ -15,8 +15,7 @@ module TimeLogger
 
       def execute
         date_entered = @log_date.run
-        previous_hours_worked = @log_time_retrieval.employee_hours_worked_for_date(@employee_id, date_entered)
-        hours_entered = @log_hours_worked.run(previous_hours_worked)
+        hours_entered = @log_hours_worked.run(@employee_id, date_entered)
         return execute unless hours_entered
         clients = @log_time_retrieval.all_clients
         timecode_entered = @log_timecode.run(clients)

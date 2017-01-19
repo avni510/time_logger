@@ -1,0 +1,34 @@
+<% if flash[:error] %>
+  <%= flash[:error] %>
+<% end %>
+<p> Please log your time </p>
+<form method="post" action="/log_time_submission"> 
+   Date (MM-DD-YYYY)<br>
+  <input type="text" name="date"> <br>
+   Hours Worked<br>
+  <input type="text" name="hours_worked"> <br>
+  <br>
+<p> Please select your timecode from the dropdown </p>
+    <% unless @clients.empty? %>
+      <select name="timecode">
+      <option value="Billable"> Billable </option>
+      <option value="Non-Billable"> Non-Billable </option>
+      <option value="PTO"> PTO </option>
+      </select>
+    <% else %>
+      <select name="timecode">
+      <option value="Non-Billable"> Non-Billable </option>
+      <option value="PTO"> PTO </option>
+      </select>
+    <% end %>
+<% unless @clients.empty? %>
+  <p> Please select your client from the dropdown </p>
+  <select name="client">
+    <option selected="selected" value = "None"> </option>
+  <% @clients.each do |client| %>
+    <option value= "<%= client.name %>"> <%= client.name %></option>
+  <% end %>
+  </select>
+<% end %>
+  <input class="btn btn-primary" type="submit" value="Submit">
+</form>

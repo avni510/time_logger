@@ -8,7 +8,7 @@ module TimeLogger
       before(:each) do
         @employee = TimeLogger::Employee.new(1, "rstarr", false)
         @admin_employee = TimeLogger::Employee.new(2, "jlennon", true)
-
+        allow(Repository).to receive(:for).with(:log_time).and_return(double)
         allow(Repository).to receive(:for).with(:employee).and_return(double)
         allow(Repository).to receive(:for).with(:client).and_return(double)
         allow(mock_console_ui).to receive(:menu_selection_message)

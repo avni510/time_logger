@@ -50,7 +50,7 @@ describe WebApp do
     ]
   }
   let(:log_times_current_month) { set_up_log_time_entries }
-  let(:mock_load_data) { double(run: nil) }
+  let(:mock_log_time_retrieval) { double()}
   let(:mock_worker_retrieval) { double(company_employees: employees) }
   let(:mock_report_retrieval) { double(log_times: log_times_current_month) }
   let(:mock_client_retrieval) { double }
@@ -66,6 +66,7 @@ describe WebApp do
       worker_retrieval: mock_worker_retrieval, 
       report_retrieval: mock_report_retrieval,
       client_retrieval: mock_client_retrieval,
+      log_time_retrieval: mock_log_time_retrieval,
       validation_client_creation: validation_client_creation,
       validation_employee_creation: validation_employee_creation, 
       validation_date: validation_date,
@@ -111,8 +112,8 @@ describe WebApp do
         expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
 
         get "/menu_selection", {}, { 'rack.session' => {username: "defaultadmin"}}
-        expect(last_response.body).to include("Do you want to log your time?")
-        expect(last_response.body).to include("Do you want to run a company report?")
+        expect(last_response.body).to include("Log Your Time")
+        expect(last_response.body).to include("Run a Report on Yourself")
       end
     end
 
@@ -121,9 +122,9 @@ describe WebApp do
         expect(mock_worker_retrieval).to receive(:employee).and_return(employees[1])
 
         get "/menu_selection", {}, { 'rack.session' => {username: "defaultadmin"}}
-        expect(last_response.body).to_not include("Do you want to create a client")
-        expect(last_response.body).to_not include("Do you want to create an employee")
-        expect(last_response.body).to_not include("Do you want to run a company report")
+        expect(last_response.body).to_not include("Create a Client")
+        expect(last_response.body).to_not include("Create an Employee")
+        expect(last_response.body).to_not include("Run a Company Report")
       end
     end 
   end
@@ -166,15 +167,6 @@ describe WebApp do
         get "/employee_report", {}, { 'rack.session' => {username: "defaultadmin"} }
         expect(last_response.body).to include("You have no log times")
       end
-    end
-  end
-
-  describe "GET /back_to_menu_selection" do
-    it "redirects back to the menu selection page" do
-      get '/back_to_menu_selection' 
-      expect(last_response.redirect?).to eq(true)
-      follow_redirect!
-      expect(last_request.path).to eq('/menu_selection')
     end
   end
 
@@ -337,10 +329,104 @@ describe WebApp do
     end
   end
 
-#  describe "GET /log_time" do
-#    it "loads a page after a user selects the log time option from the menu" do
-#      get "/log_time", {}, { 'rack.session' => {username: "defaultadmin"} }
-#      expect(last_response)
-#    end
-#  end
+  describe "GET /log_time" do
+    before(:each) do
+      allow(mock_client_retrieval).to receive(:find_all).and_return([TimeLogger::Client.new(1, "clientname1")])
+    end
+
+    it "loads a page after a user selects the log time option from the menu" do
+      get "/log_time", {}, { 'rack.session' => {username: "defaultadmin"} }
+      expect(last_response).to be_ok
+    end
+
+    context "there are clients" do
+      it "displays a form to log your time" do
+        get "/log_time", {}, { 'rack.session' => {username: "defaultadmin"} }
+        expect(last_response.body).to include("Please log your time")
+        expect(last_response.body).to include("Date")
+        expect(last_response.body).to include("Hours Worked")
+        expect(last_response.body).to include("timecode")
+        expect(last_response.body).to include("Billable")
+        expect(last_response.body).to include("Please select your client from the dropdown")
+      end
+    end
+
+    context "there are no clients" do
+      it "displays a form to log your time" do
+        expect(mock_client_retrieval).to receive(:find_all).and_return([])
+        get "/log_time", {}, { 'rack.session' => {username: "defaultadmin"} }
+        expect(last_response.body).to include("Please log your time")
+        expect(last_response.body).to include("Date")
+        expect(last_response.body).to include("Hours Worked")
+        expect(last_response.body).to include("timecode")
+        expect(last_response.body).to include("Non-Billable")
+        expect(last_response.body).to include("PTO")
+        expect(last_response.body).to_not include("Please select your client from the dropdown")
+      end
+    end
+  end
+
+  describe "POST /log_time_submission" do
+    before(:each) do
+      allow(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
+      allow(mock_log_time_retrieval).to receive(:employee_hours_worked_for_date).and_return(0)
+      allow(mock_log_time_retrieval).to receive(:save_log_time_entry)
+    end
+
+    context "the user enters a date in the incorrect format" do
+      it "redirects them to the log_time page and displays a message to enter a valid date" do
+        post "/log_time_submission", {:date => "9999", :hours_worked => "8"}, { 'rack.session' => {username: "defaultadmin"} }
+        expect(last_response.redirect?).to eq(true)
+        follow_redirect!
+        expect(last_request.path).to eq('/log_time')
+        expect(last_response.body).to include("Please enter a date in a valid format")
+      end
+    end
+
+    context "the user enters a date in the future" do
+      it "redirects them to the log_time page and displays a message to enter a date in the past" do
+        post "/log_time_submission", {:date => "01-23-2020", :hours_worked => "8"}, { 'rack.session' => {username: "defaultadmin"} }
+        expect(last_response.redirect?).to eq(true)
+        follow_redirect!
+        expect(last_request.path).to eq('/log_time')
+        expect(last_response.body).to include("Please enter a date in the past")
+      end
+    end
+
+    context "the user enters an invalid number of hours" do
+      it "redirects them to the log_time page and displays a message to enter a number greater than 0" do
+        post "/log_time_submission", {:date => "01-16-2017", :hours_worked => "zzz"}, { 'rack.session' => {username: "defaultadmin"} }
+        expect(last_response.redirect?).to eq(true)
+        follow_redirect!
+        expect(last_request.path).to eq('/log_time')
+        expect(last_response.body).to include("Please enter a number greater than 0")
+      end
+    end
+
+    context "the user enters more than 24 hours for a given day" do
+      it "redirects them to the log_time page and displays a message that they have exceeded 24 hours" do
+        expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
+        expect(mock_log_time_retrieval).to receive(:employee_hours_worked_for_date).and_return(10)
+        post "/log_time_submission", {:date => "01-03-2017", :hours_worked => "20"}, { 'rack.session' => {username: "defaultadmin"} }
+        expect(last_response.redirect?).to eq(true)
+        follow_redirect!
+        expect(last_request.path).to eq('/log_time')
+        expect(last_response.body).to include("You have exceeded 24 hours for this day.")
+      end
+    end
+
+    context "all fields entered are valid and a client was entered" do
+      it "saves the log time entry" do
+        expect(mock_log_time_retrieval).to receive(:save_log_time_entry).with(employees.first.id, "01-03-2017", "4", "Billable", "client1")
+        post "/log_time_submission", {:date => "01-03-2017", :hours_worked => "4", :timecode => "Billable", :client => "client1"}, { 'rack.session' => {username: "defaultadmin"} }
+      end
+    end
+
+    context "all fields entered are valid and a client was not entered" do
+      it "saves the log time entry" do
+        expect(mock_log_time_retrieval).to receive(:save_log_time_entry).with(employees.first.id, "01-03-2017", "4", "Non-Billable", nil)
+        post "/log_time_submission", {:date => "01-03-2017", :hours_worked => "4", :timecode => "Non-Billable", :client => "None"}, { 'rack.session' => {username: "defaultadmin"} }
+      end
+    end
+  end
 end
