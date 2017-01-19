@@ -4,8 +4,14 @@ module TimeLogger
 
     describe LogDate do
       let(:mock_console_ui) { double }
-      let(:validation_date) { TimeLogger::ValidationDate.new }
-      let(:log_date) { LogDate.new(mock_console_ui, validation_date) }
+      let(:mock_log_time_repo) { double }
+      let(:validation_log_time) { 
+        TimeLogger::ValidationLogTime.new(
+          TimeLogger::ValidationDate.new, 
+          TimeLogger::ValidationHoursWorked.new, 
+          mock_log_time_repo)
+      }
+      let(:log_date) { LogDate.new(mock_console_ui, validation_log_time) }
 
       describe ".run" do 
         it "allows the user to enter the date they worked" do

@@ -4,15 +4,17 @@ module TimeLogger
 
     describe LogTime do
       let(:mock_console_ui) { double }
+      let(:mock_client_repo) { double }
+      let(:mock_employee_repo) { double }
+      let(:mock_log_time_repo) { double }
       let(:validation_hours_worked) { TimeLogger::ValidationHoursWorked.new }
       let(:validation_menu) { TimeLogger::ValidationMenu.new }
       let(:validation_date) { TimeLogger::ValidationDate.new } 
-      let(:client_repo) { double }
-      let(:employee_repo) { double }
-      let(:validation_client_creation) { TimeLogger::ValidationClientCreation.new(client_repo) }
-      let(:validation_employee_creation) { TimeLogger::ValidationEmployeeCreation.new(employee_repo) }
-      let(:log_date) { LogDate.new(mock_console_ui, validation_date) }
-      let(:log_hours_worked) { LogHoursWorked.new(mock_console_ui, validation_hours_worked) }
+      let(:validation_log_time) { TimeLogger::ValidationLogTime.new(validation_date, validation_hours_worked, mock_log_time_repo )}
+      let(:validation_client_creation) { TimeLogger::ValidationClientCreation.new(mock_client_repo) }
+      let(:validation_employee_creation) { TimeLogger::ValidationEmployeeCreation.new(mock_employee_repo) }
+      let(:log_date) { LogDate.new(mock_console_ui, validation_log_time) }
+      let(:log_hours_worked) { LogHoursWorked.new(mock_console_ui, validation_log_time) }
       let(:log_timecode) { LogTimecode.new(mock_console_ui, validation_menu) }
       let(:log_client) { LogClient.new(mock_console_ui, validation_menu) }
 
@@ -38,14 +40,10 @@ module TimeLogger
         allow(log_date).
           to receive(:run).
           and_return("09-15-2016")  
-        previous_hours_worked = 0
-        allow_any_instance_of(TimeLogger::LogTimeRetrieval).
-          to receive(:employee_hours_worked_for_date).
-          with(@employee_id, "09-15-2016").
-          and_return(previous_hours_worked)
+        allow(mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(0)
         allow(log_hours_worked).
           to receive(:run).
-          with(previous_hours_worked).
+          with(@employee_id, "09-15-2016").
           and_return("5")
         allow_any_instance_of(TimeLogger::LogTimeRetrieval).
           to receive(:all_clients).
@@ -67,14 +65,9 @@ module TimeLogger
         context "the user does not select 'Billable' as their timecode" do
           it "allows the user to log their time" do
             expect(log_date).to receive(:run).and_return("09-15-2016")  
-            previous_hours_worked = 0
-            expect_any_instance_of(TimeLogger::LogTimeRetrieval).
-              to receive(:employee_hours_worked_for_date).
-              with(@employee_id, "09-15-2016").
-              and_return(previous_hours_worked)
             expect(log_hours_worked).
               to receive(:run).
-              with(previous_hours_worked).
+              with(@employee_id, "09-15-2016").
               and_return("5") 
             expect_any_instance_of(TimeLogger::LogTimeRetrieval).
               to receive(:all_clients).
@@ -119,9 +112,7 @@ module TimeLogger
             allow(log_date).
               to receive(:run).
               and_return("09-15-2016", "09-16-2016")
-            expect_any_instance_of(TimeLogger::LogTimeRetrieval).
-              to receive(:employee_hours_worked_for_date).
-              and_return(20, 0)
+            allow(mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(20)
             expect(log_hours_worked).
               to receive(:run).
               and_return(nil, "5")

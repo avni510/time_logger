@@ -1,3 +1,4 @@
+require 'pry'
 require "sinatra/base"
 require "wannabe_bool"
 require "sinatra/flash"

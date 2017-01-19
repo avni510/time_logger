@@ -21,6 +21,9 @@ module TimeLogger
       end
       
       private
+      def log_time_repo
+        Repository.for(:log_time)
+      end
 
       def employee_repo
         Repository.for(:employee)
@@ -68,6 +71,14 @@ module TimeLogger
         TimeLogger::ValidationDate.new
       end
 
+      def validation_log_time
+        TimeLogger::ValidationLogTime.new(
+          validation_date, 
+          validation_hours_worked, 
+          log_time_repo
+        )
+      end
+
       def validation_client_creation
         TimeLogger::ValidationClientCreation.new(client_repo)
       end
@@ -107,8 +118,8 @@ module TimeLogger
 
       def generate_log_time_hash
         { 
-          :log_date => LogDate.new(@console_ui, validation_date),
-          :log_hours_worked => LogHoursWorked.new(@console_ui, validation_hours_worked),
+          :log_date => LogDate.new(@console_ui, validation_log_time),
+          :log_hours_worked => LogHoursWorked.new(@console_ui, validation_log_time),
           :log_timecode => LogTimecode.new(@console_ui, validation_menu),
           :log_client => LogClient.new(@console_ui, validation_menu),
           :employee_id => @employee.id
