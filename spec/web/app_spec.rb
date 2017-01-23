@@ -56,10 +56,16 @@ describe WebApp do
   let(:mock_client_retrieval) { double }
   let(:mock_client_repo) { double }
   let(:mock_employee_repo) { double }
+  let(:mock_log_time_repo) { double }
   let(:validation_client_creation) {TimeLogger::ValidationClientCreation.new(mock_client_repo)}
   let(:validation_employee_creation) {TimeLogger::ValidationEmployeeCreation.new(mock_employee_repo)}
   let(:validation_date) {TimeLogger::ValidationDate.new}
   let(:validation_hours_worked) {TimeLogger::ValidationHoursWorked.new}
+  let(:validation_log_time) { TimeLogger::ValidationLogTime.new(
+                              validation_date, 
+                              validation_hours_worked, 
+                              mock_log_time_repo) 
+                            }
 
   def app
     params = { 
@@ -69,8 +75,7 @@ describe WebApp do
       log_time_retrieval: mock_log_time_retrieval,
       validation_client_creation: validation_client_creation,
       validation_employee_creation: validation_employee_creation, 
-      validation_date: validation_date,
-      validation_hours_worked: validation_hours_worked
+      validation_log_time: validation_log_time
     }
     WebApp.new(app = nil, params)
   end
@@ -369,7 +374,7 @@ describe WebApp do
   describe "POST /log_time_submission" do
     before(:each) do
       allow(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
-      allow(mock_log_time_retrieval).to receive(:employee_hours_worked_for_date).and_return(0)
+      allow(mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(0)
       allow(mock_log_time_retrieval).to receive(:save_log_time_entry)
     end
 
@@ -406,7 +411,7 @@ describe WebApp do
     context "the user enters more than 24 hours for a given day" do
       it "redirects them to the log_time page and displays a message that they have exceeded 24 hours" do
         expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
-        expect(mock_log_time_retrieval).to receive(:employee_hours_worked_for_date).and_return(10)
+        allow(mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(10)
         post "/log_time_submission", {:date => "01-03-2017", :hours_worked => "20"}, { 'rack.session' => {username: "defaultadmin"} }
         expect(last_response.redirect?).to eq(true)
         follow_redirect!

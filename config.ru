@@ -17,6 +17,11 @@ validation_client_creation = TimeLogger::ValidationClientCreation.new(TimeLogger
 validation_employee_creation = TimeLogger::ValidationEmployeeCreation.new(TimeLogger::Repository.for(:employee))
 validation_date = TimeLogger::ValidationDate.new
 validation_hours_worked = TimeLogger::ValidationHoursWorked.new
+validation_log_time = TimeLogger::ValidationLogTime.new(
+                                    validation_date, 
+                                    validation_hours_worked, 
+                                    TimeLogger::Repository.for(:log_time)
+                                  )
 params = { 
   worker_retrieval: worker_retrieval, 
   report_retrieval: report_retrieval,
@@ -24,8 +29,7 @@ params = {
   log_time_retrieval: log_time_retrieval,
   validation_client_creation: validation_client_creation,
   validation_employee_creation: validation_employee_creation, 
-  validation_date: validation_date,
-  validation_hours_worked: validation_hours_worked
+  validation_log_time: validation_log_time
 }
 
 run WebApp.new(app = nil, params)

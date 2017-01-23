@@ -1,4 +1,3 @@
-require 'pry'
 require "sinatra/base"
 require "wannabe_bool"
 require "sinatra/flash"
@@ -15,8 +14,7 @@ class WebApp < Sinatra::Base
     @log_time_retrieval = params[:log_time_retrieval]
     @validation_client_creation = params[:validation_client_creation]
     @validation_employee_creation = params[:validation_employee_creation]
-    @validation_date = params[:validation_date]
-    @validation_hours_worked = params[:validation_hours_worked]
+    @validation_log_time = params[:validation_log_time]
     super(app)
   end
 
@@ -90,32 +88,35 @@ class WebApp < Sinatra::Base
 
   post "/log_time_submission" do
     employee = @worker_retrieval.employee(session[:username])
-    result_date = @validation_date.validate(params[:date])
-    unless result_date.valid? 
-      flash[:error] = result_date.error_message
+    log_time_hash = { 
+      date: params[:date], 
+      hours_worked: params[:hours_worked], 
+      employee_id: employee.id 
+    }
+    result = @validation_log_time.validate(log_time_hash) 
+    unless result.valid?
+      flash[:error] = result.error_message
       redirect "/log_time"
     else
-      result_hours_worked = @validation_hours_worked.validate(params[:hours_worked])
-      unless result_hours_worked.valid?
-        flash[:error] = result_hours_worked.error_message
-        redirect "/log_time"
+      if params[:client] == "None"
+        @log_time_retrieval.save_log_time_entry(
+          employee.id, 
+          params[:date], 
+          params[:hours_worked], 
+          params[:timecode], 
+          nil
+        )
       else
-        previous_hours_worked = @log_time_retrieval.employee_hours_worked_for_date(employee.id, params[:date])
-        result_hours_worked = @validation_hours_worked.validate(previous_hours_worked, params[:hours_worked])
-        unless result_hours_worked.valid?
-          flash[:error] = result_hours_worked.error_message
-          redirect "/log_time"
-        else
-          "#{params}"
-          if params[:client] == "None"
-            @log_time_retrieval.save_log_time_entry(employee.id, params[:date], params[:hours_worked], params[:timecode], nil)
-          else
-            @log_time_retrieval.save_log_time_entry(employee.id, params[:date], params[:hours_worked], params[:timecode], params[:client])
-          end
-          @success_message = "You have successfully logged your time"
-          erb :submission_success
-        end
+        @log_time_retrieval.save_log_time_entry(
+          employee.id, 
+          params[:date], 
+          params[:hours_worked], 
+          params[:timecode], 
+          params[:client]
+        )
       end
+      @success_message = "You have successfully logged your time"
+      erb :submission_success
     end
   end
 end
