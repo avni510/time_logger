@@ -9,11 +9,8 @@ module TimeLogger
 
       def execute
         sorted_log_time_objects = retrieve_log_times
-
         return @console_ui.no_log_times_message unless sorted_log_time_objects
-
         retrieve_times_for_report(sorted_log_time_objects, @employee_id)
-
         @console_ui.format_employee_report(
           @sorted_log_times_array, 
           @clients_hours_hash, 

@@ -50,12 +50,8 @@ describe WebApp do
     ]
   }
   let(:log_times_current_month) { set_up_log_time_entries }
-  let(:mock_log_time_retrieval) { double()}
-  let(:mock_worker_retrieval) { double(company_employees: employees) }
-  let(:mock_report_retrieval) { double(log_times: log_times_current_month) }
-  let(:mock_client_retrieval) { double }
   let(:mock_client_repo) { double }
-  let(:mock_employee_repo) { double }
+  let(:mock_employee_repo) { double(all: employees) }
   let(:mock_log_time_repo) { double }
   let(:validation_client_creation) {TimeLogger::ValidationClientCreation.new(mock_client_repo)}
   let(:validation_employee_creation) {TimeLogger::ValidationEmployeeCreation.new(mock_employee_repo)}
@@ -69,10 +65,9 @@ describe WebApp do
 
   def app
     params = { 
-      worker_retrieval: mock_worker_retrieval, 
-      report_retrieval: mock_report_retrieval,
-      client_retrieval: mock_client_retrieval,
-      log_time_retrieval: mock_log_time_retrieval,
+      client_repo: mock_client_repo,
+      employee_repo: mock_employee_repo,
+      log_time_repo: mock_log_time_repo,
       validation_client_creation: validation_client_creation,
       validation_employee_creation: validation_employee_creation, 
       validation_log_time: validation_log_time
@@ -82,7 +77,7 @@ describe WebApp do
 
   describe "GET usernames" do
     before(:each) do
-      expect(mock_worker_retrieval).to receive(:company_employees)
+      expect(mock_employee_repo).to receive(:all)
     end
 
     it "loads the homepage" do
@@ -106,16 +101,17 @@ describe WebApp do
   end
 
   describe "GET menu_selection" do
+    before(:each) do
+      allow(mock_employee_repo).to receive(:find_by_username).and_return(employees.first)
+    end
+
     it "loads a menu selection page" do
-      expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
       get "/menu_selection", {}, { 'rack.session' => {username: "defaultadmin"}}
       expect(last_response).to be_ok
     end
 
     context "the user is an admin" do
       it "loads a list of 5 options the user can select" do
-        expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
-
         get "/menu_selection", {}, { 'rack.session' => {username: "defaultadmin"}}
         expect(last_response.body).to include("Log Your Time")
         expect(last_response.body).to include("Run a Report on Yourself")
@@ -124,8 +120,7 @@ describe WebApp do
 
     context "the user is not an admin" do
       it "loads a list of 2 options the user can select" do
-        expect(mock_worker_retrieval).to receive(:employee).and_return(employees[1])
-
+        expect(mock_employee_repo).to receive(:find_by_username).and_return(employees[1])
         get "/menu_selection", {}, { 'rack.session' => {username: "defaultadmin"}}
         expect(last_response.body).to_not include("Create a Client")
         expect(last_response.body).to_not include("Create an Employee")
@@ -142,10 +137,10 @@ describe WebApp do
         "PTO": "8", 
         "Billable": "7"
       }
-      allow(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
-      allow(mock_report_retrieval).to receive(:log_times).with(employees.first.id).and_return(set_up_log_time_entries)
-      allow(mock_report_retrieval).to receive(:client_hours).with(employees.first.id).and_return(client_hours_hash)
-      allow(mock_report_retrieval).to receive(:timecode_hours).with(employees.first.id).and_return(timecode_hours_hash)
+      allow(mock_employee_repo).to receive(:find_by_username).and_return(employees.first)
+      allow(mock_log_time_repo).to receive(:sorted_current_month_entries_by_employee_id).and_return(set_up_log_time_entries)
+      allow(mock_log_time_repo).to receive(:employee_client_hours).with(employees.first.id).and_return(client_hours_hash)
+      allow(mock_log_time_repo).to receive(:employee_timecode_hours).with(employees.first.id).and_return(timecode_hours_hash)
     end
 
     it "loads an employee report page" do
@@ -165,10 +160,9 @@ describe WebApp do
 
     context "log times do not exist for an employee" do
       it "displays a message that there are no log times" do
-        expect(mock_report_retrieval).to receive(:log_times).and_return(nil)
-        expect(mock_report_retrieval).to receive(:client_hours).with(employees.first.id).and_return({})
-        expect(mock_report_retrieval).to receive(:timecode_hours).with(employees.first.id).and_return({})
-
+        expect(mock_log_time_repo).to receive(:sorted_current_month_entries_by_employee_id).and_return(nil)
+        expect(mock_log_time_repo).to receive(:employee_client_hours).with(employees.first.id).and_return({})
+        expect(mock_log_time_repo).to receive(:employee_timecode_hours).with(employees.first.id).and_return({})
         get "/employee_report", {}, { 'rack.session' => {username: "defaultadmin"} }
         expect(last_response.body).to include("You have no log times")
       end
@@ -184,13 +178,13 @@ describe WebApp do
         "PTO" => 5
       }
 
-        company_client_hash =  
-          { 
-          "Microsoft" => 5,
-          "Google" => 3
-        }
-          allow(mock_report_retrieval).to receive(:company_wide_timecode_hours).and_return(company_timecode_hash)
-          allow(mock_report_retrieval).to receive(:company_wide_client_hours).and_return(company_client_hash)
+      company_client_hash =  
+        { 
+        "Microsoft" => 5,
+        "Google" => 3
+      }
+      allow(mock_log_time_repo).to receive(:company_timecode_hours).and_return(company_timecode_hash)
+      allow(mock_log_time_repo).to receive(:company_client_hours).and_return(company_client_hash)
     end
 
     it "loads an admin report page" do
@@ -208,7 +202,7 @@ describe WebApp do
 
     context "There are no client hours worked" do
       it "displays a message that there are no client hours worked" do
-        expect(mock_report_retrieval).to receive(:company_wide_client_hours).and_return(nil)
+        expect(mock_log_time_repo).to receive(:company_client_hours).and_return(nil)
         get '/admin_report', {}, { 'rack.session' => {username: "defaultadmin" } }
         expect(last_response.body).to include("There are no hours logged for clients")
       end
@@ -216,8 +210,8 @@ describe WebApp do
 
     context "There are no log times" do
       it "displays a message that there are no log times for the company" do
-        expect(mock_report_retrieval).to receive(:company_wide_client_hours).and_return(nil)
-        expect(mock_report_retrieval).to receive(:company_wide_timecode_hours).and_return(nil)
+        expect(mock_log_time_repo).to receive(:company_client_hours).and_return(nil)
+        expect(mock_log_time_repo).to receive(:company_timecode_hours).and_return(nil)
         get '/admin_report', {}, { 'rack.session' => {username: "defaultadmin" } }
         expect(last_response.body).to include("There are no log times for the company")
         expect(last_response).to be_ok
@@ -240,9 +234,9 @@ describe WebApp do
 
   describe "POST /employee_creation_submission" do
     before(:each) do
-      allow(mock_worker_retrieval).to receive(:employee).and_return(nil)
       allow(mock_employee_repo).to receive(:find_by_username).and_return(nil)
-      allow(mock_worker_retrieval).to receive(:save_employee)
+      allow(mock_employee_repo).to receive(:create)
+      allow(mock_employee_repo).to receive(:save)
     end
 
     it "loads a page after a new user is submitted" do
@@ -252,7 +246,8 @@ describe WebApp do
 
     context "the newly created username does not already exist" do
       it "displays a success message and saves the user" do
-        expect(mock_worker_retrieval).to receive(:save_employee).with("username3", true)
+        expect(mock_employee_repo).to receive(:create).with("username3", true)
+        expect(mock_employee_repo).to receive(:save)
         post "/employee_creation_submission", {:new_user => "username3", :admin_authority => "true"}
         expect(last_response.body).to include("You have successfully created a new employee")
       end
@@ -260,7 +255,6 @@ describe WebApp do
 
     context "a blank space is entered as the new user" do
       it "redirects them to the employee creation page and displays a message to enter a valid username" do
-
         post "/employee_creation_submission", {:new_user => "", :admin_authority => "true"}
         expect(last_response.redirect?).to eq(true) 
         follow_redirect!
@@ -271,7 +265,7 @@ describe WebApp do
 
     context "the newly created username already exists" do
       it "displays a message to create a new employee and redirects them to the employee creation page" do
-        allow(mock_employee_repo).to receive(:find_by_username).and_return(employees.first)
+        expect(mock_employee_repo).to receive(:find_by_username).and_return(employees.first)
         post "/employee_creation_submission", {:new_user => "defaultadmin", :admin_authority => "true"}
         expect(last_response.redirect?).to eq(true)
         follow_redirect!
@@ -295,9 +289,9 @@ describe WebApp do
 
   describe "POST /client_creation_submission" do
     before(:each) do
-      allow(mock_client_retrieval).to receive(:save_client)
       allow(mock_client_repo).to receive(:find_by_name).and_return(nil)
-      allow(mock_client_retrieval).to receive(:find_client).and_return(nil)
+      allow(mock_client_repo).to receive(:create)
+      allow(mock_client_repo).to receive(:save)
     end
 
     it "loads a page after a new client is submitted" do
@@ -336,7 +330,7 @@ describe WebApp do
 
   describe "GET /log_time" do
     before(:each) do
-      allow(mock_client_retrieval).to receive(:find_all).and_return([TimeLogger::Client.new(1, "clientname1")])
+      allow(mock_client_repo).to receive(:all).and_return([TimeLogger::Client.new(1, "clientname1")])
     end
 
     it "loads a page after a user selects the log time option from the menu" do
@@ -358,7 +352,7 @@ describe WebApp do
 
     context "there are no clients" do
       it "displays a form to log your time" do
-        expect(mock_client_retrieval).to receive(:find_all).and_return([])
+        expect(mock_client_repo).to receive(:all).and_return([])
         get "/log_time", {}, { 'rack.session' => {username: "defaultadmin"} }
         expect(last_response.body).to include("Please log your time")
         expect(last_response.body).to include("Date")
@@ -373,9 +367,10 @@ describe WebApp do
 
   describe "POST /log_time_submission" do
     before(:each) do
-      allow(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
+      allow(mock_employee_repo).to receive(:find_by_username).and_return(employees.first)
       allow(mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(0)
-      allow(mock_log_time_retrieval).to receive(:save_log_time_entry)
+      allow(mock_log_time_repo).to receive(:create)
+      allow(mock_log_time_repo).to receive(:save)
     end
 
     context "the user enters a date in the incorrect format" do
@@ -410,8 +405,8 @@ describe WebApp do
 
     context "the user enters more than 24 hours for a given day" do
       it "redirects them to the log_time page and displays a message that they have exceeded 24 hours" do
-        expect(mock_worker_retrieval).to receive(:employee).and_return(employees.first)
-        allow(mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(10)
+        expect(mock_employee_repo).to receive(:find_by_username).and_return(employees.first)
+        expect(mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(10)
         post "/log_time_submission", {:date => "01-03-2017", :hours_worked => "20"}, { 'rack.session' => {username: "defaultadmin"} }
         expect(last_response.redirect?).to eq(true)
         follow_redirect!
@@ -422,14 +417,30 @@ describe WebApp do
 
     context "all fields entered are valid and a client was entered" do
       it "saves the log time entry" do
-        expect(mock_log_time_retrieval).to receive(:save_log_time_entry).with(employees.first.id, "01-03-2017", "4", "Billable", "client1")
+        expect(mock_log_time_repo).to receive(:create).with(
+          {
+            employee_id: employees.first.id, 
+            date: "2017-01-03", 
+            hours_worked: "4", 
+            timecode: "Billable", 
+            client: "client1"
+          }
+        )
         post "/log_time_submission", {:date => "01-03-2017", :hours_worked => "4", :timecode => "Billable", :client => "client1"}, { 'rack.session' => {username: "defaultadmin"} }
       end
     end
 
     context "all fields entered are valid and a client was not entered" do
       it "saves the log time entry" do
-        expect(mock_log_time_retrieval).to receive(:save_log_time_entry).with(employees.first.id, "01-03-2017", "4", "Non-Billable", nil)
+        expect(mock_log_time_repo).to receive(:create).with(
+          {
+            employee_id: employees.first.id, 
+            date: "2017-01-03", 
+            hours_worked: "4", 
+            timecode: "Non-Billable", 
+            client: nil
+          }
+        )
         post "/log_time_submission", {:date => "01-03-2017", :hours_worked => "4", :timecode => "Non-Billable", :client => "None"}, { 'rack.session' => {username: "defaultadmin"} }
       end
     end
