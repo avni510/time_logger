@@ -37,6 +37,8 @@ module TimeLogger
       end
 
       before(:each) do
+        allow(Repository).to receive(:for).with(:log_time).and_return(mock_log_time_repo)
+        allow(Repository).to receive(:for).with(:client).and_return(mock_client_repo)
         allow(log_date).
           to receive(:run).
           and_return("09-15-2016")  
@@ -45,20 +47,12 @@ module TimeLogger
           to receive(:run).
           with(@employee_id, "09-15-2016").
           and_return("5")
-        allow_any_instance_of(TimeLogger::LogTimeRetrieval).
-          to receive(:all_clients).
-          and_return(@clients)
+        allow(mock_client_repo).to receive(:all).and_return(@clients)
         allow(log_timecode).to receive(:run).
           with(@clients).
           and_return("Non-Billable")
-        allow_any_instance_of(TimeLogger::LogTimeRetrieval).
-          to receive(:save_log_time_entry).
-          with(
-            @employee_id,
-            "09-15-2016",
-            "5",
-            "Non-Billable",
-            nil)
+        allow(mock_log_time_repo).to receive(:create)
+        allow(mock_log_time_repo).to receive(:save)
       end
 
       describe ".execute" do
@@ -69,20 +63,19 @@ module TimeLogger
               to receive(:run).
               with(@employee_id, "09-15-2016").
               and_return("5") 
-            expect_any_instance_of(TimeLogger::LogTimeRetrieval).
-              to receive(:all_clients).
-              and_return(@clients)
+            expect(mock_client_repo).to receive(:all).and_return(@clients)
             expect(log_timecode).to receive(:run).
               with(@clients).
               and_return("Non-Billable")
-            expect_any_instance_of(TimeLogger::LogTimeRetrieval).
-              to receive(:save_log_time_entry).
-              with(
-                @employee_id,
-                "09-15-2016",
-                "5",
-                "Non-Billable",
-                nil)
+            expect(mock_log_time_repo).to receive(:create).with(
+              { 
+                "employee_id":  @employee_id,
+                 "date": "2016-09-15",
+                 "hours_worked": "5",
+                 "timecode": "Non-Billable",
+                 "client": nil
+              })
+            expect(mock_log_time_repo).to receive(:save)
             log_time.execute
           end
         end
@@ -95,14 +88,15 @@ module TimeLogger
             expect(log_client).to receive(:run).
               with(@clients).
               and_return("Google")
-            expect_any_instance_of(TimeLogger::LogTimeRetrieval).
-              to receive(:save_log_time_entry).
-              with(
-                @employee_id,
-                "09-15-2016", 
-                "5",
-                "Billable", 
-                "Google")
+            expect(mock_log_time_repo).to receive(:create).with(
+              { 
+                "employee_id":  @employee_id,
+                 "date": "2016-09-15",
+                 "hours_worked": "5",
+                 "timecode": "Billable",
+                 "client": "Google"
+              })
+            expect(mock_log_time_repo).to receive(:save)
             log_time.execute
           end
         end
@@ -116,14 +110,16 @@ module TimeLogger
             expect(log_hours_worked).
               to receive(:run).
               and_return(nil, "5")
-            expect_any_instance_of(TimeLogger::LogTimeRetrieval).
-              to receive(:save_log_time_entry).
-              with(
-                @employee_id,
-                "09-16-2016", 
-                "5",
-                "Non-Billable", 
-                nil)
+
+            expect(mock_log_time_repo).to receive(:create).with(
+              { 
+                "employee_id":  @employee_id,
+                 "date": "2016-09-16",
+                 "hours_worked": "5",
+                 "timecode": "Non-Billable",
+                 "client": nil
+              })
+            expect(mock_log_time_repo).to receive(:save)
             log_time.execute
           end
         end

@@ -11,6 +11,13 @@
           "hours_worked": 6,
           "timecode": "Non-Billable",
           "client": null
+        },
+        {
+          "id": 2,
+          "date": "2017-01-09",
+          "hours_worked": 1,
+          "timecode": "Non-Billable",
+          "client": null
         }
       ]
     },
@@ -24,5 +31,9 @@
     }
   ],
   "clients": [
+    {
+      "id": 1,
+      "name": "zzzzzzzzz"
+    }
   ]
 }

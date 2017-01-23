@@ -6,17 +6,21 @@ module TimeLogger
         @console_ui = console_ui
         @validation_employee_creation = validation_employee_creation
         @validation_menu = validation_menu
-        @worker_retrieval = TimeLogger::WorkerRetrieval.new
       end
 
       def execute
         new_username = enter_new_username
         admin_option_num = enter_new_user_admin_authority
         admin_authority = convert_input_to_boolean(admin_option_num)
-        @worker_retrieval.save_employee(new_username, admin_authority)
+        employee_repo.create(new_username, admin_authority)
+        employee_repo.save
       end
 
       private
+
+      def employee_repo
+        Repository.for(:employee)
+      end
 
       def enter_new_username
         @console_ui.enter_new_username_message

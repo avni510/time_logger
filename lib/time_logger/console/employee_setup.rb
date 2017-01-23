@@ -4,32 +4,30 @@ module TimeLogger
 
       def initialize(console_ui)
         @console_ui = console_ui
-        @worker_retrieval = TimeLogger::WorkerRetrieval.new
       end
 
       def run
         @console_ui.username_display_message
-
         username = @console_ui.get_user_input
-        
-        worker = @worker_retrieval.employee(username)
-       
-        worker = valid_username_loop(worker)
-
-        menu_selection = MenuSelection.new(worker, @console_ui)
-
+        employee = employee_repo.find_by_username(username)
+        employee = valid_username_loop(employee)
+        menu_selection = MenuSelection.new(employee, @console_ui)
         menu_selection.run
       end
 
       private
 
-      def valid_username_loop(worker)
-        until worker
+      def valid_username_loop(employee)
+        until employee
           @console_ui.username_does_not_exist_message
           username = @console_ui.get_user_input
-          worker = @worker_retrieval.employee(username)
+          employee = employee_repo.find_by_username(username)
         end
-        worker
+        employee
+      end
+
+      def employee_repo
+        Repository.for(:employee)
       end
     end
   end
