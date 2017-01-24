@@ -1,7 +1,7 @@
-<a href="/log_time" > Log Your Time </a> <br>
-<a href="/employee_report" > Run a Report on Yourself</a> <br>
-<% if @admin %>
-  <a href= "/client_creation" > Create a Client </a> <br>
-  <a href= "/employee_creation">Create an Employee</a> <br>
-  <a href= "/admin_report">Run a Company Report</a>
+<a href="/log_times/new" > Log Your Time </a> <br>
+<a href="/employees/<%=@employee.id%>/report" > Run a Report on Yourself</a> <br>
+<% if @employee.admin %>
+  <a href= "/clients/new" > Create a Client </a> <br>
+  <a href= "/employees/new">Create an Employee</a> <br>
+  <a href= "/employees/<%=@employee.id%>/company_report">Run a Company Report</a>
 <% end %>

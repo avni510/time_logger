@@ -1,6 +1,6 @@
 module TimeLogger
   module Console
-    class WorkerSetup
+    class EmployeeSetup
 
       def initialize(console_ui)
         @console_ui = console_ui

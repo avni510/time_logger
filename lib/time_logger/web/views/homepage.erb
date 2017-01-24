@@ -1,3 +1,6 @@
+<% if flash[:error] %>
+  <%= flash[:error] %>
+<% end %>
 <form method= "post" action="/login">
   <select name="username">
   <% @employees.each do |employee| %>

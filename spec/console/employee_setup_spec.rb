@@ -2,12 +2,12 @@ module TimeLogger
   module Console
     require "spec_helper"
 
-    describe WorkerSetup do
+    describe EmployeeSetup do
       before(:each) do
         @employee_1 = TimeLogger::Employee.new(1, "rstarr", false)
         @mock_console_ui = double  
         @mock_employee_repo = double
-        @worker_setup = WorkerSetup.new(@mock_console_ui)
+        @worker_setup = EmployeeSetup.new(@mock_console_ui)
         allow(Repository).to receive(:for).and_return(@mock_employee_repo)
       end
 

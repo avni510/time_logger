@@ -30,11 +30,15 @@ class WebApp < Sinatra::Base
   get '/menu_selection' do
     redirect to('/') unless session[:username]
     @employee = @employee_repo.find_by_username(session[:username])
-    @admin = @employee.admin
-    erb :menu_selection, :layout => false
+    if @employee
+      erb :menu_selection, :layout => false
+    else
+      flash[:error] = "This user does not exist"
+      redirect to('/')
+    end
   end
 
-  get '/employee_report' do
+  get '/employees/:id/report' do
     employee = @employee_repo.find_by_username(session[:username])
     @sorted_log_times = @log_time_repo.sorted_current_month_entries_by_employee_id(employee.id)
     @client_hours = @log_time_repo.employee_client_hours(employee.id)
@@ -42,21 +46,21 @@ class WebApp < Sinatra::Base
     erb :employee_report
   end
 
-  get "/admin_report" do
+  get "/employees/:id/company_report" do
     @company_timecodes = @log_time_repo.company_timecode_hours
     @company_clients = @log_time_repo.company_client_hours
     erb :admin_report
   end
 
-  get "/employee_creation" do
+  get "/employees/new" do
     erb :employee_creation
   end
 
-  post "/employee_creation_submission" do
+  post "/employees" do
     result = @validation_employee_creation.validate(params[:new_user])
     unless result.valid?
       flash[:error] = result.error_message
-      redirect "/employee_creation"
+      redirect "/employees/new"
     else
       @employee_repo.create(params[:new_user], params[:admin_authority].to_b)
       @employee_repo.save
@@ -65,15 +69,15 @@ class WebApp < Sinatra::Base
     end
   end
 
-  get "/client_creation" do
+  get "/clients/new" do
     erb :client_creation 
   end
 
-  post "/client_creation_submission" do
+  post "/clients" do
     result = @validation_client_creation.validate(params[:new_client])
     unless result.valid?
       flash[:error] = result.error_message
-      redirect "/client_creation"
+      redirect "/clients/new"
     else
       @client_repo.create(params[:new_client])
       @client_repo.save
@@ -82,12 +86,12 @@ class WebApp < Sinatra::Base
     end
   end
 
-  get "/log_time" do
+  get "/log_times/new" do
     @clients = @client_repo.all
     erb :log_time
   end
 
-  post "/log_time_submission" do
+  post "/log_times" do
     employee = @employee_repo.find_by_username(session[:username])
     log_time_hash = { 
       date: params[:date], 
@@ -97,7 +101,7 @@ class WebApp < Sinatra::Base
     result = @validation_log_time.validate(log_time_hash) 
     unless result.valid?
       flash[:error] = result.error_message
-      redirect "/log_time"
+      redirect "/log_times/new"
     else
       log_time_entry = { 
         employee_id: employee.id,
