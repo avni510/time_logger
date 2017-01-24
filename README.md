@@ -22,9 +22,14 @@ Install dependencies
 $ bundle install
 ```
 
-Run application
+Run application console application
 ```
-$ ./bin/execute_time_logger.rb
+$ ./bin/execute_time_logger_console.rb
+```
+
+Run Web App
+```
+$ ./bin/execute_time_logger_web.rb
 ```
 Usage
 -----

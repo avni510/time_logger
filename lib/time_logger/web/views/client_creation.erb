@@ -1,0 +1,10 @@
+<% if flash[:error] %>
+  <%= flash[:error] %>
+<% end %>
+<br>
+<form method="post" action="/client_creation_submission"> 
+  Please enter the name of the client you would like to create <br>
+  <input type="text" name="new_client"> <br>
+  <input class="btn btn-primary" type="submit" value="Submit">
+</form>
+

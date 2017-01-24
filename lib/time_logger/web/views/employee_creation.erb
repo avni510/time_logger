@@ -1,0 +1,15 @@
+<% if flash[:error] %>
+  <%= flash[:error] %>
+<% end %>
+<br>
+<form method="post" action="/employee_creation_submission"> 
+  Please enter the username of the employee you would like to create <br>
+  <input type="text" name="new_user"> <br>
+  <br>
+  <p>Please select from the dropdown if the user should have admin authority</p>
+  <select name="admin_authority">
+    <option value="true"> Yes </option>
+    <option value="false"> No </option>
+  </select>
+  <input class="btn btn-primary" type="submit" value="Submit">
+</form>

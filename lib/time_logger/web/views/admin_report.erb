@@ -1,0 +1,15 @@
+<p> This is a company wide report for the current month </p>
+<% unless @company_clients || @company_timecodes %>
+  <p> There are no log times for the company </p>
+<% else %>
+  <% unless @company_clients %>
+    <p> There are no hours logged for clients </p>
+  <% else %>
+    <% @company_clients.each do |client, hours_worked| %> 
+      <p> Company total hours worked for <%= client %> : <%= hours_worked %> </p>
+    <% end %>
+  <% end %>
+  <% @company_timecodes.each do |timecode, hours_worked| %> 
+    <p> Company total <%= timecode %> hours worked : <%= hours_worked %> </p>
+  <% end %>
+<% end %>

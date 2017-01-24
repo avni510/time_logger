@@ -1,0 +1,12 @@
+<% if flash[:error] %>
+  <%= flash[:error] %>
+<% end %>
+<form method= "post" action="/login">
+  <select name="username">
+  <% @employees.each do |employee| %>
+    <option value= "<%= employee.username %>"> <%= employee.username %></option>
+  <% end %>
+  <input class= "btn btn-primary" type='submit' value="Submit">
+  </select>
+</form>
+
