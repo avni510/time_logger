@@ -4,6 +4,7 @@ require "time_logger/web/app"
 require "rspec/json_expectations"
 require "time_logger" 
 require "time_logger/console/console"
+require "db/db"
 def session
     last_request.env['rack.session']
 end
