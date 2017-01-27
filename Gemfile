@@ -9,7 +9,6 @@ gem "rack"
 gem "sinatra", require: "sinatra/base"
 gem "shotgun"
 gem "rack-test"
-gem "vegas"
 gem "thin"
 gem "wannabe_bool"
 gem "sinatra-flash", :require => 'sinatra/flash'

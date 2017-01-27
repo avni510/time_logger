@@ -29,7 +29,7 @@ $ ./bin/execute_time_logger_console.rb
 
 Run Web App
 ```
-$ ./bin/execute_time_logger_web.rb
+$ rackup 
 ```
 Usage
 -----
