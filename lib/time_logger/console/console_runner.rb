@@ -12,8 +12,8 @@ module TimeLogger
         load_data = TimeLogger::LoadDataToRepos.new(@file_wrapper, @save_json_data)
         load_data.run
 
-        worker_setup = EmployeeSetup.new(@console_ui)
-        worker_setup.run
+        employee_setup = EmployeeSetup.new(@console_ui)
+        employee_setup.run
       end
     end
   end

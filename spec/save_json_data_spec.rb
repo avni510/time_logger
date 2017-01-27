@@ -2,7 +2,7 @@ module TimeLogger
   require "spec_helper"
 
   describe SaveJsonData do
-    let(:output_file) { "../time_logger/time_logger_data.json" }
+    let(:output_file) { File.expand_path("data/" + "time_logger_data.json") }
     let(:file_wrapper) { FileWrapper.new(output_file) }
     let(:save_json_data) { SaveJsonData.new(file_wrapper) }
 

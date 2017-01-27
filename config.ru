@@ -2,7 +2,7 @@ $LOAD_PATH << File.expand_path('../lib', __FILE__)
 require 'time_logger'
 require 'time_logger/web/app'
 
-FILE_PATH = File.expand_path("../time_logger_data.json", __FILE__)
+FILE_PATH = File.expand_path("../data/time_logger_data.json", __FILE__)
 
 file_wrapper =  TimeLogger::FileWrapper.new(FILE_PATH)
 save_json_data = TimeLogger::SaveJsonData.new(file_wrapper)
