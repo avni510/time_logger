@@ -1,14 +1,14 @@
 module DB
-  class Setup
+  class SetupTest
 
     def self.create
       con = PG::Connection.open(:dbname => "postgres")
-      con.exec("CREATE DATABASE time_logger")
+      con.exec("CREATE DATABASE time_logger_test")
       con.close
     end
 
     def self.migrate
-      con = PG::Connection.open(:dbname => "time_logger")
+      con = PG::Connection.open(:dbname => "time_logger_test")
       con.exec("CREATE TABLE Clients
                (
                   ID SERIAL, 

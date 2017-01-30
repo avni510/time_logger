@@ -1,4 +1,4 @@
-module TimeLogger
+module InMemory
   class ClientRepo
     attr_reader :clients
     
@@ -9,7 +9,7 @@ module TimeLogger
 
     def create(name)
       client_id = @clients.count + 1
-      client = Client.new(client_id, name)
+      client = TimeLogger::Client.new(client_id, name)
       @clients << client
     end
 

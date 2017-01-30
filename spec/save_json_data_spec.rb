@@ -1,5 +1,5 @@
+require "spec_helper"
 module TimeLogger
-  require "spec_helper"
 
   describe SaveJsonData do
     let(:output_file) { File.expand_path("data/" + "time_logger_data.json") }

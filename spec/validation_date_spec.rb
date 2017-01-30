@@ -1,5 +1,5 @@
+require "spec_helper" 
 module TimeLogger
-  require "spec_helper" 
 
   describe ValidationDate do
     let(:validation_date) { ValidationDate.new }

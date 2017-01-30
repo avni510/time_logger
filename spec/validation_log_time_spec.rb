@@ -1,5 +1,5 @@
+require "spec_helper"
 module TimeLogger
-  require "spec_helper"
 
   describe ValidationLogTime do
     let (:validation_log_time) { ValidationLogTime.new(ValidationDate.new, ValidationHoursWorked.new, mock_log_time_repo) } 

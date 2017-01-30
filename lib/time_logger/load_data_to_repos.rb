@@ -9,11 +9,11 @@ module TimeLogger
     def run
       data_hash = @file_wrapper.read_data
 
-      @employee_repo = EmployeeRepo.new(@save_json_data)
+      @employee_repo = InMemory::EmployeeRepo.new(@save_json_data)
 
-      @log_time_repo = LogTimeRepo.new(@save_json_data)
+      @log_time_repo = InMemory::LogTimeRepo.new(@save_json_data)
 
-      @client_repo = ClientRepo.new(@save_json_data)
+      @client_repo = InMemory::ClientRepo.new(@save_json_data)
 
       load_employee_and_log_times_repos(data_hash)
 

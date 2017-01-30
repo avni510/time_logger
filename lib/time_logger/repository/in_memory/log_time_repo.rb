@@ -1,4 +1,4 @@
-module TimeLogger
+module InMemory
   class LogTimeRepo
     attr_reader :entries
 
@@ -12,7 +12,7 @@ module TimeLogger
 
       log_entry_params = generate_log_entry_hash(log_entry_id, params)
 
-      log_time_entry = LogTimeEntry.new(log_entry_params)
+      log_time_entry = TimeLogger::LogTimeEntry.new(log_entry_params)
 
       @entries << log_time_entry
     end
@@ -199,7 +199,6 @@ module TimeLogger
         log_time_entry.date
       end
     end
-
   end
 end
 

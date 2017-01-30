@@ -1,6 +1,5 @@
 $LOAD_PATH << File.expand_path('../lib', __FILE__)
-require "db/setup"
-require "pg"
+require "db/db"
 
 namespace :db do
   task :create do
@@ -16,6 +15,23 @@ namespace :db do
       con.close
     end
     DB::Setup.migrate
+  end
+end
+
+namespace :db_test do
+  task :create do
+    DB::SetupTest.create
+  end
+
+  task :migrate do
+    begin 
+      con = PG::Connection.open(:dbname => "time_logger_test")
+    rescue PG::Error 
+      puts "please run rake db_test:create first"
+    else
+      con.close
+    end
+    DB::SetupTest.migrate
   end
 end
 

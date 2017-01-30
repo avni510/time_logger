@@ -1,16 +1,16 @@
 require "spec_helper"
 module DB
 
-  describe Setup do
+  describe SetupTest do
 
     def create_and_migrate
-      Setup.create
-      Setup.migrate
+      SetupTest.create
+      SetupTest.migrate
     end
 
     def connect_to_db
       begin 
-        con = PG::Connection.open(:dbname => "time_logger")
+        con = PG::Connection.open(:dbname => "time_logger_test")
       rescue => e
         return false
       else
@@ -20,7 +20,7 @@ module DB
 
     def teardown 
       connection = PG::Connection.open(:dbname => "postgres")
-      connection.exec("DROP DATABASE time_logger")
+      connection.exec("DROP DATABASE time_logger_test")
       connection.close
     end
 
@@ -29,13 +29,13 @@ module DB
       context "rake db:create has been run" do
         it "creates the db" do
           if connect_to_db == false
-            Setup.create
-            expect { @con = PG::Connection.open(:dbname => "time_logger") }.to_not raise_error
+            SetupTest.create
+            expect { @con = PG::Connection.open(:dbname => "time_logger_test") }.to_not raise_error
             @con.close
           else
             teardown
-            Setup.create
-            expect { @con = PG::Connection.open(:dbname => "time_logger") }.to_not raise_error
+            SetupTest.create
+            expect { @con = PG::Connection.open(:dbname => "time_logger_test") }.to_not raise_error
             @con.close
           end
           teardown
@@ -53,7 +53,7 @@ module DB
             teardown
             create_and_migrate
           end          
-          @con = PG::Connection.open(:dbname => "time_logger")
+          @con = PG::Connection.open(:dbname => "time_logger_test")
         end
 
         after(:all) do

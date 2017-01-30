@@ -1,6 +1,6 @@
+require "spec_helper"
 module TimeLogger
   module Console
-    require "spec_helper"
 
     describe LogClient do
       let(:mock_console_ui) { double }

@@ -1,5 +1,5 @@
+require "spec_helper"
 module TimeLogger
-  require "spec_helper"
 
   describe ValidationHoursWorked do
     let (:validation_hours_worked) { ValidationHoursWorked.new }

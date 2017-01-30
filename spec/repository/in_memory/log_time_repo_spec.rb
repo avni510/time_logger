@@ -1,5 +1,5 @@
-module TimeLogger
-  require "spec_helper"
+require "spec_helper"
+module InMemory
 
   describe LogTimeRepo do
     let(:mock_save_json_data) { double }

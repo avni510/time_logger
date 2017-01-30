@@ -1,6 +1,4 @@
-require 'time_logger/employee'
-
-module TimeLogger
+module InMemory
   class EmployeeRepo
     attr_reader :employees
 
@@ -11,7 +9,7 @@ module TimeLogger
 
     def create(username, admin=false)
       employee_id = @employees.count + 1
-      employee = Employee.new(employee_id, username, admin)
+      employee = TimeLogger::Employee.new(employee_id, username, admin)
       @employees << employee
     end
 

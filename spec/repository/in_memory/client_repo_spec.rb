@@ -1,5 +1,5 @@
-module TimeLogger
-  require "spec_helper"
+require "spec_helper"
+module InMemory
 
   describe ClientRepo do
     let(:mock_save_json_data) { double }
@@ -75,7 +75,7 @@ module TimeLogger
     end
 
     describe ".all" do
-      it "returns an array of all log time objects" do
+      it "returns an array of all client objects" do
         client_repo.create(@name)
         client_repo.create("Microsoft")
         client_repo.create("Facebook")
