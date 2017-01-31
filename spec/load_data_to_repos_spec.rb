@@ -53,7 +53,7 @@ module TimeLogger
           to receive(:create).exactly(2).times
         expect_any_instance_of(InMemory::ClientRepo).
           to receive(:create).exactly(2).times
-        expect(Repository).to receive(:register).exactly(3).times
+        expect(RepositoryRegistry).to receive(:setup)
         load_data_to_repos.run
       end
     end

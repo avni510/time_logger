@@ -19,7 +19,7 @@ module TimeLogger
 
       load_client_repo(data_hash)
       
-      setup_main_repository
+      setup_main_repository(@employee_repo, @log_time_repo, @client_repo)
     end
 
     private
@@ -59,11 +59,13 @@ module TimeLogger
       }
     end
 
-    def setup_main_repository
-      Repository.repositories
-      Repository.register("log_time", @log_time_repo)
-      Repository.register("employee", @employee_repo)
-      Repository.register("client", @client_repo)
+    def setup_main_repository(employee_repo, log_time_repo, client_repo)
+      params = {
+        :log_time_repo => log_time_repo,
+        :employee_repo => employee_repo,
+        :client_repo => client_repo
+      }
+      RepositoryRegistry.setup(params)
     end
   end
 end
