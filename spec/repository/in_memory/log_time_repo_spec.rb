@@ -120,36 +120,6 @@ module InMemory
       end
     end
 
-    describe ".find_by_employee_id_and_date" do
-      context "an employee has logged times for the date entered" do
-        it "retrieves the hours worked for a given employee and given date" do
-          create_log_entry(1,"2016-09-07", "8","Non-Billable")
-
-          create_log_entry(1,"2016-09-07", "8","Non-Billable")
-
-          create_log_entry(1,"2016-09-07", "8","Non-Billable")
-
-          create_log_entry(1,"2016-09-08", "7","Non-Billable")
-
-
-          result_array = log_time_repo.find_by_employee_id_and_date(1, "09-07-2016")
-
-          result_array.each do |result|
-            expect(result.date.day).to eq(7)
-          end
-        end
-      end
-
-      context "the employee has no logged times for the date entered" do
-        it "retrieves the hours worked for a given employee and given date" do
-
-          result_array = log_time_repo.find_by_employee_id_and_date(1, "09-07-2016")
-
-          expect(result_array).to eq(nil)
-        end
-      end
-    end
-
     describe ".sorted_current_month_entries_by_employee_id" do
       it "returns the log entries for the current month sorted by date and filtered by employee id" do
         create_log_entry(1,"2016-09-04", "8","Non-Billable")
@@ -175,7 +145,6 @@ module InMemory
         result = log_time_repo.sorted_current_month_entries_by_employee_id(1)
 
         expect(result).to eq(nil)
-
       end
     end
 
@@ -400,25 +369,6 @@ module InMemory
           result = log_time_repo.company_client_hours
 
           expect(result).to eq(nil)
-        end
-      end
-
-      describe ".filter_for_current_month" do
-        it "returns an array of log entry objects for the current month" do
-          allow(Date).to receive(:today).and_return(Date.new(2016, 9, 28))
-
-          create_log_entry(1,"2016-08-05", "8","Billable", "Google")
-
-          create_log_entry(2,"2015-09-07", "8","Non-Billable")
-
-          create_log_entry(2,"2016-09-07", "6","Billable", "Microsoft")
-
-          create_log_entry(3,"2016-09-07", "6", "PTO")
-
-          result = log_time_repo.filter_for_current_month(log_time_repo.entries)
-
-          expect(result.count).to eq(2)
-          expect(result[0].date.month).to eq(9)
         end
       end
     end

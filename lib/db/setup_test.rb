@@ -48,6 +48,9 @@ module DB
                 )"
               )
       con.exec("INSERT INTO EMPLOYEES (username, admin) VALUES ('defaultadmin', 'true')")
+      con.exec("INSERT INTO TIMECODES (id, timecode) VALUES (1, 'Non-Billable')")
+      con.exec("INSERT INTO TIMECODES (id, timecode) VALUES (2, 'PTO')")
+      con.exec("INSERT INTO TIMECODES (id, timecode) VALUES (3, 'Billable')")
       con.close
     end
   end

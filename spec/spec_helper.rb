@@ -8,5 +8,5 @@ require "db/db"
 require "time_logger/repository/sql/sql"
 require "time_logger/repository/in_memory/in_memory"
 def session
-    last_request.env['rack.session']
+  last_request.env['rack.session']
 end

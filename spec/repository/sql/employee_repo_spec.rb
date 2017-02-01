@@ -1,29 +1,29 @@
 require "spec_helper"
 module SQL
   describe EmployeeRepo do
-    let(:connection) { PG::Connection.open(:dbname => "time_logger_test") }  
-    let(:employee_repo) { EmployeeRepo.new(connection) }
+    before(:each) do
+      @connection = PG::Connection.open(:dbname => "time_logger_test")
+      @employee_repo = EmployeeRepo.new(@connection)
+    end
 
     after(:each) do
-      connection.exec("DELETE FROM EMPLOYEES")
-      connection.exec(
+      @connection.exec("DELETE FROM EMPLOYEES")
+      @connection.exec(
         "ALTER SEQUENCE employees_id_seq RESTART WITH 1"
       )
-      connection.exec(
+      @connection.exec(
         "INSERT INTO EMPLOYEES (username, admin) VALUES ('defaultadmin', 'true')"
       )
+      @connection.close if @connection
     end
 
-    after(:all) do
-      PG::Connection.open(:dbname => "time_logger_test").close
-    end
 
     describe ".create" do
       it "creates a new employee in the database" do
         username = "rstarr"
         admin = false
-        employee_repo.create(username, admin)
-        result = connection.exec(
+        @employee_repo.create(username, admin)
+        result = @connection.exec(
           "SELECT * FROM EMPLOYEES WHERE username='rstarr'"
         )
         expect(result.values[0][1]).to eq("rstarr")
@@ -35,8 +35,8 @@ module SQL
         id = 2
         username = "rstarr"
         admin = false
-        employee_repo.create(username, admin)
-        result_employee = employee_repo.find_by(id) 
+        @employee_repo.create(username, admin)
+        result_employee = @employee_repo.find_by(id) 
         expected_employee = 
           TimeLogger::Employee.new(2, "rstarr", false)
         expect(result_employee.id).to eq(expected_employee.id)
@@ -46,9 +46,9 @@ module SQL
         id = 2
         username = "rstarr"
         admin = false
-        employee_repo.create(username, admin)
+        @employee_repo.create(username, admin)
         nonexistent_id = 3
-        result_employee = employee_repo.find_by(nonexistent_id)
+        result_employee = @employee_repo.find_by(nonexistent_id)
         expect(result_employee).to eq(nil) 
       end
     end
@@ -59,8 +59,8 @@ module SQL
           id = 2
           username = "rstarr"
           admin = false
-          employee_repo.create(username, admin)
-          result_employee = employee_repo.find_by_username(username) 
+          @employee_repo.create(username, admin)
+          result_employee = @employee_repo.find_by_username(username) 
           expected_employee = 
             TimeLogger::Employee.new(2, "rstarr", false)
           expect(result_employee.username).to eq(expected_employee.username)
@@ -72,9 +72,9 @@ module SQL
           id = 2
           username = "rstarr"
           admin = false
-          employee_repo.create(username, admin)
+          @employee_repo.create(username, admin)
           nonexistant_username = "gharrison"
-          result_employee = employee_repo.find_by_username(nonexistant_username) 
+          result_employee = @employee_repo.find_by_username(nonexistant_username) 
           expect(result_employee).to eq(nil)
         end
       end
@@ -82,15 +82,15 @@ module SQL
 
     describe ".save" do
       it "passes all the employees that need to be saved" do
-        employee_repo.save
+        @employee_repo.save
       end
     end
 
     describe ".all" do
       it "returns a list of all the employee objects" do
-        employee_repo.create("rstarr", false)
-        employee_repo.create("gharrison", true)
-        result_employees = employee_repo.all
+        @employee_repo.create("rstarr", false)
+        @employee_repo.create("gharrison", true)
+        result_employees = @employee_repo.all
         expected_employees = [
           [TimeLogger::Employee.new(1, "defaultadmin", true)],
           [TimeLogger::Employee.new(2, "rstarr", false)],
@@ -102,13 +102,13 @@ module SQL
 
       context "there are no employees in the database" do
         before(:each) do
-          connection.exec(
+          @connection.exec(
             "DELETE FROM EMPLOYEES WHERE username='defaultadmin'"
           )
         end
 
         it "returns nil" do
-          expect(employee_repo.all).to eq(nil)  
+          expect(@employee_repo.all).to eq(nil)  
         end
       end
     end

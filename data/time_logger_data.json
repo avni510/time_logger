@@ -5,7 +5,13 @@
       "username": "defaultadmin",
       "admin": true,
       "log_time": [
-
+        {
+          "id": 1,
+          "date": "2017-01-01",
+          "hours_worked": 1,
+          "timecode": "Non-Billable",
+          "client": null
+        }
       ]
     }
   ],

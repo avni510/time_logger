@@ -46,17 +46,6 @@ module InMemory
       aggregate_total_hours_worked(entries_by_date)
     end
 
-  
-    def find_by_employee_id_and_date(employee_id, date_string)
-      date = Date.strptime(date_string,'%m-%d-%Y')
-      filtered_entries = @entries.select { |entry| 
-        entry.employee_id == employee_id && 
-        entry.date == date
-      }
-
-      entries_empty?(filtered_entries)
-    end
-
     def sorted_current_month_entries_by_employee_id(employee_id)
       entries_by_employee = find_by_employee_id(employee_id)
 
@@ -104,15 +93,25 @@ module InMemory
       entries_empty?(company_client_hash)
     end
 
+    private 
+
     def filter_for_current_month(entries)
       today = Date.today
       entries.reject do |log_time|
         log_time.date.month < today.month ||
-        log_time.date.year < today.year 
+          log_time.date.year < today.year 
       end
     end
 
-    private 
+    def find_by_employee_id_and_date(employee_id, date_string)
+      date = Date.strptime(date_string,'%m-%d-%Y')
+      filtered_entries = @entries.select { |entry| 
+        entry.employee_id == employee_id && 
+        entry.date == date
+      }
+
+      entries_empty?(filtered_entries)
+    end
 
     def aggregate_total_hours_worked(entries_by_date)
       total_hours_worked = 0
