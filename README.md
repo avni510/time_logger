@@ -33,15 +33,26 @@ $ rackup
 ```
 Usage
 -----
-The application is used for employees to log in their time worked 
+The application is used for employees to log their time worked 
 
 Default Admin
 -----
 The default admin username is 'defaultadmin'
 
+Persisting Data
+--------------
+There are two ways to persist data. To a flat file in JSON format or to a Postgresql database. 
+
+Here are steps for using the flat file
+
+Here are the steps for using the Postgresql database 
+1. Start your Postgresql server
+2. `$ rake:db_create`
+3. `$ rake:db_migrate`
+
 Test Suite
 ----------
-Executing the test suite
+Please start your Postgresql server and run the migration prior to run the test suite then run
 ```
 $ rspec
 ```
