@@ -1,3 +1,4 @@
+require 'pry'
 module TimeLogger
   class SaveJsonData
 
@@ -5,17 +6,14 @@ module TimeLogger
       @file_wrapper = file_wrapper
     end
 
-    def employees(employees)
+    def employees(employees_data)
       data_hash = read_data
-
-      workers = retrieve_workers_array(data_hash)
-
-      last_employee_entered = workers.count
-      
-      new_employees = find_new_employees(employees, last_employee_entered)
-      
-      add_new_employees(workers, new_employees)
-
+      existing_employees = retrieve_employees_array(data_hash)
+      last_employee_entered = existing_employees.count
+      new_employees = find_new_employees(
+        employees_data, last_employee_entered
+      )
+      all_employees = add_new_employees(existing_employees, new_employees)
       write_data(data_hash)
     end
 
@@ -49,29 +47,21 @@ module TimeLogger
       @file_wrapper.write_data(data_hash)
     end
 
-    def retrieve_workers_array(data_hash)
-      data_hash["workers"]
+    def retrieve_employees_array(data_hash)
+      data_hash["employees"]
     end
 
-    def find_new_employees(employees, last_employee_entered)
-      new_employees = []
-
-      employees.each do |employee|
-        if employee.id > last_employee_entered
-          new_employees << employee
-        end
+    def find_new_employees(employees_data, last_employee_entered)
+      employees_data.select do |employee| 
+        employee[:id] > last_employee_entered
       end
-      new_employees
     end
 
-    def add_new_employees(workers_array, new_employees)
-      new_employees.each do |employee|
-        employee_hash = generate_employee_hash(
-          employee.id, 
-          employee.username, 
-          employee.admin)
-        workers_array << employee_hash
+    def add_new_employees(existing_employees_array, new_employees_array)
+      new_employees_array.each do |employee|
+        existing_employees_array << employee 
       end
+      existing_employees_array
     end
 
     def add_log_times(workers, entries)

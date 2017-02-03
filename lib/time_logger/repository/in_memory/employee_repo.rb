@@ -1,38 +1,45 @@
 module InMemory
   class EmployeeRepo
-    attr_reader :employees
 
-    def initialize(save_json_data)
-      @save_json_data = save_json_data
-      @employees = []
+    def initialize(employees_array)
+      @data = employees_array
+    end
+
+    def employees
+      @data.map do |employee| 
+        TimeLogger::Employee.new(
+          employee[:id], 
+          employee[:username], 
+          employee[:admin]
+        )
+      end
     end
 
     def create(username, admin=false)
-      employee_id = @employees.count + 1
-      employee = TimeLogger::Employee.new(employee_id, username, admin)
-      @employees << employee
+      employee_id = employees.count + 1
+      @data <<  
+        {
+          "id": employee_id,
+          "username": username,
+          "admin": admin,
+          "log_time": []
+        }
     end
 
     def find_by(id)
-      @employees.each do |employee|
-        return employee if employee.id == id
-      end
-      nil
+      employees.find { |employee| employee.id == id }
     end
     
     def find_by_username(username)
-      @employees.each do |employee|
-        return employee if employee.username == username
-      end
-      nil
+      employees.find { |employee| employee.username == username }
     end
 
     def save
-      @save_json_data.employees(@employees)
+#      @save_json_data.employees(@employees)
     end
 
     def all
-      @employees
+      employees
     end
   end
 end
