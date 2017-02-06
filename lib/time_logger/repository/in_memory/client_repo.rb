@@ -2,37 +2,40 @@ module InMemory
   class ClientRepo
     attr_reader :clients
     
-    def initialize(save_json_data)
-      @save_json_data = save_json_data
-      @clients = []
+    def initialize(json_store)
+      @store = json_store
+    end
+
+    def clients
+      clients_array = @store.data["clients"]
+      clients_array.map do |client|
+        TimeLogger::Client.new(
+          client["id"],
+          client["name"]
+        )
+      end
     end
 
     def create(name)
-      client_id = @clients.count + 1
-      client = TimeLogger::Client.new(client_id, name)
-      @clients << client
+      client_id = clients.count + 1
+      data_hash = {
+        "id": client_id,
+        "name": name
+      }
+      data_hash = JSON.parse(JSON.generate(data_hash))
+      @store.data["clients"] << data_hash
     end
 
     def find_by(id)
-      @clients.each do |client|
-        return client if client.id == id
-      end
-      nil
+      clients.find { |client| client.id == id }
     end
 
     def find_by_name(name)
-      @clients.each do |client|
-        return client if client.name == name
-      end
-      nil
-    end
-
-    def save
-      @save_json_data.clients(@clients)
+      clients.find { |client| client.name == name }
     end
 
     def all
-      @clients
+      clients
     end
   end
 end

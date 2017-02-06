@@ -3,38 +3,48 @@ module InMemory
 
   describe EmployeeRepo do
     before(:each) do
+      @file_wrapper = double
+      @json_store = JsonStore.new(@file_wrapper)
+
       data = 
-        [
-          {
-            "id": 1,
-            "username": "defaultadmin",
-            "admin": true,
-            "log_time": [
-              {
-                "id": 1,
-                "date": "2017-01-01",
-                "hours_worked": 1,
-                "timecode": "Non-Billable",
-                "client": nil
-              }
-            ]
-          },
-          {
-            "id": 2,
-            "username": "rstarr",
-            "admin": false,
-            "log_time": [
-              {
-                "id": 2,
-                "date": "2017-01-02",
-                "hours_worked": 1,
-                "timecode": "Non-Billable",
-                "client": nil
-              }
-            ]
-          }
-        ]
-      @employee_repo = EmployeeRepo.new(data) 
+        {
+          "employees": 
+          [
+            {
+              "id": 1,
+              "username": "defaultadmin",
+              "admin": true,
+              "log_time": [
+                {
+                  "id": 1,
+                  "date": "2017-01-01",
+                  "hours_worked": 1,
+                  "timecode": "Non-Billable",
+                  "client": nil
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "username": "rstarr",
+              "admin": false,
+              "log_time": [
+                {
+                  "id": 2,
+                  "date": "2017-01-02",
+                  "hours_worked": 1,
+                  "timecode": "Non-Billable",
+                  "client": nil
+                }
+              ]
+            }
+          ],
+          "clients": []
+        }
+      data = JSON.parse(JSON.generate(data))
+      expect(@file_wrapper).to receive(:read_data).and_return(data)
+      @json_store.load
+      @employee_repo = EmployeeRepo.new(@json_store) 
       @username = "jlennon"
       @admin = false
     end
@@ -53,7 +63,7 @@ module InMemory
     end
 
     describe ".create" do
-      it "creates a new employee and adds to the the employees data" do
+      it "creates a new employee and adds it to the data store" do
         @employee_repo.create(@username, @admin)
         result = @employee_repo.employees
         expect(result[0].username).to eq("defaultadmin")
@@ -91,18 +101,6 @@ module InMemory
         end
       end
     end
-
-#    describe ".save" do
-#      it "passes all the employees that need to be saved" do
-#        employee_repo.create(@username, @admin)
-#
-#        employees = employee_repo.employees
-#
-#        expect(mock_save_json_data).to receive(:employees).with(employees)
-#
-#        employee_repo.save
-#      end
-#    end
 
     describe ".all" do
       it "returns a list of all the employee objects" do
