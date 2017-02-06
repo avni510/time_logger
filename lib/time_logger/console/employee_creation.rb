@@ -13,7 +13,6 @@ module TimeLogger
         admin_option_num = enter_new_user_admin_authority
         admin_authority = convert_input_to_boolean(admin_option_num)
         employee_repo.create(new_username, admin_authority)
-        employee_repo.save
       end
 
       private

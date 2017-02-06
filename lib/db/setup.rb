@@ -1,13 +1,21 @@
 module DB
   class Setup
-    def self.create
+    @@db_hash = 
+      {
+        production: "time_logger",
+        test: "time_logger_test"
+      }
+
+    def self.create(db_env)
       con = PG::Connection.open(:dbname => "postgres")
-      con.exec("CREATE DATABASE time_logger")
+      db_name = @@db_hash[db_env]
+      con.exec("CREATE DATABASE #{db_name}")
       con.close
     end
 
-    def self.migrate
-      con = PG::Connection.open(:dbname => "time_logger")
+    def self.migrate(db_env)
+      db_name = @@db_hash[db_env]
+      con = PG::Connection.open(:dbname => db_name)
       con.exec("CREATE TABLE Clients
                (
                   ID SERIAL, 

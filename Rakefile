@@ -3,7 +3,7 @@ require "db/db"
 
 namespace :db do
   task :create do
-    DB::Setup.create
+    DB::Setup.create(:production)
   end
 
   task :migrate do
@@ -14,13 +14,13 @@ namespace :db do
     else
       con.close
     end
-    DB::Setup.migrate
+    DB::Setup.migrate(:production)
   end
 end
 
 namespace :db_test do
   task :create do
-    DB::SetupTest.create
+    DB::Setup.create(:test)
   end
 
   task :migrate do
@@ -31,7 +31,7 @@ namespace :db_test do
     else
       con.close
     end
-    DB::SetupTest.migrate
+    DB::Setup.migrate(:test)
   end
 end
 

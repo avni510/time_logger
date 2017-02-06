@@ -29,9 +29,6 @@ module SQL
       create_client_object(client_list)
     end
 
-    def save
-    end
-
     def all
       result = @connection.exec(
         "SELECT * FROM CLIENTS"

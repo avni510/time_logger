@@ -1,5 +1,5 @@
 require "spec_helper"
-module TimeLogger
+module InMemory
 
   output_file_name = File.expand_path("data/" + "time_logger_data.json")
 

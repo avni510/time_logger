@@ -61,12 +61,6 @@ module SQL
       end
     end
 
-    describe ".save" do
-      it "passes all the clients that need to be saved" do
-        @client_repo.save
-      end
-    end
-
     describe ".all" do
       it "returns an array of all client objects" do
         @client_repo.create("Google")

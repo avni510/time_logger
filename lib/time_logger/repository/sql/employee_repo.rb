@@ -29,9 +29,6 @@ module SQL
       create_employee_object(employee_list)
     end
 
-    def save
-    end
-
     def all
       result = @connection.exec(
         "SELECT * FROM EMPLOYEES"

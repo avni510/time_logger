@@ -63,7 +63,6 @@ class WebApp < Sinatra::Base
       redirect "/employees/new"
     else
       @employee_repo.create(params[:new_user], params[:admin_authority].to_b)
-      @employee_repo.save
       @success_message = "You have successfully created a new employee"
       erb :submission_success
     end
@@ -80,7 +79,6 @@ class WebApp < Sinatra::Base
       redirect "/clients/new"
     else
       @client_repo.create(params[:new_client])
-      @client_repo.save
       @success_message = "You have successfully created a new client"
       erb :submission_success
     end
@@ -115,7 +113,6 @@ class WebApp < Sinatra::Base
         log_time_entry[:client] = params[:client]
       end
       @log_time_repo.create(log_time_entry)
-      @log_time_repo.save
       @success_message = "You have successfully logged your time"
       erb :submission_success
     end

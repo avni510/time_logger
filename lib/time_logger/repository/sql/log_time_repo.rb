@@ -42,9 +42,6 @@ module SQL
       create_log_entry_object(log_entry_row)
     end
 
-    def save
-    end
-
     def all
       result = @connection.exec(
         "SELECT lt.id, lt.emp_id, lt.date, 

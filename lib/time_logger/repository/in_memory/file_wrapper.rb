@@ -1,4 +1,4 @@
-module TimeLogger
+module InMemory
   class FileWrapper
     
     def initialize(file_name)

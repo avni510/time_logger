@@ -80,12 +80,6 @@ module SQL
       end
     end
 
-    describe ".save" do
-      it "passes all the employees that need to be saved" do
-        @employee_repo.save
-      end
-    end
-
     describe ".all" do
       it "returns a list of all the employee objects" do
         @employee_repo.create("rstarr", false)

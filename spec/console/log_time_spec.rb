@@ -52,7 +52,6 @@ module TimeLogger
           with(@clients).
           and_return("Non-Billable")
         allow(mock_log_time_repo).to receive(:create)
-        allow(mock_log_time_repo).to receive(:save)
       end
 
       describe ".execute" do
@@ -75,13 +74,12 @@ module TimeLogger
                  "timecode": "Non-Billable",
                  "client": nil
               })
-            expect(mock_log_time_repo).to receive(:save)
             log_time.execute
           end
         end
 
         context "the user selects 'Billable' as their timecode" do
-          it "makes a call to select a client and saves it" do
+          it "makes a call to select a client and creates it" do
             expect(log_timecode).to receive(:run).
               with(@clients).
               and_return("Billable")
@@ -96,7 +94,6 @@ module TimeLogger
                  "timecode": "Billable",
                  "client": "Google"
               })
-            expect(mock_log_time_repo).to receive(:save)
             log_time.execute
           end
         end
@@ -119,7 +116,6 @@ module TimeLogger
                  "timecode": "Non-Billable",
                  "client": nil
               })
-            expect(mock_log_time_repo).to receive(:save)
             log_time.execute
           end
         end

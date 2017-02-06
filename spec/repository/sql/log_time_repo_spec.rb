@@ -107,11 +107,6 @@ module SQL
       end
     end
 
-    describe ".save" do
-      it "passes the entries to a method that will handle storing the data in the proper format" do
-       end
-    end
-
     describe ".all" do
       it "returns a list of objects of all the log time entries that exist" do
         log_entry_1_hash = create_entry_in_database

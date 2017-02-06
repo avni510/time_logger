@@ -13,11 +13,10 @@ module TimeLogger
           allow(@mock_console_ui).to receive(:new_client_name_message)
           allow(Repository).to receive(:for).and_return(@mock_client_repo)
           allow(@mock_client_repo).to receive(:create)
-          allow(@mock_client_repo).to receive(:save)
         end
 
         context "client name does not exist in memory" do
-          it "prompts the user to enter a client name and saves it" do
+          it "prompts the user to enter a client name and creates it" do
             expect(@mock_console_ui).to receive(:new_client_name_message)
             expect(@mock_console_ui).to receive(:get_user_input).and_return("Google")
             expect(@mock_client_repo).to receive(:find_by_name).with("Google").and_return(nil)
@@ -26,7 +25,7 @@ module TimeLogger
         end
 
         context "client name exists in memory" do
-          it "prompts the user to enter a client name and saves it" do
+          it "prompts the user to enter a client name and creates it " do
             expect(@mock_console_ui).to receive(:get_user_input).and_return("Google", "Microsoft")
             expect(@mock_client_repo).to receive(:find_by_name).and_return(TimeLogger::Client.new(1, "Google"), nil)
             expect(@mock_console_ui).to receive(:puts_string).with("This client already exists, please enter a different one")
@@ -35,7 +34,7 @@ module TimeLogger
         end
 
         context "the user enters a blank space" do
-          it "prompts the user to enter a valid client name and saves it" do
+          it "prompts the user to enter a valid client name and creates it" do
             expect(@mock_console_ui).to receive(:get_user_input).and_return("", "Microsoft")
             expect(@mock_console_ui).to receive(:puts_string).with("Your input cannot be blank")
             expect(@mock_client_repo).to receive(:find_by_name).and_return(nil)
