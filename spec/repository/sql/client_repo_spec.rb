@@ -76,9 +76,9 @@ module SQL
     end
 
     context "there are no clients in the database" do
-      it "returns nil" do
+      it "returns an empty array" do
         result_clients = @client_repo.all
-        expect(result_clients).to eq(nil) 
+        expect(result_clients).to eq([])
       end
     end
   end

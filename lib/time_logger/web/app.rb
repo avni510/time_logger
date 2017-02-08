@@ -1,13 +1,13 @@
-require "sinatra/base"
-require "wannabe_bool"
-require "sinatra/flash"
+require "sinatra/base" 
+require "wannabe_bool" 
+require "sinatra/flash" 
 
-class WebApp < Sinatra::Base
-  enable :sessions
-  set :session_secret, "My session secret"
-  register Sinatra::Flash
+class WebApp < Sinatra::Base 
+  enable :sessions 
+  set :session_secret, "My session secret" 
+  register Sinatra::Flash 
 
-  def initialize(app = nil, params)
+  def initialize(app=nil, params)
     @client_repo = params[:client_repo]
     @employee_repo = params[:employee_repo]
     @log_time_repo = params[:log_time_repo]
@@ -43,7 +43,7 @@ class WebApp < Sinatra::Base
     @sorted_log_times = @log_time_repo.sorted_current_month_entries_by_employee_id(employee.id)
     @client_hours = @log_time_repo.employee_client_hours(employee.id)
     @timecode_hours = @log_time_repo.employee_timecode_hours(employee.id)
-    erb :employee_report
+    erb :employee_report 
   end
 
   get "/employees/:id/company_report" do

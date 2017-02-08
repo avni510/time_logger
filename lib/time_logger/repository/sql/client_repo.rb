@@ -33,7 +33,7 @@ module SQL
       result = @connection.exec(
         "SELECT * FROM CLIENTS"
       )
-      return nil if result.values.empty?
+      return [] if result.values.empty?
       result.values.map do |client_values|
         create_client_object(client_values)
       end
