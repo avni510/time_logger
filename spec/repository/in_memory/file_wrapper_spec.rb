@@ -1,7 +1,7 @@
-module TimeLogger
-  require "spec_helper"
+require "spec_helper"
+module InMemory
 
-  output_file_name = "../time_logger/time_logger_data.json"
+  output_file_name = File.expand_path("data/" + "time_logger_data.json")
 
   describe FileWrapper do
 

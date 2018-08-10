@@ -1,13 +1,13 @@
-require "sinatra/base"
-require "wannabe_bool"
-require "sinatra/flash"
+require "sinatra/base" 
+require "wannabe_bool" 
+require "sinatra/flash" 
 
-class WebApp < Sinatra::Base
-  enable :sessions
-  set :session_secret, "My session secret"
-  register Sinatra::Flash
+class WebApp < Sinatra::Base 
+  enable :sessions 
+  set :session_secret, "My session secret" 
+  register Sinatra::Flash 
 
-  def initialize(app = nil, params)
+  def initialize(app=nil, params)
     @client_repo = params[:client_repo]
     @employee_repo = params[:employee_repo]
     @log_time_repo = params[:log_time_repo]
@@ -43,7 +43,7 @@ class WebApp < Sinatra::Base
     @sorted_log_times = @log_time_repo.sorted_current_month_entries_by_employee_id(employee.id)
     @client_hours = @log_time_repo.employee_client_hours(employee.id)
     @timecode_hours = @log_time_repo.employee_timecode_hours(employee.id)
-    erb :employee_report
+    erb :employee_report 
   end
 
   get "/employees/:id/company_report" do
@@ -63,7 +63,6 @@ class WebApp < Sinatra::Base
       redirect "/employees/new"
     else
       @employee_repo.create(params[:new_user], params[:admin_authority].to_b)
-      @employee_repo.save
       @success_message = "You have successfully created a new employee"
       erb :submission_success
     end
@@ -80,7 +79,6 @@ class WebApp < Sinatra::Base
       redirect "/clients/new"
     else
       @client_repo.create(params[:new_client])
-      @client_repo.save
       @success_message = "You have successfully created a new client"
       erb :submission_success
     end
@@ -115,7 +113,6 @@ class WebApp < Sinatra::Base
         log_time_entry[:client] = params[:client]
       end
       @log_time_repo.create(log_time_entry)
-      @log_time_repo.save
       @success_message = "You have successfully logged your time"
       erb :submission_success
     end

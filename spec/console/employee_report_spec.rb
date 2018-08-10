@@ -1,6 +1,6 @@
+require "spec_helper"
 module TimeLogger
   module Console
-    require "spec_helper"
 
     describe EmployeeReport do
       before(:each) do

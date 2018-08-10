@@ -1,6 +1,6 @@
+require "spec_helper"
 module TimeLogger
   module Console
-    require "spec_helper"
 
     describe EmployeeCreation do
       before(:each) do
@@ -11,7 +11,6 @@ module TimeLogger
         @employee_creation = EmployeeCreation.new(@mock_console_ui, validation_employee_creation, validation_menu)
         allow(Repository).to receive(:for).and_return(@mock_employee_repo)
         allow(@mock_employee_repo).to receive(:create)
-        allow(@mock_employee_repo).to receive(:save)
       end
 
       describe ".execute" do
@@ -22,7 +21,7 @@ module TimeLogger
         end
 
         context "the user enters a username that does not exist and a valid option for an admin" do
-          it "prompts the user to create a new employee and saves it" do
+          it "prompts the user to create a new employee and creates it" do
             expect(@mock_console_ui).to receive(:enter_new_username_message)
             expect(@mock_console_ui).to receive(:get_user_input).and_return("pmccartney", "1")
             allow(@mock_employee_repo).to receive(:find_by_username).and_return(nil)
@@ -33,7 +32,6 @@ module TimeLogger
             }
             expect(@mock_console_ui).to receive(:display_menu_options).with(admin_options_hash)
             expect(@mock_employee_repo).to receive(:create).with("pmccartney", true)
-            expect(@mock_employee_repo).to receive(:save)
             @employee_creation.execute
           end
         end

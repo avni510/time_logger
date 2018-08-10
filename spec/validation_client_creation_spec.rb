@@ -1,5 +1,5 @@
+require "spec_helper"
 module TimeLogger
-  require "spec_helper"
   
   describe ValidationClientCreation do
     before(:each) do

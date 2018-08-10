@@ -253,7 +253,6 @@ describe WebApp do
     before(:each) do
       allow(mock_employee_repo).to receive(:find_by_username).and_return(nil)
       allow(mock_employee_repo).to receive(:create)
-      allow(mock_employee_repo).to receive(:save)
     end
 
     it "loads a page after a new user is submitted" do
@@ -262,9 +261,8 @@ describe WebApp do
     end
 
     context "the newly created username does not already exist" do
-      it "displays a success message and saves the user" do
+      it "displays a success message and creates the user" do
         expect(mock_employee_repo).to receive(:create).with("username3", true)
-        expect(mock_employee_repo).to receive(:save)
         post "/employees", {:new_user => "username3", :admin_authority => "true"}
         expect(last_response.body).to include("You have successfully created a new employee")
       end
@@ -308,7 +306,6 @@ describe WebApp do
     before(:each) do
       allow(mock_client_repo).to receive(:find_by_name).and_return(nil)
       allow(mock_client_repo).to receive(:create)
-      allow(mock_client_repo).to receive(:save)
     end
 
     it "loads a page after a new client is submitted" do
@@ -317,7 +314,7 @@ describe WebApp do
     end
 
     context "the newly created client does not already exist" do
-      it "displays a success message and saves the client" do
+      it "displays a success message and creates the client" do
         post "/clients", {:new_client => "client1"}
         expect(last_response.body).to include("You have successfully created a new client")
       end
@@ -387,7 +384,6 @@ describe WebApp do
       allow(mock_employee_repo).to receive(:find_by_username).and_return(employees.first)
       allow(mock_log_time_repo).to receive(:find_total_hours_worked_for_date).and_return(0)
       allow(mock_log_time_repo).to receive(:create)
-      allow(mock_log_time_repo).to receive(:save)
     end
 
     context "the user enters a date in the incorrect format" do
@@ -457,7 +453,7 @@ describe WebApp do
     end
 
     context "all fields entered are valid and a client was entered" do
-      it "saves the log time entry" do
+      it "creates the log time entry" do
         expect(mock_log_time_repo).to receive(:create).with(
           {
             employee_id: employees.first.id, 
@@ -478,7 +474,7 @@ describe WebApp do
     end
 
     context "all fields entered are valid and a client was not entered" do
-      it "saves the log time entry" do
+      it "creates the log time entry" do
         expect(mock_log_time_repo).to receive(:create).with(
           {
             employee_id: employees.first.id, 

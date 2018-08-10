@@ -19,7 +19,7 @@ module TimeLogger
         clients = client_repo.all
         timecode_entered = @log_timecode.run(clients)
         client_entered = select_client(timecode_entered, clients)
-        save_log_time_entry(
+        create_log_entry(
           date_entered,
           hours_entered,
           timecode_entered, 
@@ -52,7 +52,7 @@ module TimeLogger
           }
       end
 
-      def save_log_time_entry(date, hours_worked, timecode, client)
+      def create_log_entry(date, hours_worked, timecode, client)
         log_time_hash = generate_log_time_hash(
           @employee_id,
           date,
@@ -61,7 +61,6 @@ module TimeLogger
           client
         )
         log_time_repo.create(log_time_hash)
-        log_time_repo.save
       end
     end
   end

@@ -1,5 +1,5 @@
+require "spec_helper"
 module TimeLogger
-  require "spec_helper"
 
   describe Client do
 

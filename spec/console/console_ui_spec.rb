@@ -1,6 +1,6 @@
+require "spec_helper"
 module TimeLogger
   module Console
-    require "spec_helper"
 
     describe ConsoleUI do
       let(:mock_io_wrapper) { double }

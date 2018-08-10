@@ -16,18 +16,13 @@ module TimeLogger
           new_client_name = @console_ui.get_user_input
           result = @validation_client_creation.validate(new_client_name)
         end
-        save_client(new_client_name)
+        client_repo.create(new_client_name)
       end
 
       private 
 
       def client_repo
         Repository.for(:client)
-      end
-
-      def save_client(new_client_name)
-        client_repo.create(new_client_name)
-        client_repo.save
       end
     end
   end
